@@ -36,7 +36,7 @@ function createHTTPSConfig() {
               },
               {
                 type: 2,
-                value: "hubs.local"
+                value: "meta2.teacherville.co.kr"
               }
             ]
           }
@@ -72,22 +72,22 @@ module.exports = (env, argv) => {
 
   if (env.local) {
     Object.assign(process.env, {
-      HOST: "hubs.local",
-      RETICULUM_SOCKET_SERVER: "hubs.local",
-      CORS_PROXY_SERVER: "hubs-proxy.local:4000",
-      NON_CORS_PROXY_DOMAINS: "hubs.local,dev.reticulum.io",
-      BASE_ASSETS_PATH: "https://hubs.local:8989/",
-      RETICULUM_SERVER: "hubs.local:4000",
+      HOST: "meta2.teacherville.co.kr",
+      RETICULUM_SOCKET_SERVER: "meta2.teacherville.co.kr",
+      CORS_PROXY_SERVER: "meta2.teacherville.co.kr",
+      NON_CORS_PROXY_DOMAINS: "meta2.teacherville.co.kr,dev.reticulum.io",
+      BASE_ASSETS_PATH: "https://meta2.teacherville.co.kr:8989/",
+      RETICULUM_SERVER: "meta2.teacherville.co.kr",
       POSTGREST_SERVER: "",
       ITA_SERVER: "turkey",
       TIER: "p1"
     });
   }
 
-  const defaultHostName = "hubs.local";
+  const defaultHostName = "meta2.teacherville.co.kr";
   const host = process.env.HOST_IP || defaultHostName;
 
-  const internalHostname = process.env.INTERNAL_HOSTNAME || "hubs.local";
+  const internalHostname = process.env.INTERNAL_HOSTNAME || "meta2.teacherville.co.kr";
   return {
     cache: {
       type: "filesystem"
@@ -149,6 +149,9 @@ module.exports = (env, argv) => {
       }
     },
     performance: {
+      hints: false, // false | "warning" | "error"
+      maxAssetSize : 500000000, // 250,000(250KB) --> 500,000,000(500MB)
+      maxEntrypointSize : 500000000, // 250,000(250KB) -> 500,000,000(500MB)
       // Ignore media and sourcemaps when warning about file size.
       assetFilter(assetFilename) {
         return !/\.(map|png|jpg|gif|glb|webm)$/.test(assetFilename);

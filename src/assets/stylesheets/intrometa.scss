@@ -1,0 +1,141 @@
+@use "../../react-components/styles/theme.scss";
+
+body {
+    margin: 0;
+    background-color: #000;
+    color: #fff;
+}
+
+:local(.roomHeader) {
+    display: flex;
+    margin: 0 auto;
+    max-width: 1440px;
+
+    img {
+        object-fit: contain;
+        width: 100%;
+    }
+}
+
+:local(.roomsContainer) {
+    padding: 20px 0px 10px 0px;
+    position: relative;
+
+    :local(.roomsContainerInner){
+        display: block;
+        max-width: 1400px;
+        padding: 0 20px;
+        margin: 0 auto;
+
+        :local(.roomsContainerHeader) {
+            width: 100px;
+
+            :local(.roomsContainerTitle) {
+                font-weight: 700;
+                font-size: 32px;
+                letter-spacing: -0.24px;
+                padding-left: 16px;
+            }
+        }
+
+        :local(.roomsContainerBody) {
+            width: 100%;
+            padding-bottom: 50px;
+            border-bottom: solid 1px #999;
+        }
+    }
+}
+
+:local(.roomsChannels) {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+    padding: 8px;
+    width: 100%;
+
+    @media(min-width: 1200px) {
+        grid-template-columns: repeat(auto-fill, minmax(210px, 1fr));
+    }
+    @media(min-width: 1400px) {
+        grid-template-columns: repeat(auto-fill, minmax(230px, 1fr));
+    }
+
+    :local(.roomsChannel) {
+        padding: 8px;
+        cursor: pointer;
+
+        :local(.roomsPreview) {
+            position: relative;
+            padding-top: 56.25%;
+
+            img {
+                border-radius: 12px;
+                height: 100%;
+                width: 100%;
+                position: absolute;
+                top: 0;
+                left: 0;
+            }
+
+            :local(.roomsMemberCount) {
+                position: absolute;
+                right: 8px;
+                bottom: 8px;
+                height: 30px;
+                padding: 0 10px;
+                border: 1px solid #e7e7e7;
+                border-radius: 10px;
+                background-color: #ffffff;
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                color: #000;
+
+                svg {
+                    margin-right: 4px;
+                }
+            }
+        }
+
+        :local(.roomsTitle) {
+            margin-top: 10px;
+            font-size: 20px;
+        }
+    }
+}
+
+:local(.footer) {
+    display: block;
+    height: 90px;
+    margin: 0 auto;
+    max-width: 1400px;
+    text-align: center;
+
+    div {
+        display: inline-block;
+        vertical-align: middle;
+
+        img {
+            display: inline-block;
+            vertical-align: middle;
+            margin-right: 20px;
+
+	    @media(min-width: 430px) {
+                padding-right: 20px;
+                border-right: 1px solid #e7e8ea;
+	        width: 140px;
+	    }
+        }
+
+        span {
+            display: inline-block;
+            vertical-align: middle;
+            color: #999;
+            font-size: 14px;
+
+	    @media(min-width: 430px) {
+                text-align: left;
+            }
+        }
+    }
+}
+

@@ -1,0 +1,104 @@
+@use "../../react-components/styles/theme.scss";
+
+body {
+    margin: 0;
+    color: #000;
+    font-family: "Noto Sans KR", sans-serif;
+}
+
+:local(.header) {
+    display: block;
+    margin: 0 auto;
+    max-width: 1440px;
+    text-align: center;
+}
+
+:local(.roomsContainer) {
+    padding: 20px 0px;
+    position: relative;
+
+    :local(.roomsContainerHeader) {
+        padding: 0 20px;
+
+        :local(.roomsContainerTitle) {
+            font-weight: 700;
+            letter-spacing: -0.24px;
+            padding-left: 10px;
+        }
+    }
+
+    :local(.roomsContainerInner){
+        display: block;
+        max-width: 1440px;
+        padding: 20px 20px;
+        margin: 20px 20px;
+        background-color: #f9f9f9;
+        border-radius: 16px;
+
+        :local(.roomsContainerBody) {
+            width: 100%;
+        }
+    }
+}
+
+:local(.roomsChannels) {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+    width: 100%;
+
+    @media(min-width: 1200px) {
+        grid-template-columns: repeat(auto-fill, minmax(210px, 1fr));
+    }
+    @media(min-width: 1400px) {
+        grid-template-columns: repeat(auto-fill, minmax(230px, 1fr));
+    }
+
+    :local(.roomsChannel) {
+        padding: 8px;
+
+        :local(.roomsPreview) {
+            position: relative;
+            padding-top: 56.25%;
+
+            img {
+                border-radius: 12px;
+                height: 100%;
+                width: 100%;
+                position: absolute;
+                top: 0;
+                left: 0;
+            }
+
+            :local(.roomsMemberCount) {
+                position: absolute;
+                right: 8px;
+                bottom: 8px;
+                height: 30px;
+                padding: 0 10px;
+                border: 1px solid #e7e7e7;
+                border-radius: 10px;
+                background-color: #ffffff;
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                color: #000;
+
+                svg {
+                    margin-right: 4px;
+                }
+            }
+        }
+
+        :local(.roomsTitle) {
+            display: flex;
+            justify-content: space-between;
+            margin: 10px 0px;
+
+            a {
+                text-decoration: none;
+                color: inherit;
+            }
+        }
+    }
+}
+

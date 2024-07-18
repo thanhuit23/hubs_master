@@ -1,0 +1,52 @@
+.tfc-layer-pop {
+    display: block;
+    position: fixed;
+    left: 0;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.5);
+    z-index: 1000;
+}
+
+.tfc-layer-pop .pop-container {
+    max-width: 1920px;
+    width:calc(100% - 20px);
+    height:calc(100% - 40px);
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    padding: 20px 10px 0px 10px;
+    border-radius:5px;
+    overflow-y:auto;
+}
+
+.tfc-layer-pop .pop-container .top-area {
+    position: absolute;
+    top: 0px;
+    right: 0px;
+    z-index: 1;
+}
+
+.tfc-layer-pop .pop-container .top-area BUTTON {
+    background-color: #e53e3e;
+    border-radius: 100%;
+    width: 42px;
+    height: 42px;
+    color: #ffffff;
+    font-size: 20px;
+    border: 0;
+}
+
+.tfc-layer-pop .pop-container .view-area {
+    margin-top:0px;
+    height: 100%;
+}
+
+.tfc-layer-pop .pop-container .view-area .video-container {
+    position: relative;
+    height: 100%;
+    background-color: #000000;
+}
+

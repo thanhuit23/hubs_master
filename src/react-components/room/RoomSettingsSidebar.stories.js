@@ -12,7 +12,9 @@ export default {
 
 const room = {
   name: "Room Name",
+  category: "Room Category",
   description: "Room Description",
+  room_data: "Room Data",
   scene: {
     name: "Scene Name",
     account_id: "123",

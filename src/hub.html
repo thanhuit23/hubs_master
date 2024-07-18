@@ -19,7 +19,7 @@
         rel="stylesheet" />
     <!-- Google Analytics -->
     <!-- NOTE GA tracking is disabled by default. You'll need to set the GA_TRACKING_ID build variable to enable it. -->
-    <script>
+    <!-- <script>
         if (navigator.doNotTrack !== "1") {
             (function (i, s, o, g, r, a, m) {
                 i["GoogleAnalyticsObject"] = r;
@@ -35,7 +35,7 @@
                 m.parentNode.insertBefore(a, m);
             })(window, document, "script", "https://www.google-analytics.com/analytics.js", "ga");
         }
-    </script>
+    </script> -->
     <style>
         /* Ease the transition to the load screen by displaying a default overlay */
         #preload-overlay {
@@ -883,6 +883,12 @@
     </a-scene>
 
     <div id="ui-root"></div>
+    <div style="display:none;">
+        <img id="circle_btn_img" src="https://meta2.teacherville.co.kr/files/3b5cda1f-c94c-4975-9de4-fa8c6ad6f90e.png"
+            width="400" height="400" />
+        <img id="lock_btn_img" src="https://meta2.teacherville.co.kr/files/976c281a-7c98-40ce-b699-006d2ae4a197.png"
+            width="512" height="512" />
+    </div>
     <div id="preload-overlay"></div>
 </body>
 

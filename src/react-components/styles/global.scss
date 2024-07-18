@@ -156,6 +156,8 @@
   --tile-button-border-color: var(--basic-border-color);
 }
 
+iframe#webpack-dev-server-client-overlay{display:none!important}
+
 html {
   height: 100%;
   overflow: hidden;

@@ -503,3 +503,296 @@ export const ObjectMenuTransform = defineComponent({
   prevObjectRef: Types.eid,
   flags: Types.ui8
 });
+
+
+
+//////////////////////////////////////////////////////////////////////
+// add component
+export const Hello = defineComponent({
+  message: Types.ui32,
+  rotationX: Types.f32,
+  rotationY: Types.f32,
+  rotationZ: Types.f32
+});
+Hello.message[$isStringType] = true;
+
+// TFC(Tekville Foundation Component)
+export const TFCImageLink = defineComponent({
+  imageUrl: Types.ui32,
+  linkUrl: Types.ui32,
+  layerPopup: Types.ui8
+});
+TFCImageLink.imageUrl[$isStringType] = true;
+TFCImageLink.linkUrl[$isStringType] = true;
+
+// TFC(Tekville Foundation Component)
+export const TFCLink = defineComponent({
+  linkUrl: Types.ui32,
+  layerPopup: Types.ui8
+});
+TFCLink.linkUrl[$isStringType] = true;
+
+// TFC(Tekville Foundation Component)
+// TFC Link Hover Menu
+export const TFCLinkHoverMenu = defineComponent({
+  targetObjectRef: Types.eid,
+  linkButtonRef: Types.eid
+});
+// TFC Link Hover Menu Item
+export const TFCLinkHoverMenuItem = defineComponent();
+
+// TFC Multiple Hover Menu
+export const TFCMultipleHoverMenu = defineComponent({
+  targetObjectRef: Types.eid,
+  button1Ref: Types.eid,
+  button2Ref: Types.eid,
+  button3Ref: Types.eid,
+  button4Ref: Types.eid,
+  button5Ref: Types.eid,
+  button6Ref: Types.eid
+});
+// TFC Multiple Hover Menu Item
+export const TFCMultipleHoverMenuItem = defineComponent();
+
+// TFC Multiple Image Link
+export const TFCMultipleImageLink = defineComponent({
+  horizontalBlocks: Types.ui8,
+  verticalBlocks: Types.ui8,
+  blockWidth: Types.f32,
+  blockHeight: Types.f32,
+  blockInterval: Types.f32,
+  bottomPadding: Types.f32,
+  showEmptyBlocks: Types.ui8,
+  imageLinkJSON: Types.ui32
+});
+TFCMultipleImageLink.imageLinkJSON[$isStringType] = true;
+
+// TFC Multiple Media Video
+export const TFCMultipleMediaVideo = defineComponent({
+  source: Types.ui32
+});
+TFCMultipleMediaVideo.source[$isStringType] = true;
+export const TFCMultipleMediaVideoLink = defineComponent({
+  targetObjectRef: Types.eid,
+  url: Types.ui32
+});
+TFCMultipleMediaVideoLink.url[$isStringType] = true;
+
+// TFC Multiple Media
+export const TFCMultipleMedia = defineComponent({
+  source: Types.ui32
+});
+TFCMultipleMedia.source[$isStringType] = true;
+// TFC Multiple Media Link
+export const TFCMultipleMediaLink = defineComponent({
+  targetObjectRef: Types.eid,
+  type: Types.ui32,
+  url: Types.ui32,
+  info: Types.ui32
+});
+TFCMultipleMediaLink.type[$isStringType] = true;
+TFCMultipleMediaLink.url[$isStringType] = true;
+TFCMultipleMediaLink.info[$isStringType] = true;
+// TFC Multiple Media Frame
+export const TFCMultipleMediaFrame = defineComponent({
+  videoProgressRef: Types.eid,
+  videoProgressWidth: Types.f32
+});
+// TFC Multiple Media Hover Menu Item
+export const TFCMultipleMediaHoverMenuItem = defineComponent();
+
+// TFC Networked Multiple Media
+export const TFCNetworkedMultipleMedia = defineComponent({
+  source: Types.ui32
+});
+// TFC Networked Media Data
+export const TFCNetworkedMediaData = defineComponent({
+  type: Types.ui32,
+  url: Types.ui32,
+  control: Types.ui32,
+  info: Types.ui32,
+  clientId: Types.ui32
+});
+TFCNetworkedMediaData.type[$isStringType] = true;
+TFCNetworkedMediaData.url[$isStringType] = true;
+TFCNetworkedMediaData.control[$isStringType] = true;
+TFCNetworkedMediaData.info[$isStringType] = true;
+TFCNetworkedMediaData.clientId[$isStringType] = true;
+
+// TFC Controls Hover
+export const TFCControlsFolderHover = defineComponent();
+export const TFCControlsItemHover = defineComponent()
+
+// TFC TabControls Hover
+export const TFCTabControlsTabHover = defineComponent();
+
+// TFC MenuControls Hover
+export const TFLMenuControlsMenuHover = defineComponent();
+export const TFLMenuControlsSubMenuHover = defineComponent();
+
+// TFC MenuPopControls Hover
+export const TFLMenuPopControlsMenu = defineComponent();
+export const TFLMenuPopControlsSubMenu = defineComponent();
+export const TFLMenuPopControlsPopClose = defineComponent();
+
+// Thanh add
+// TFC Networked Content Data
+export const TFCNetworkedContentData = defineComponent({
+  type: Types.ui32,
+  steps: Types.ui32,
+  control: Types.ui32,
+  clientId: Types.ui32
+});
+TFCNetworkedContentData.type[$isStringType] = true;
+TFCNetworkedContentData.control[$isStringType] = true;
+TFCNetworkedContentData.clientId[$isStringType] = true;
+// TFCNetworkedContentData.steps[$isStringType] = true;
+//
+
+// Thanh add
+export const TFCMyThreeJS = defineComponent({
+  category: Types.ui32,
+  unit: Types.ui32
+});
+TFCMyThreeJS.category[$isStringType] = true;
+TFCMyThreeJS.unit[$isStringType] = true;
+
+export const TFCMYThreeJSSliderBar = defineComponent({
+  name: Types.ui32,
+  targetObjectRef: Types.eid
+});
+TFCMYThreeJSSliderBar.name[$isStringType] = true;
+
+export const TFCMyThreeJSButton = defineComponent({
+  name: Types.ui32,
+  targetObjectRef: Types.eid
+});
+TFCMyThreeJSButton.name[$isStringType] = true;
+
+export const TFCNetworkedSyncButton = defineComponent({
+  targetObjectRef: Types.eid,
+  type: Types.ui32,
+  steps: Types.ui32,
+  control: Types.ui32,
+  clientId: Types.ui32
+});
+TFCNetworkedSyncButton.type[$isStringType] = true;
+TFCNetworkedSyncButton.control[$isStringType] = true;
+TFCNetworkedSyncButton.steps[$isStringType] = true;
+TFCNetworkedSyncButton.clientId[$isStringType] = true;
+
+// TFC Gateway Link
+export const TFCGatewayLink = defineComponent({
+  visible: Types.ui8,
+  linkUrl: Types.ui32,
+});
+TFCGatewayLink.linkUrl[$isStringType] = true;
+
+// TFC Gateway
+export const TFCGateway = defineComponent({
+  linkUrl: Types.ui32
+});
+TFCGateway.linkUrl[$isStringType] = true;
+
+export const TFCMyWebGLButton = defineComponent({
+  action: Types.ui32,
+  content: Types.ui32,
+  buttonImage: Types.ui32,
+  buttonLink: Types.ui32,
+  buttonText: Types.ui32,
+});
+TFCMyWebGLButton.action[$isStringType] = true;
+TFCMyWebGLButton.content[$isStringType] = true;
+TFCMyWebGLButton.buttonImage[$isStringType] = true;
+TFCMyWebGLButton.buttonLink[$isStringType] = true;
+TFCMyWebGLButton.buttonText[$isStringType] = true;
+
+export const TFCMagicButton = defineComponent({
+  action: Types.ui32,
+  content: Types.ui32,
+  buttonImage: Types.ui32,
+  buttonLink: Types.ui32,
+  buttonText: Types.ui32,
+});
+TFCMagicButton.action[$isStringType] = true;
+TFCMagicButton.content[$isStringType] = true;
+TFCMagicButton.buttonImage[$isStringType] = true;
+TFCMagicButton.buttonLink[$isStringType] = true;
+TFCMagicButton.buttonText[$isStringType] = true;
+
+// Thanh Add
+export const TFCKeyboardButton = defineComponent({
+  action: Types.ui32,
+  value: Types.ui32,
+  buttonImage: Types.ui32,
+  buttonLink: Types.ui32,
+  buttonText: Types.ui32,
+});
+TFCKeyboardButton.action[$isStringType] = true;
+TFCKeyboardButton.value[$isStringType] = true;
+TFCKeyboardButton.buttonImage[$isStringType] = true;
+TFCKeyboardButton.buttonLink[$isStringType] = true;
+TFCKeyboardButton.buttonText[$isStringType] = true;
+
+export const TFCIframe = defineComponent({
+  href: Types.ui32,
+});
+TFCIframe.href[$isStringType] = true;
+//
+
+// TFC Learning Frame
+export const TFCLearningFrame = defineComponent({
+  source: Types.ui32
+});
+TFCLearningFrame.source[$isStringType] = true;
+// TFC Networked Learning Frame Data
+export const TFCNetworkedLearningFrameData = defineComponent({
+  type: Types.ui32,
+  url: Types.ui32,
+  control: Types.ui32,
+  info: Types.ui32,
+  clientId: Types.ui32
+});
+TFCNetworkedLearningFrameData.type[$isStringType] = true;
+TFCNetworkedLearningFrameData.url[$isStringType] = true;
+TFCNetworkedLearningFrameData.control[$isStringType] = true;
+TFCNetworkedLearningFrameData.info[$isStringType] = true;
+TFCNetworkedLearningFrameData.clientId[$isStringType] = true;
+// TFC Learning Frame Link
+export const TFCLearningFrameLink = defineComponent({
+  targetObjectRef: Types.eid,
+  type: Types.ui32,
+  url: Types.ui32,
+  info: Types.ui32
+});
+TFCLearningFrameLink.type[$isStringType] = true;
+TFCLearningFrameLink.url[$isStringType] = true;
+TFCLearningFrameLink.info[$isStringType] = true;
+
+// TFC Text
+export const TFCText = defineComponent({
+  text: Types.ui32,
+  fontName: Types.ui32,
+  fontUrl: Types.ui32,
+  fontSize: Types.f32,
+  color: Types.ui32,
+  backgroundColor: Types.ui32,
+  lineHeight: Types.f32,
+  lineSpace: Types.f32,
+  width: Types.f32,
+  paddingLeft: Types.f32,
+  paddingTop: Types.f32,
+  paddingRight: Types.f32,
+  paddingBottom: Types.f32,
+  align: Types.ui32,
+  autoOverflowWrap: Types.ui8,
+  wordBreak: Types.ui32
+});
+TFCText.text[$isStringType] = true;
+TFCText.fontName[$isStringType] = true;
+TFCText.fontUrl[$isStringType] = true;
+TFCText.color[$isStringType] = true;
+TFCText.backgroundColor[$isStringType] = true;
+TFCText.align[$isStringType] = true;
+TFCText.wordBreak[$isStringType] = true;
+

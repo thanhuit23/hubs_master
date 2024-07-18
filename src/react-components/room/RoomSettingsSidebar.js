@@ -97,6 +97,21 @@ export function RoomSettingsSidebar({
           fullWidth
           {...register("name")}
         />
+        <TextInputField
+          type="text"
+          required
+          autoComplete="off"
+          placeholder={intl.formatMessage({
+           id: "room-settings-sidebar.category-placeholder",
+           defaultMessage: "Room Category"
+          })}
+          minLength={1}
+          maxLength={64}
+          label={<FormattedMessage id="room-settings-sidebar.category" defaultMessage="Room Category" />}
+          error={errors?.category?.message}
+          fullWidth
+          {...register("category")}
+        />
         <TextAreaInputField
           autoComplete="off"
           placeholder={intl.formatMessage({
@@ -104,10 +119,22 @@ export function RoomSettingsSidebar({
             defaultMessage: "Room Description"
           })}
           label={<FormattedMessage id="room-settings-sidebar.description" defaultMessage="Room Description" />}
-          minRows={3}
+          minRows={2}
           error={errors?.description?.message}
           fullWidth
           {...register("description")}
+        />
+        <TextAreaInputField
+         autoComplete="off"
+         placeholder={intl.formatMessage({
+           id: "room-settings-sidebar.roomdata-placeholder",
+           defaultMessage: "Room Data"
+         })}
+         label={<FormattedMessage id="room-settings-sidebar.roomdata" defaultMessage="Room Data" />}
+         minRows={2}
+         error={errors?.roomdata?.message}
+         fullWidth
+         {...register("room_data")}
         />
         <NumericInputField
           required

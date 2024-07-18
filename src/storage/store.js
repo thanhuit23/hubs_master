@@ -139,6 +139,9 @@ export const SCHEMA = {
         snapRotationDegrees: { type: "number", default: 45 },
         materialQualitySetting: { type: "string", default: defaultMaterialQuality },
         enableDynamicShadows: { type: "bool", default: false },
+        // Thanh add
+        enableThirdPersonView: { type: "bool", default: false },
+        //
         disableSoundEffects: { type: "bool", default: false },
         disableMovement: { type: "bool", default: false },
         disableBackwardsMovement: { type: "bool", default: false },

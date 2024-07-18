@@ -43,7 +43,7 @@ function createHTTPSConfig() {
               },
               {
                 type: 2,
-                value: "hubs.local"
+                value: "meta2.teacherville.co.kr"
               }
             ]
           }
@@ -188,9 +188,9 @@ async function fetchAppConfigAndEnvironmentVars() {
 
   process.env.RETICULUM_SERVER = host;
   process.env.SHORTLINK_DOMAIN = shortlink_domain;
-  process.env.CORS_PROXY_SERVER = `hubs.local:8080/cors-proxy`;
+  process.env.CORS_PROXY_SERVER = `meta2.teacherville.co.kr:8080/cors-proxy`;
   process.env.THUMBNAIL_SERVER = thumbnail_server;
-  process.env.NON_CORS_PROXY_DOMAINS = `${localIp},hubs.local,localhost`;
+  process.env.NON_CORS_PROXY_DOMAINS = `${localIp},meta2.teacherville.co.kr,localhost`;
 
   return appConfig;
 }
@@ -250,18 +250,18 @@ module.exports = async (env, argv) => {
     }
 
     if (env.localDev) {
-      const localDevHost = "hubs.local";
+      const localDevHost = "meta2.teacherville.co.kr";
       // Local Dev Environment (npm run local)
       Object.assign(process.env, {
         HOST: localDevHost,
         RETICULUM_SOCKET_SERVER: localDevHost,
-        CORS_PROXY_SERVER: "hubs-proxy.local:4000",
+        CORS_PROXY_SERVER: "meta2.teacherville.co.kr",
         NON_CORS_PROXY_DOMAINS: `${localDevHost},dev.reticulum.io`,
         BASE_ASSETS_PATH: `https://${localDevHost}:8080/`,
-        RETICULUM_SERVER: `${localDevHost}:4000`,
+        RETICULUM_SERVER: `${localDevHost}`,
         POSTGREST_SERVER: "",
         ITA_SERVER: "",
-        UPLOADS_HOST: `https://${localDevHost}:4000`
+        UPLOADS_HOST: `https://${localDevHost}`
       });
     }
   }
@@ -269,7 +269,7 @@ module.exports = async (env, argv) => {
   // In production, the environment variables are defined in CI or loaded from ita and
   // the app config is injected into the head of the page by Reticulum.
 
-  const host = process.env.HOST_IP || env.localDev || env.remoteDev ? "hubs.local" : "localhost";
+  const host = process.env.HOST_IP || env.localDev || env.remoteDev ? "meta2.teacherville.co.kr" : "localhost";
 
   const liveReload = !!process.env.LIVE_RELOAD || false;
 
@@ -288,7 +288,7 @@ module.exports = async (env, argv) => {
   const addonsConfigFilePath = "./addons.json";
   const addonsConfig = JSON.parse(fs.readFileSync(addonsConfigFilePath, "utf-8"));
 
-  const internalHostname = process.env.INTERNAL_HOSTNAME || "hubs.local";
+  const internalHostname = process.env.INTERNAL_HOSTNAME || "meta2.teacherville.co.kr";
   return {
     cache: {
       type: "filesystem"
@@ -330,6 +330,8 @@ module.exports = async (env, argv) => {
       avatar: path.join(__dirname, "src", "avatar.js"),
       link: path.join(__dirname, "src", "link.js"),
       discord: path.join(__dirname, "src", "discord.js"),
+      intrometa: path.join(__dirname, "src", "intrometa.js"),
+      category: path.join(__dirname, "src", "category.js"),
       cloud: path.join(__dirname, "src", "cloud.js"),
       signin: path.join(__dirname, "src", "signin.js"),
       verify: path.join(__dirname, "src", "verify.js"),
@@ -370,6 +372,8 @@ module.exports = async (env, argv) => {
           { from: /^\/scenes/, to: "/scene.html" },
           { from: /^\/signin/, to: "/signin.html" },
           { from: /^\/discord/, to: "/discord.html" },
+          { from: /^\/intrometa/, to: "/intrometa.html" },
+          { from: /^\/category/, to: "/category.html" },
           { from: /^\/cloud/, to: "/cloud.html" },
           { from: /^\/verify/, to: "/verify.html" },
           { from: /^\/tokens/, to: "/tokens.html" },
@@ -392,7 +396,7 @@ module.exports = async (env, argv) => {
           const redirectLocation = req.header("location");
 
           if (redirectLocation) {
-            res.header("Location", "https://localhost:8080/cors-proxy/" + redirectLocation);
+            res.header("Location", "https://meta2.teacherville.co.kr:8080/cors-proxy/" + redirectLocation);
           }
 
           if (req.method === "OPTIONS") {
@@ -409,7 +413,7 @@ module.exports = async (env, argv) => {
         });
 
         // be flexible with people accessing via a local reticulum on another port
-        app.use(cors({ origin: /hubs\.local(:\d*)?$/ }));
+        app.use(cors({ origin: /meta2\.teacherville\.co\.kr(:\d*)?$/ }));
         // networked-aframe makes HEAD requests to the server for time syncing. Respond with an empty body.
         app.head("*", function (req, res, next) {
           if (req.method === "HEAD") {
@@ -424,6 +428,9 @@ module.exports = async (env, argv) => {
       }
     },
     performance: {
+      hints: false, // false | "warning" | "error"
+      maxAssetSize : 500000000, // 250,000(250KB) --> 250,000,000(500MB)
+      maxEntrypointSize : 500000000, // 250,000(250KB) -> 250,000,000(500MB)
       // Ignore media and sourcemaps when warning about file size.
       assetFilter(assetFilename) {
         return !/\.(map|png|jpg|gif|glb|webm)$/.test(assetFilename);
@@ -683,6 +690,12 @@ module.exports = async (env, argv) => {
       }),
       htmlPagePlugin({
         filename: "discord.html"
+      }),
+      htmlPagePlugin({
+        filename: "intrometa.html"
+      }),
+      htmlPagePlugin({
+        filename: "category.html"
       }),
       htmlPagePlugin({
         filename: "whats-new.html",

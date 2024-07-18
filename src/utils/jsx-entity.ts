@@ -40,7 +40,9 @@ import {
   Inspectable,
   ObjectMenu,
   HoverableVisuals,
-  MirrorMenu
+  MirrorMenu,
+  TFCKeyboardButton,
+  TFCIframe
 } from "../bit-components";
 import { inflateMediaLoader } from "../inflators/media-loader";
 import { inflateMediaFrame } from "../inflators/media-frame";
@@ -103,6 +105,38 @@ import { inflatePlane, PlaneParams } from "../inflators/plane";
 import { FollowInFovParams, inflateFollowInFov } from "../inflators/follow-in-fov";
 import { ComponentDataT } from "../types";
 import { HoldableParams, inflateHoldable } from "../inflators/holdable";
+
+// add component
+import { HelloParams, inflateHello } from "../inflators/hello";
+
+// TFC(Tekville Foundation Component)
+import { TFCImageLinkParams, inflateTFCImageLink } from "../inflators/tfc-image-link";
+import { TFCLinkParams, inflateTFCLink } from "../inflators/tfc-link";
+import { inflateTFCLinkHoverMenu, inflateTFCLinkHoverMenuItem } from "../inflators/tfc-link-hover-menu";
+
+import { inflateTFCMultipleHoverMenu, inflateTFCMultipleHoverMenuItem } from "../inflators/tfc-multiple-hover-menu";
+
+import { TFCMultipleImageLinkParams, inflateTFCMultipleImageLink } from "../inflators/tfc-multiple-image-link";
+
+import { TFCMultipleMediaVideoParams, inflateTFCMultipleMediaVideo } from "../inflators/tfc-multiple-media-video";
+
+import { TFCMultipleMediaParams, inflateTFCMultipleMedia } from "../inflators/tfc-multiple-media";
+
+import { TFCNetworkedMultipleMediaParams, inflateTFCNetworkedMultipleMedia } from "../inflators/tfc-networked-multiple-media";
+import { TFCNetworkedMediaDataParams, inflateTFCNetworkedMediaData } from "../inflators/tfc-networked-media-data";
+import { TFCNetworkedContentDataParams, inflateTFCNetworkedContentData } from "../inflators/tfc-networked-content-data";
+// Thanh add
+import { TFCMyWebGLButtonParams, inflateTFCMyWebGLButton } from "../inflators/tfc-my-webgl-button";
+import { TFCKeyboardButtonParams, inflateTFCKeyboardButton } from "../inflators/tfc-keyboard-button";
+import { TFCIframeParams, inflateTFCIframe } from "../inflators/iframe";
+//
+import { TFCGatewayLinkParams, inflateTFCGatewayLink } from "../inflators/tfc-gateway-link";
+import { TFCGatewayParams, inflateTFCGateway } from "../inflators/tfc-gateway";
+
+import { TFCLearningFrameParams, inflateTFCLearningFrame } from "../inflators/tfc-learning-frame";
+import { TFCNetworkedLearningFrameDataParams, inflateTFCNetworkedLearningFrameData } from "../inflators/tfc-learning-frame-data";
+
+import { TFCTextParams, inflateTFCText } from "../inflators/tfc-text";
 
 preload(
   new Promise(resolve => {
@@ -376,6 +410,51 @@ export interface JSXComponentData extends ComponentData {
   objectMenuTarget?: OptionalParams<ObjectMenuTargetParams>;
   plane?: PlaneParams;
   text?: TextParams;
+
+  //////////////////////////////////////////////////////////////////////
+  // add component
+  hello?: HelloParams;
+
+  // TFC(Tekville Foundation Component)
+  tfcImageLink?: TFCImageLinkParams;
+  tfcLink?: TFCLinkParams;
+  tfcLinkHoverMenu?: {
+    linkButtonRef: Ref;
+  };
+  tfcLinkHoverMenuItem?: boolean;
+
+  tfcMultipleHoverMenu?: {
+    button1Ref: Ref;
+    button2Ref: Ref;
+    button3Ref: Ref;
+    button4Ref: Ref;
+    button5Ref: Ref;
+    button6Ref: Ref;
+  };
+  tfcMultipleHoverMenuItem?: boolean;
+
+  tfcMultipleImageLink?: TFCMultipleImageLinkParams;
+
+  tfcMultipleMediaVideo?: TFCMultipleMediaVideoParams;
+
+  tfcMultipleMedia?: TFCMultipleMediaParams;
+
+  tfcNetworkedMultipleMedia?: TFCNetworkedMultipleMediaParams;
+  tfcNetworkedMediaData?: TFCNetworkedMediaDataParams;
+  // Thanh add
+  tfcNetworkedContentData?: TFCNetworkedContentDataParams;
+  tfcMyWebGLButton?: TFCMyWebGLButtonParams;
+  tfcKeyboardButton?: TFCKeyboardButtonParams;
+  tfcIframe?: TFCIframeParams;
+  //
+
+  tfcGatewayLink?: TFCGatewayLinkParams;
+  tfcGateway?: TFCGatewayParams;
+
+  tfcLearningFrame?: TFCLearningFrameParams;
+  tfcNetworkedLearningFrameData?: TFCNetworkedLearningFrameDataParams;
+
+  tfcText?: TFCTextParams;
 }
 
 export interface GLTFComponentData extends ComponentData {
@@ -414,6 +493,36 @@ export interface GLTFComponentData extends ComponentData {
   boxCollider?: BoxColliderParams;
   trimesh?: true;
   heightfield?: HeightFieldParams;
+
+  //////////////////////////////////////////////////////////////////////
+  // add component
+  hello?: HelloParams;
+
+  // TFC(Tekville Foundation Component)
+  tfcImageLink?: TFCImageLinkParams;
+  tfcLink?: TFCLinkParams;
+
+  tfcMultipleImageLink?: TFCMultipleImageLinkParams;
+
+  tfcMultipleMediaVideo?: TFCMultipleMediaVideoParams;
+
+  tfcMultipleMedia?: TFCMultipleMediaParams;
+
+  tfcNetworkedMultipleMedia?: TFCNetworkedMultipleMediaParams;
+
+  // Thanh add
+  tfcNetworkedContentData?: TFCNetworkedContentDataParams;
+  tfcMyWebGLButton?: TFCMyWebGLButtonParams;
+  tfcKeyboardButton?: TFCKeyboardButtonParams;
+  tfcIframe?: TFCIframeParams;
+  ////
+
+  tfcGatewayLink?: TFCGatewayLinkParams;
+  tfcGateway?: TFCGatewayParams;
+
+  tfcLearningFrame?: TFCLearningFrameParams;
+
+  tfcText?: TFCTextParams;
 }
 
 declare global {
@@ -500,7 +609,43 @@ export const jsxInflators: Required<{ [K in keyof ComponentDataT]: InflatorFn }>
   link: inflateLink,
   objectMenuTransform: inflateObjectMenuTransform,
   objectMenuTarget: inflateObjectMenuTarget,
-  plane: inflatePlane
+  plane: inflatePlane,
+
+  //////////////////////////////////////////////////////////////////////
+  // add component
+  hello: inflateHello,
+
+  // TFC(Tekville Foundation Component)
+  tfcImageLink: inflateTFCImageLink,
+  tfcLink: inflateTFCLink,
+  tfcLinkHoverMenu: inflateTFCLinkHoverMenu,
+  tfcLinkHoverMenuItem: inflateTFCLinkHoverMenuItem,
+
+  tfcMultipleHoverMenu: inflateTFCMultipleHoverMenu,
+  tfcMultipleHoverMenuItem: inflateTFCMultipleHoverMenuItem,
+
+  tfcMultipleImageLink: inflateTFCMultipleImageLink,
+
+  tfcMultipleMediaVideo: inflateTFCMultipleMediaVideo,
+
+  tfcMultipleMedia: inflateTFCMultipleMedia,
+
+  tfcNetworkedMultipleMedia: inflateTFCNetworkedMultipleMedia,
+  tfcNetworkedMediaData: inflateTFCNetworkedMediaData,
+  // Thanh add
+  tfcNetworkedContentData: inflateTFCNetworkedContentData,
+  tfcMyWebGLButton: inflateTFCMyWebGLButton,
+  tfcKeyboardButton: inflateTFCKeyboardButton,
+  tfcIframe: inflateTFCIframe,
+  //
+
+  tfcGatewayLink: inflateTFCGatewayLink,
+  tfcGateway: inflateTFCGateway,
+
+  tfcLearningFrame: inflateTFCLearningFrame,
+  tfcNetworkedLearningFrameData: inflateTFCNetworkedLearningFrameData,
+
+  tfcText: inflateTFCText
 };
 
 export const gltfInflators: Required<{ [K in keyof ComponentDataT]: InflatorFn }> = {
@@ -539,7 +684,37 @@ export const gltfInflators: Required<{ [K in keyof ComponentDataT]: InflatorFn }
   mediaLink: inflateMediaLink,
   rigidbody: inflateGLTFRigidBody,
   physicsShape: inflateAmmoShape,
-  text: inflateGLTFText
+  text: inflateGLTFText,
+
+  //////////////////////////////////////////////////////////////////////
+    // add component
+  hello: inflateHello,
+
+  // TFC(Tekville Foundation Component)
+  tfcImageLink: inflateTFCImageLink,
+  tfcLink: inflateTFCLink,
+
+  tfcMultipleImageLink: inflateTFCMultipleImageLink,
+
+  tfcMultipleMediaVideo: inflateTFCMultipleMediaVideo,
+
+  tfcMultipleMedia: inflateTFCMultipleMedia,
+
+  tfcNetworkedMultipleMedia: inflateTFCNetworkedMultipleMedia,
+
+  // Thanh add
+  tfcNetworkedContentData: inflateTFCNetworkedContentData,
+  tfcMyWebGLButton: inflateTFCMyWebGLButton,
+  tfcKeyboardButton: inflateTFCKeyboardButton,
+  tfcIframe: inflateTFCIframe,
+  //
+
+  tfcGatewayLink: inflateTFCGatewayLink,
+  tfcGateway: inflateTFCGateway,
+
+  tfcLearningFrame: inflateTFCLearningFrame,
+
+  tfcText: inflateTFCText
 };
 
 function jsxInflatorExists(name: string) {

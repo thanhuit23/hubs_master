@@ -9,7 +9,12 @@ import {
   NetworkedText,
   NetworkedTransform,
   NetworkedVideo,
-  NetworkedWaypoint
+  NetworkedWaypoint,
+  // add
+  TFCNetworkedMediaData,
+  // Thanh add
+  TFCNetworkedContentData,
+  TFCNetworkedLearningFrameData
 } from "../bit-components";
 import { defineNetworkSchema } from "./define-network-schema";
 import { NetworkedMediaFrameSchema } from "./networked-media-frame-schema";
@@ -20,6 +25,12 @@ import { NetworkedWaypointSchema } from "./networked-waypoint-schema";
 import type { CursorBuffer, EntityID } from "./networking-types";
 import { NetworkedTextSchema } from "./networked-text-schema";
 import { NetworkedRigidBodySchema } from "./networked-rigid-body";
+
+// add
+import { TFCNetworkedMediaDataSchema } from "../network-schemas/tfc-networked-multiple-media-data-schema";
+// Thanh add
+import { TFCNetworkedContentDataSchema } from "../network-schemas/tfc-networked-my-threejs-data-schema";
+import { TFCNetworkedLearningFrameDataSchema } from "../network-schemas/tfc-networked-learning-frame-data-schems";
 
 export interface StoredComponent {
   version: number;
@@ -52,6 +63,13 @@ schemas.set(NetworkedFloatyObject, {
 schemas.set(NetworkedPDF, NetworkedPDFSchema);
 schemas.set(NetworkedText, NetworkedTextSchema);
 schemas.set(NetworkedRigidBody, NetworkedRigidBodySchema);
+
+// add
+schemas.set(TFCNetworkedMediaData, TFCNetworkedMediaDataSchema);
+// Thanh add
+schemas.set(TFCNetworkedContentData, TFCNetworkedContentDataSchema);
+
+schemas.set(TFCNetworkedLearningFrameData, TFCNetworkedLearningFrameDataSchema);
 
 export const networkableComponents = Array.from(schemas.keys());
 

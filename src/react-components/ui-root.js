@@ -104,6 +104,11 @@ import { ChatContextProvider } from "./room/contexts/ChatContext";
 import ChatToolbarButton from "./room/components/ChatToolbarButton/ChatToolbarButton";
 import SeePlansCTA from "./room/components/SeePlansCTA/SeePlansCTA";
 
+// Thanh add
+import {WebGLContentModalContainer} from "./room/WebGLContentModalContainer";
+import {AIChatModalContainer} from "./room/AIChatModalContainer";
+//
+
 const avatarEditorDebug = qsTruthy("avatarEditorDebug");
 
 const IN_ROOM_MODAL_ROUTER_PATHS = ["/media"];
@@ -117,6 +122,23 @@ async function grantedMicLabels() {
   const mediaDevices = await navigator.mediaDevices.enumerateDevices();
   return mediaDevices.filter(d => d.label && d.kind === "audioinput").map(d => d.label);
 }
+
+// Thanh add
+function enableThirdPersonMode() {
+  console.log("Enabling third person mode");
+  const scene = document.querySelector("a-scene");
+  const cameraSystem = scene.systems["hubs-systems"].cameraSystem;
+  if (!cameraSystem) {
+    console.error("Camera system not found");
+    return;
+  }
+  if (cameraSystem.mode === 5) {
+    cameraSystem.setMode(0);
+  } else {
+    cameraSystem.setMode(5);
+  }
+}
+//
 
 const isMobile = AFRAME.utils.device.isMobile();
 const isMobileVR = AFRAME.utils.device.isMobileVR();
@@ -336,6 +358,51 @@ class UIRoot extends Component {
     this.props.scene.addEventListener("action_toggle_ui", () =>
       this.setState({ hide: !this.state.hide, hideUITip: false })
     );
+
+    // Thanh add
+    this.props.scene.addEventListener("action_toggle_wegbl", (action, content) =>
+      this.showNonHistoriedDialog(WebGLContentModalContainer,  { scene })
+    );
+    this.props.scene.addEventListener("action_toggle_cnc_01", (action, content) =>
+      this.showNonHistoriedDialog(WebGLContentModalContainer,  { scene, url: "https://visualinfinity.asia/webcnc/m1/" })
+    );
+    this.props.scene.addEventListener("action_toggle_math_01", (action, content) =>
+      this.showNonHistoriedDialog(WebGLContentModalContainer,  { scene, url: "https://visualinfinity.asia/Geo/7.html" })
+    );
+    this.props.scene.addEventListener("action_toggle_science_01", (action, content) =>
+      this.showNonHistoriedDialog(WebGLContentModalContainer,  { scene, url: "https://visualinfinity.asia/sciences/s01/" })
+    );
+    this.props.scene.addEventListener("action_toggle_science", (action, content) =>
+      this.showNonHistoriedDialog(WebGLContentModalContainer,  { scene, url: action.detail["url"] })
+    );
+
+    this.props.scene.addEventListener("action_toggle_milling", (action, content) =>
+      this.showNonHistoriedDialog(WebGLContentModalContainer,  { scene, url: action.detail["url"] })
+    );
+
+    this.props.scene.addEventListener("action_toggle_lathe", (action, content) =>
+      this.showNonHistoriedDialog(WebGLContentModalContainer,  { scene, url: action.detail["url"] })
+    );
+
+    this.props.scene.addEventListener("action_toggle_iframe", (action, content) =>
+      this.showNonHistoriedDialog(WebGLContentModalContainer,  { scene, url: action.detail["href"] })
+    );
+
+    this.props.scene.addEventListener("action_toggle_ai_chat", (action, content) =>
+      this.showNonHistoriedDialog(AIChatModalContainer,  {url: action.detail["href"] })
+    );
+
+    this.props.scene.addEventListener("action_toggle_third_camera_mode", () => {
+      const cameraSystem = scene.systems["hubs-systems"].cameraSystem;
+      if (cameraSystem.mode === 5) {
+        cameraSystem.setMode(0);
+      } else {
+        cameraSystem.setMode(5);
+      }
+    }
+    );
+    ////
+
     this.props.scene.addEventListener("action_toggle_record", () => {
       const cursor = document.querySelector("#right-cursor");
       if (this.state.isRecordingMode) {
@@ -1661,6 +1728,15 @@ class UIRoot extends Component {
                         onClick={() => exit2DInterstitialAndEnterVR(true)}
                       />
                     )}
+                    {/* Thanh add */}
+                    {entered && (
+                      <ToolbarButton
+                        icon={<VRIcon />}
+                        preset="transparent"
+                        label={<FormattedMessage id="toolbar.enter-third-view" defaultMessage="Change View" />}
+                        onClick={() => enableThirdPersonMode()}
+                      />)}
+                      {/* // */}
                   </>
                 }
                 toolbarRight={
