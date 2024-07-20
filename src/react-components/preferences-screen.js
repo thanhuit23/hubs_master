@@ -21,6 +21,9 @@ import {
   getScreenResolutionHeight,
   setMaxResolution
 } from "../utils/screen-orientation-utils";
+// Thanh add
+import { CAMERA_MODE_THIRD_PERSON_VIEW, CAMERA_MODE_FIRST_PERSON } from "../systems/camera-system";
+//
 import { AAModes } from "../constants";
 import { isLockedDownDemoRoom } from "../utils/hub-utils";
 
@@ -478,6 +481,12 @@ const preferenceLabels = defineMessages({
     id: "preferences-screen.preference.enable-dynamic-shadows",
     defaultMessage: "Enable Real-time Shadows"
   },
+  // Thanh add
+  enableThirdPersonView: {
+    id: "preferences-screen.preference.enable-third-person-view",
+    defaultMessage: "Enable Third-Person View"
+  },
+  //
   disableAutoPixelRatio: {
     id: "preferences-screen.preference.disable-auto-pixel-ratio",
     defaultMessage: "Disable automatic pixel ratio adjustments"
@@ -609,9 +618,9 @@ class PreferenceListItem extends Component {
     const hasPref =
       this.props.itemProps.prefType === PREFERENCE_LIST_ITEM_TYPE.MAX_RESOLUTION
         ? this.props.store.state.preferences.maxResolutionWidth !== undefined ||
-          this.props.store.state.preferences.maxResolutionHeight !== undefined
+        this.props.store.state.preferences.maxResolutionHeight !== undefined
         : prefSchema[this.props.storeKey] &&
-          this.props.store.state.preferences[this.props.storeKey] !== prefSchema[this.props.storeKey].default;
+        this.props.store.state.preferences[this.props.storeKey] !== prefSchema[this.props.storeKey].default;
     const resetToDefault =
       !this.props.disabled && hasPref ? (
         <ResetToDefaultButton
@@ -1016,6 +1025,12 @@ class PreferencesScreen extends Component {
       this.state.canVoiceChat &&
         this.mediaDevicesManager.startMicShare({ updatePrefs: false }).then(this.updateMediaDevices);
     }
+    // Thanh add
+    const { enableThirdPersonView } = this.props.store.state.preferences;
+    this.props.scene.systems["hubs-systems"].cameraSystem.setMode(
+      enableThirdPersonView ? CAMERA_MODE_THIRD_PERSON_VIEW : CAMERA_MODE_FIRST_PERSON
+    );
+    //
   }
 
   createSections() {
@@ -1115,13 +1130,13 @@ class PreferencesScreen extends Component {
         [
           ...(!this.state.canVoiceChat
             ? [
-                {
-                  key: "voiceChatPinnedMessage",
-                  prefType: PREFERENCE_LIST_ITEM_TYPE.CUSTOM_COMPONENT,
-                  componentType: PermissionNotification,
-                  permission: "voice_chat"
-                }
-              ]
+              {
+                key: "voiceChatPinnedMessage",
+                prefType: PREFERENCE_LIST_ITEM_TYPE.CUSTOM_COMPONENT,
+                componentType: PermissionNotification,
+                permission: "voice_chat"
+              }
+            ]
             : []),
           ...(MediaDevicesManager.isAudioInputSelectEnabled && !isLockedDownDemoRoom()
             ? [this.state.preferredMic]
@@ -1232,56 +1247,56 @@ class PreferencesScreen extends Component {
           },
           ...(!isLockedDownDemoRoom()
             ? [
-                {
-                  key: "nametagVisibility",
-                  prefType: PREFERENCE_LIST_ITEM_TYPE.SELECT,
-                  options: [
-                    {
-                      value: "showAll",
-                      text: intl.formatMessage({
-                        id: "preferences-screen.nametag-visibility.show-all",
-                        defaultMessage: "Always"
-                      })
-                    },
-                    {
-                      value: "showNone",
-                      text: intl.formatMessage({
-                        id: "preferences-screen.nametag-visibility.show-none",
-                        defaultMessage: "Never"
-                      })
-                    },
-                    {
-                      value: "showFrozen",
-                      text: intl.formatMessage({
-                        id: "preferences-screen.nametag-visibility.show-frozen",
-                        defaultMessage: "Only in Frozen state"
-                      })
-                    },
-                    {
-                      value: "showSpeaking",
-                      text: intl.formatMessage({
-                        id: "preferences-screen.nametag-visibility.show-speaking",
-                        defaultMessage: "Only speaking"
-                      })
-                    },
-                    {
-                      value: "showClose",
-                      text: intl.formatMessage({
-                        id: "preferences-screen.nametag-visibility.show-close",
-                        defaultMessage: "Close to me"
-                      })
-                    }
-                  ]
-                },
-                {
-                  key: "nametagVisibilityDistance",
-                  prefType: PREFERENCE_LIST_ITEM_TYPE.NUMBER_WITH_RANGE,
-                  min: 1,
-                  max: 20,
-                  step: 1,
-                  digits: 2
-                }
-              ]
+              {
+                key: "nametagVisibility",
+                prefType: PREFERENCE_LIST_ITEM_TYPE.SELECT,
+                options: [
+                  {
+                    value: "showAll",
+                    text: intl.formatMessage({
+                      id: "preferences-screen.nametag-visibility.show-all",
+                      defaultMessage: "Always"
+                    })
+                  },
+                  {
+                    value: "showNone",
+                    text: intl.formatMessage({
+                      id: "preferences-screen.nametag-visibility.show-none",
+                      defaultMessage: "Never"
+                    })
+                  },
+                  {
+                    value: "showFrozen",
+                    text: intl.formatMessage({
+                      id: "preferences-screen.nametag-visibility.show-frozen",
+                      defaultMessage: "Only in Frozen state"
+                    })
+                  },
+                  {
+                    value: "showSpeaking",
+                    text: intl.formatMessage({
+                      id: "preferences-screen.nametag-visibility.show-speaking",
+                      defaultMessage: "Only speaking"
+                    })
+                  },
+                  {
+                    value: "showClose",
+                    text: intl.formatMessage({
+                      id: "preferences-screen.nametag-visibility.show-close",
+                      defaultMessage: "Close to me"
+                    })
+                  }
+                ]
+              },
+              {
+                key: "nametagVisibilityDistance",
+                prefType: PREFERENCE_LIST_ITEM_TYPE.NUMBER_WITH_RANGE,
+                min: 1,
+                max: 20,
+                step: 1,
+                digits: 2
+              }
+            ]
             : []),
           this.state.preferredCamera,
           {
@@ -1367,6 +1382,13 @@ class PreferencesScreen extends Component {
             key: "enableDynamicShadows",
             prefType: PREFERENCE_LIST_ITEM_TYPE.CHECK_BOX
           },
+          // Thanh add
+          {
+            key: "enableThirdPersonView",
+            prefType: PREFERENCE_LIST_ITEM_TYPE.CHECK_BOX,
+            defaultBool: false
+          },
+          //
           {
             key: "disableAutoPixelRatio",
             prefType: PREFERENCE_LIST_ITEM_TYPE.CHECK_BOX

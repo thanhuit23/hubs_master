@@ -9,6 +9,36 @@ import { commonInflators, renderAsEntity } from "./utils/jsx-entity";
 import { Networked } from "./bit-components";
 import { addComponent } from "bitecs";
 
+//////////////////////////////////////////////////////////////////////
+// add component
+import { inflateHello } from "./inflators/hello";
+
+// TFC(Tekville Foundation Component)
+import { inflateTFCImageLink } from "./inflators/tfc-image-link";
+import { inflateTFCLink } from "./inflators/tfc-link";
+
+import { inflateTFCMultipleImageLink } from "./inflators/tfc-multiple-image-link";
+
+import { inflateTFCMultipleMediaVideo } from "./inflators/tfc-multiple-media-video";
+
+import { inflateTFCMultipleMedia } from "./inflators/tfc-multiple-media";
+
+import { inflateTFCNetworkedMultipleMedia } from "./inflators/tfc-networked-multiple-media";
+
+// Thanh add
+import { inflateTFCMyThreeJS } from "./inflators/tfc-my-threejs";
+import { inflateTFCMyWebGLButton } from "./inflators/tfc-my-webgl-button";
+import { inflateTFCKeyboardButton } from "./inflators/tfc-keyboard-button";
+import { inflateTFCIframe } from "./inflators/iframe";
+//
+
+import { inflateTFCGatewayLink } from "./inflators/tfc-gateway-link";
+import { inflateTFCGateway } from "./inflators/tfc-gateway";
+
+import { inflateTFCLearningFrame } from "./inflators/tfc-learning-frame";
+
+import { inflateTFCText } from "./inflators/tfc-text";
+
 const inflatorWrapper = inflator => (el, _componentName, componentData) =>
   inflator(APP.world, el.object3D.eid, componentData);
 
@@ -598,3 +628,32 @@ AFRAME.GLTFModelPlus.registerComponent("reflection-probe", "reflection-probe", (
 
   el.setAttribute(componentName, componentData);
 });
+
+//////////////////////////////////////////////////////////////////////
+// add component
+AFRAME.GLTFModelPlus.registerComponent("hello", "hello", inflatorWrapper(inflateHello));
+
+// TFC(Tekville Foundation Component)
+AFRAME.GLTFModelPlus.registerComponent("tfc-image-link", "tfc-image-link", inflatorWrapper(inflateTFCImageLink));
+AFRAME.GLTFModelPlus.registerComponent("tfc-link", "tfc-link", inflatorWrapper(inflateTFCLink));
+
+AFRAME.GLTFModelPlus.registerComponent("tfc-multiple-image-link", "tfc-multiple-image-link", inflatorWrapper(inflateTFCMultipleImageLink));
+
+AFRAME.GLTFModelPlus.registerComponent("tfc-multiple-media-video", "tfc-multiple-media-video", inflatorWrapper(inflateTFCMultipleMediaVideo));
+
+AFRAME.GLTFModelPlus.registerComponent("tfc-multiple-media", "tfc-multiple-media", inflatorWrapper(inflateTFCMultipleMedia));
+
+AFRAME.GLTFModelPlus.registerComponent("tfc-networked-multiple-media", "tfc-networked-multiple-media", inflatorWrapper(inflateTFCNetworkedMultipleMedia));
+// Thanh add
+AFRAME.GLTFModelPlus.registerComponent("tfc-my-threejs", "tfc-my-threejs", inflatorWrapper(inflateTFCMyThreeJS));
+AFRAME.GLTFModelPlus.registerComponent("tfc-my-button", "tfc-my-button", inflatorWrapper(inflateTFCMyWebGLButton));
+AFRAME.GLTFModelPlus.registerComponent("tfc-keyboard-button", "tfc-keyboard-button", inflatorWrapper(inflateTFCKeyboardButton));
+AFRAME.GLTFModelPlus.registerComponent("iframe", "iframe", inflatorWrapper(inflateTFCIframe));
+//
+
+AFRAME.GLTFModelPlus.registerComponent("tfc-gateway-link", "tfc-gateway-link", inflatorWrapper(inflateTFCGatewayLink));
+AFRAME.GLTFModelPlus.registerComponent("tfc-gateway", "tfc-gateway", inflatorWrapper(inflateTFCGateway));
+
+AFRAME.GLTFModelPlus.registerComponent("tfc-learning-frame", "tfc-learning-frame", inflatorWrapper(inflateTFCLearningFrame));
+
+AFRAME.GLTFModelPlus.registerComponent("tfc-text", "tfc-text", inflatorWrapper(inflateTFCText));

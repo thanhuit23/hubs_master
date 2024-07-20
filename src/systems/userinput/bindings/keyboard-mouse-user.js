@@ -380,6 +380,13 @@ export const keyboardMouseUserBindings = addSetsToBindings({
       dest: { value: paths.actions.nextCameraMode },
       xform: xforms.rising
     },
+    // Thanh add
+    {
+      src: { value: paths.device.keyboard.key("n") },
+      dest: { value: paths.actions.thirdCameraMode },
+      xform: xforms.rising
+    },
+    //
     {
       src: {
         bool: paths.device.keyboard.key("control"),

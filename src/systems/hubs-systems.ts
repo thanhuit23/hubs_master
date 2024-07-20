@@ -95,6 +95,35 @@ import { scaleWhenGrabbedSystem } from "../bit-systems/scale-when-grabbed-system
 import { interactableSystem } from "../bit-systems/interactable-system";
 import { SystemConfigT } from "../types";
 
+//////////////////////////////////////////////////////////////////////
+// add component
+import { helloSystem } from "../bit-systems/hello";
+import { helloHoverMenuSystem } from "../bit-systems/hello-hover-menu";
+
+// TFC(Tekville Foundation Component)
+import { TFCImageLinkSystem } from "../bit-systems/tfc-image-link";
+import { TFCLinkSystem } from "../bit-systems/tfc-link";
+import { TFCLinkHoverMenuSystem } from "../bit-systems/tfc-link-hover-menu";
+
+import { TFCMultipleImageLinkSystem } from "../bit-systems/tfc-multiple-image-link";
+import { TFCMultipleMediaVideoSystem } from "../bit-systems/tfc-multiple-media-video";
+import { TFCMultipleMediaSystem } from "../bit-systems/tfc-multiple-media";
+
+import { TFCNetworkedMultipleMediaSystem } from "../bit-systems/tfc-networked-multiple-media";
+// Thanh add
+import { TFCMyThreeJSSystem } from "../bit-systems/tfc-my-threejs";
+import { TFCMyWebGLButtonSystem } from "../bit-systems/tfc-my-webgl-button";
+import { TFCKeyboardButton } from "../bit-components";
+import { TFCKeyboardButtonSystem } from "../bit-systems/tfc-keyboard-button";
+import { TFCIframeSystem } from "../bit-systems/iframe";
+
+//
+import { TFCGatewayLinkSystem } from "../bit-systems/tfc-gateway-link";
+import { TFCGatewaySystem } from "../bit-systems/tfc-gateway";
+
+import { TFCLearningFrameSystem } from "../bit-systems/tfc-learning-frame";
+
+import { TFCTextSystem } from "../bit-systems/tfc-text";
 declare global {
   interface Window {
     $S: HubsSystems;
@@ -302,6 +331,37 @@ export function mainTick(xrFrame: XRFrame, renderer: WebGLRenderer, scene: Scene
 
   mixerAnimatableSystem(world);
   loopAnimationSystem(world);
+
+  //////////////////////////////////////////////////////////////////////
+  // add component
+  helloSystem(world);
+  helloHoverMenuSystem(world);
+
+  // TFC(Tekville Foundation Component)
+  TFCImageLinkSystem(world);
+  TFCLinkSystem(world);
+  TFCLinkHoverMenuSystem(world);
+
+  TFCMultipleImageLinkSystem(world);
+  TFCMultipleMediaVideoSystem(world);
+
+  TFCMultipleMediaSystem(world);
+
+  TFCNetworkedMultipleMediaSystem(world);
+
+  // Thanh add
+  TFCMyThreeJSSystem(world, aframeSystems.userinput);
+  TFCMyWebGLButtonSystem(world);
+  TFCKeyboardButtonSystem(world);
+  TFCIframeSystem(world);
+  //
+
+  TFCGatewayLinkSystem(world);
+  TFCGatewaySystem(world);
+
+  TFCLearningFrameSystem(world);
+
+  TFCTextSystem(world);
 
   // All systems that update text properties should run before this
   textSystem(world);
