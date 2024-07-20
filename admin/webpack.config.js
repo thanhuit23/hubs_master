@@ -149,6 +149,9 @@ module.exports = (env, argv) => {
       }
     },
     performance: {
+      hints: false, // false | "warning" | "error"
+      maxAssetSize: 500000000, // 250,000(250KB) --> 500,000,000(500MB)
+      maxEntrypointSize: 500000000, // 250,000(250KB) -> 500,000,000(500MB)
       // Ignore media and sourcemaps when warning about file size.
       assetFilter(assetFilename) {
         return !/\.(map|png|jpg|gif|glb|webm)$/.test(assetFilename);

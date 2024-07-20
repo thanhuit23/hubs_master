@@ -330,6 +330,8 @@ module.exports = async (env, argv) => {
       avatar: path.join(__dirname, "src", "avatar.js"),
       link: path.join(__dirname, "src", "link.js"),
       discord: path.join(__dirname, "src", "discord.js"),
+      intrometa: path.join(__dirname, "src", "intrometa.js"),
+      category: path.join(__dirname, "src", "category.js"),
       cloud: path.join(__dirname, "src", "cloud.js"),
       signin: path.join(__dirname, "src", "signin.js"),
       verify: path.join(__dirname, "src", "verify.js"),
@@ -370,6 +372,8 @@ module.exports = async (env, argv) => {
           { from: /^\/scenes/, to: "/scene.html" },
           { from: /^\/signin/, to: "/signin.html" },
           { from: /^\/discord/, to: "/discord.html" },
+          { from: /^\/intrometa/, to: "/intrometa.html" },
+          { from: /^\/category/, to: "/category.html" },
           { from: /^\/cloud/, to: "/cloud.html" },
           { from: /^\/verify/, to: "/verify.html" },
           { from: /^\/tokens/, to: "/tokens.html" },
@@ -424,6 +428,9 @@ module.exports = async (env, argv) => {
       }
     },
     performance: {
+      hints: false, // false | "warning" | "error"
+      maxAssetSize: 500000000, // 250,000(250KB) --> 250,000,000(500MB)
+      maxEntrypointSize: 500000000, // 250,000(250KB) -> 250,000,000(500MB)
       // Ignore media and sourcemaps when warning about file size.
       assetFilter(assetFilename) {
         return !/\.(map|png|jpg|gif|glb|webm)$/.test(assetFilename);
@@ -683,6 +690,12 @@ module.exports = async (env, argv) => {
       }),
       htmlPagePlugin({
         filename: "discord.html"
+      }),
+      htmlPagePlugin({
+        filename: "intrometa.html"
+      }),
+      htmlPagePlugin({
+        filename: "category.html"
       }),
       htmlPagePlugin({
         filename: "whats-new.html",

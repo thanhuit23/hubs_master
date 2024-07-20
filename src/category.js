@@ -4,7 +4,10 @@ import PropTypes from "prop-types";
 
 import { WrappedIntlProvider } from "./react-components/wrapped-intl-provider";
 import { ThemeProvider } from "./react-components/styles/theme";
-import { store } from "./utils/store-instance";
+// Thanh add
+// import { store } from "./utils/store-instance";
+import { getStore } from "./utils/store-instance";
+//
 
 import configs from "./utils/configs";
 import styles from "./assets/stylesheets/category.scss";
@@ -31,11 +34,11 @@ class CategoryPage extends Component {
   getReticulumFetchUrl(path) {
     return `https://${configs.RETICULUM_SERVER}${path}`;
   }
-  
+
   async getRooms(categoey) {
     const url = this.getReticulumFetchUrl(`/api/v1/media/search?source=rooms&category=${categoey}`);
     const params = {
-      headers: {"content-type": "application/json"},
+      headers: { "content-type": "application/json" },
       method: "GET"
     };
     let result = null;
@@ -60,8 +63,8 @@ class CategoryPage extends Component {
   }
 
   componentDidMount() {
-    const run = async() => {
-      this.setState({category: this.props.category});
+    const run = async () => {
+      this.setState({ category: this.props.category });
       await this.getRooms(this.props.category).then(res => {
         //console.log("result: ", res);
         const rooms = [];
@@ -69,7 +72,7 @@ class CategoryPage extends Component {
           room.spoke_url = this.getReticulumFetchUrl(`/spoke/projects/${room.project_id}`);
           rooms.push(room);
         });
-        this.setState({rooms: rooms});
+        this.setState({ rooms: rooms });
       });
     }
     run();
@@ -123,11 +126,14 @@ class CategoryPage extends Component {
 }
 
 function Root(props) {
+  // Thanh add
+  const store = getStore();
+  //
   return (
     <WrappedIntlProvider>
       <ThemeProvider store={store}>
         <AuthContextProvider store={store}>
-          <CategoryPage category={props.category}/>
+          <CategoryPage category={props.category} />
         </AuthContextProvider>
       </ThemeProvider>
     </WrappedIntlProvider>

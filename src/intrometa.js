@@ -3,7 +3,8 @@ import React, { Component } from "react";
 
 import { WrappedIntlProvider } from "./react-components/wrapped-intl-provider";
 import { ThemeProvider } from "./react-components/styles/theme";
-import { store } from "./utils/store-instance";
+// import { store } from "./utils/store-instance";
+import { getStore } from "./utils/store-instance";
 
 import configs from "./utils/configs";
 import styles from "./assets/stylesheets/intrometa.scss";
@@ -23,11 +24,11 @@ class IntroMetaPage extends Component {
   getReticulumFetchUrl(path) {
     return `https://${configs.RETICULUM_SERVER}${path}`;
   }
-  
+
   async getPublicRooms() {
     const url = this.getReticulumFetchUrl("/api/v1/media/search?source=rooms&category=intrometa");
     const params = {
-      headers: {"content-type": "application/json"},
+      headers: { "content-type": "application/json" },
       method: "GET"
     };
     let result = null;
@@ -58,14 +59,14 @@ class IntroMetaPage extends Component {
 
   sortOrder(array) {
     return Array.from(array).sort((a, b) => {
-      if(a.order > b.order) return 1;
-      if(a.order < b.order) return -1;
-      if(a.order === b.order) return 0;
+      if (a.order > b.order) return 1;
+      if (a.order < b.order) return -1;
+      if (a.order === b.order) return 0;
     });
   }
 
   componentDidMount() {
-    const run = async() => {
+    const run = async () => {
       await this.getPublicRooms().then(res => {
         //console.log("result : ", res);
         const publicRooms = [];
@@ -146,22 +147,23 @@ class IntroMetaPage extends Component {
         }
 
         // State
-        this.setState({publicMathRooms: publicMathRooms});
-        this.setState({publicScienceRooms: publicScienceRooms});
-        this.setState({publicEngineeringRooms: publicEngineeringRooms});
+        this.setState({ publicMathRooms: publicMathRooms });
+        this.setState({ publicScienceRooms: publicScienceRooms });
+        this.setState({ publicEngineeringRooms: publicEngineeringRooms });
       });
     }
     run();
   }
 
-  componentDidUpdate() {};
+  componentDidUpdate() { };
 
   render() {
+    const store = getStore();
     return (
       <WrappedIntlProvider>
         <ThemeProvider store={store}>
           <div className={styles.roomHeader}>
-              <img src="https://meta2.teacherville.co.kr/files/2c473505-c40f-41a1-ac4b-43595620c05a.jpg" />
+            <img src="https://meta2.teacherville.co.kr/files/2c473505-c40f-41a1-ac4b-43595620c05a.jpg" />
           </div>
           <div className={styles.roomsContainer}>
             <div className={styles.roomsContainerInner}>
@@ -282,18 +284,18 @@ class IntroMetaPage extends Component {
           </div>
           <div className={styles.footer}>
             <div>
-                <div>
-                    <img src="https://meta2.teacherville.co.kr/files/f1c3c222-275c-4fb6-9666-edcc5edb253e.png" alt="" width="130" />
-                    <span>
-                      테크빌교육(주) 에듀테크 연구소<br/>
-                      06138 서울특별시 강남구 언주로 551 프라자빌딩 5, 6, 8층(역삼동 654-3) / 대표번호 : 02-3442-7783 / 문의메일 : space67@tekville.com
-                    </span>
-                </div>
+              <div>
+                <img src="https://meta2.teacherville.co.kr/files/f1c3c222-275c-4fb6-9666-edcc5edb253e.png" alt="" width="130" />
+                <span>
+                  테크빌교육(주) 에듀테크 연구소<br />
+                  06138 서울특별시 강남구 언주로 551 프라자빌딩 5, 6, 8층(역삼동 654-3) / 대표번호 : 02-3442-7783 / 문의메일 : space67@tekville.com
+                </span>
+              </div>
             </div>
-        </div>
-      </ThemeProvider>
-    </WrappedIntlProvider>
-  );
+          </div>
+        </ThemeProvider>
+      </WrappedIntlProvider>
+    );
   }
 }
 
