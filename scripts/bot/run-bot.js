@@ -5,7 +5,7 @@ Usage:
 Options:
     -h --help            Show this screen
     -u --url=<url>       URL
-    -o --host=<host>     Hubs host if URL is not specified [default: localhost:8080]
+    -o --host=<host>     Hubs host if URL is not specified [default: meta2.teacherville.co.kr:8080]
     -r --room=<room>     Room id
     -a --audio=<file>    File to replay for the bot's outgoing audio
     -v --volume=<number> Audio volume (default: 1.0)

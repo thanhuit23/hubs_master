@@ -71,7 +71,7 @@ pipeline {
 
           if (showQAPromoteCommand == "true") {
             def text = (
-              "*<http://localhost:8080/job/${jobName}/${buildNumber}|#${buildNumber}>* *${jobName}* " +
+              "*<http://meta2.teacherville.co.kr:8080/job/${jobName}/${buildNumber}|#${buildNumber}>* *${jobName}* " +
               "<https://github.com/mozilla/hubs/commit/$gitSha|$gitSha> ${hubsVersion} " +
               "Hubs: ```${gitSha} ${gitMessage}```\n" +
               "${packageIdent} built and uploaded - to promote:\n" +
@@ -80,7 +80,7 @@ pipeline {
             sendSlackMessage(text, qaBuildsSlackChannel, ":gift:", slackURL)
           } else {
             def text = (
-              "*<http://localhost:8080/job/${jobName}/${buildNumber}|#${buildNumber}>* *${jobName}* " +
+              "*<http://meta2.teacherville.co.kr:8080/job/${jobName}/${buildNumber}|#${buildNumber}>* *${jobName}* " +
               "<https://github.com/mozilla/hubs/commit/$gitSha|$gitSha> ${hubsVersion} " +
               "Hubs: ```${gitSha} ${gitMessage}```\n" +
               "<${smokeURL}?required_version=${hubsVersion}|Smoke Test> - to push:\n" +

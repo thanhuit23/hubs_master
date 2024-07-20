@@ -26,7 +26,7 @@ function createHTTPSConfig() {
       [
         {
           name: "commonName",
-          value: "localhost"
+          value: "meta2.teacherville.co.kr"
         }
       ],
       {
@@ -39,11 +39,11 @@ function createHTTPSConfig() {
             altNames: [
               {
                 type: 2,
-                value: "localhost"
+                value: "meta2.teacherville.co.kr"
               },
               {
                 type: 2,
-                value: "hubs.local"
+                value: "meta2.teacherville.co.kr"
               }
             ]
           }
@@ -184,13 +184,13 @@ async function fetchAppConfigAndEnvironmentVars() {
 
   const { shortlink_domain, thumbnail_server } = hubsConfigs.general;
 
-  const localIp = process.env.HOST_IP || (await internalIpV4()) || "localhost";
+  const localIp = process.env.HOST_IP || (await internalIpV4()) || "meta2.teacherville.co.kr";
 
   process.env.RETICULUM_SERVER = host;
   process.env.SHORTLINK_DOMAIN = shortlink_domain;
-  process.env.CORS_PROXY_SERVER = `hubs.local:8080/cors-proxy`;
+  process.env.CORS_PROXY_SERVER = `meta2.teacherville.co.kr:8080/cors-proxy`;
   process.env.THUMBNAIL_SERVER = thumbnail_server;
-  process.env.NON_CORS_PROXY_DOMAINS = `${localIp},hubs.local,localhost`;
+  process.env.NON_CORS_PROXY_DOMAINS = `${localIp},meta2.teacherville.co.kr,meta2.teacherville.co.kr`;
 
   return appConfig;
 }
@@ -250,18 +250,18 @@ module.exports = async (env, argv) => {
     }
 
     if (env.localDev) {
-      const localDevHost = "hubs.local";
+      const localDevHost = "meta2.teacherville.co.kr";
       // Local Dev Environment (npm run local)
       Object.assign(process.env, {
         HOST: localDevHost,
         RETICULUM_SOCKET_SERVER: localDevHost,
-        CORS_PROXY_SERVER: "hubs-proxy.local:4000",
+        CORS_PROXY_SERVER: "meta2.teacherville.co.kr",
         NON_CORS_PROXY_DOMAINS: `${localDevHost},dev.reticulum.io`,
         BASE_ASSETS_PATH: `https://${localDevHost}:8080/`,
-        RETICULUM_SERVER: `${localDevHost}:4000`,
+        RETICULUM_SERVER: `${localDevHost}`,
         POSTGREST_SERVER: "",
         ITA_SERVER: "",
-        UPLOADS_HOST: `https://${localDevHost}:4000`
+        UPLOADS_HOST: `https://${localDevHost}`
       });
     }
   }
@@ -269,7 +269,7 @@ module.exports = async (env, argv) => {
   // In production, the environment variables are defined in CI or loaded from ita and
   // the app config is injected into the head of the page by Reticulum.
 
-  const host = process.env.HOST_IP || env.localDev || env.remoteDev ? "hubs.local" : "localhost";
+  const host = process.env.HOST_IP || env.localDev || env.remoteDev ? "meta2.teacherville.co.kr" : "meta2.teacherville.co.kr";
 
   const liveReload = !!process.env.LIVE_RELOAD || false;
 
@@ -288,7 +288,7 @@ module.exports = async (env, argv) => {
   const addonsConfigFilePath = "./addons.json";
   const addonsConfig = JSON.parse(fs.readFileSync(addonsConfigFilePath, "utf-8"));
 
-  const internalHostname = process.env.INTERNAL_HOSTNAME || "hubs.local";
+  const internalHostname = process.env.INTERNAL_HOSTNAME || "meta2.teacherville.co.kr";
   return {
     cache: {
       type: "filesystem"
@@ -392,7 +392,7 @@ module.exports = async (env, argv) => {
           const redirectLocation = req.header("location");
 
           if (redirectLocation) {
-            res.header("Location", "https://localhost:8080/cors-proxy/" + redirectLocation);
+            res.header("Location", "https://meta2.teacherville.co.kr:8080/cors-proxy/" + redirectLocation);
           }
 
           if (req.method === "OPTIONS") {
