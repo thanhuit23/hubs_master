@@ -116,6 +116,7 @@ import { TFCMyWebGLButtonSystem } from "../bit-systems/tfc-my-webgl-button";
 import { TFCKeyboardButton } from "../bit-components";
 import { TFCKeyboardButtonSystem } from "../bit-systems/tfc-keyboard-button";
 import { TFCIframeSystem } from "../bit-systems/iframe";
+import { InteractableObjectSystem } from "./interactable-object-system";
 
 //
 import { TFCGatewayLinkSystem } from "../bit-systems/tfc-gateway-link";
@@ -179,6 +180,7 @@ AFRAME.registerSystem("hubs-systems", {
     this.gainSystem = new GainSystem();
     this.environmentSystem = new EnvironmentSystem(this.el);
     this.nameTagSystem = new NameTagVisibilitySystem(this.el);
+    this.interactableObjectSystem = new InteractableObjectSystem(this.el);
 
     window.$S = this;
   },

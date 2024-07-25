@@ -84,6 +84,13 @@ export function PlacePopoverContainer({ scene, mediaSearchStore, showNonHistorie
             color: "accent3",
             label: <FormattedMessage id="place-popover.item-type.upload" defaultMessage="Upload" />,
             onSelect: () => showNonHistoriedDialog(ObjectUrlModalContainer, { scene })
+          },
+          {
+            id: "object",
+            icon: ObjectIcon,
+            color: "accent2",
+            label: <FormattedMessage id="place-popover.item-type.object" defaultMessage="Object" />,
+            onSelect: () => scene.emit("spawn-interactable-object")
           }
         ];
       }
