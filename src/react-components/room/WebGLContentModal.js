@@ -36,7 +36,7 @@ export function WebGLContentModal({ onClose, url }) {
                 title="반응과 반사의 구조"
                 width="100%"
                 height="100%"
-                src={url} scrolling="no" style={{ borderWidth: 5 }} frameborder="10px" allow="xr-spatial-tracking">
+                src={url} scrolling="no" style={{ borderWidth: 5 }} frameBorder="10px" allow="xr-spatial-tracking">
             </iframe>
 
         </div>
