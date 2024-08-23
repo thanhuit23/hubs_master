@@ -602,7 +602,7 @@ export class CameraSystem {
         }
       } else if (this.mode === CAMERA_MODE_THIRD_PERSON_VIEW) { // Thanh add
         this.viewingCameraRotator.on = false;
-        tmpMat.makeTranslation(0, 0, 1.5);
+        tmpMat.makeTranslation(0, 0, 2.0);
         this.avatarRig.object3D.updateMatrices();
         setMatrixWorld(this.viewingRig.object3D, this.avatarRig.object3D.matrixWorld);
         if (scene.is("vr-mode")) {
