@@ -1,6 +1,7 @@
 import { defineQuery } from "bitecs";
 import { CameraTool } from "../bit-components";
 import { waitForDOMContentLoaded } from "../utils/async-utils";
+import { FullBodyIKSolver } from "./tools/fullbody-ik-solver";
 const { Vector3, Quaternion, Matrix4, Euler } = THREE;
 
 function quaternionAlmostEquals(epsilon, u, v) {
@@ -160,6 +161,44 @@ AFRAME.registerComponent("ik-controller", {
       this.chest = this.el.object3D.getObjectByName(this.data.chest);
     }
 
+
+    this.head = this.avatar.getObjectByName('Head');
+    this.neck = this.avatar.getObjectByName('Neck');
+    this.chest = this.avatar.getObjectByName('Spine');
+
+    const left = {
+      eye: this.avatar.getObjectByName('LeftEye'),
+      upperArm: this.avatar.getObjectByName('LeftUpperArm'),
+      lowerArm: this.avatar.getObjectByName('LeftLowerArm'),
+      hand: this.avatar.getObjectByName('LeftHand'),
+      foot: this.avatar.getObjectByName('LeftFoot'),
+    }
+
+    const right = {
+      eye: this.avatar.getObjectByName('RightEye'),
+      upperArm: this.avatar.getObjectByName('RightUpperArm'),
+      lowerArm: this.avatar.getObjectByName('RightLowerArm'),
+      hand: this.avatar.getObjectByName('RightHand'),
+      foot: this.avatar.getObjectByName('RightFoot'),
+    }
+
+    const hasArms = left.upperArm && right.upperArm;
+
+    if (hasArms) {
+      var sphereGeometry = new THREE.SphereGeometry(0.00);
+
+      left.handTarget = new THREE.Mesh(sphereGeometry, new THREE.MeshBasicMaterial({ color: 0xff0000 }));
+      this.avatar.add(left.handTarget);
+
+      right.handTarget = new THREE.Mesh(sphereGeometry, new THREE.MeshBasicMaterial({ color: 0x0000ff }));
+      this.avatar.add(right.handTarget);
+
+      this.IKSolver = new FullBodyIKSolver({ left, right });
+    }
+
+    this.left = left
+    this.right = right
+
     // Set middleEye's position to be right in the middle of the left and right eyes.
     this.middleEyePosition.addVectors(this.leftEye.position, this.rightEye.position);
     this.middleEyePosition.divideScalar(2);
@@ -209,7 +248,9 @@ AFRAME.registerComponent("ik-controller", {
         cameraYQuaternion,
         invHipsQuaternion,
         rootToChest,
-        invRootToChest
+        invRootToChest,
+        left,
+        right
       } = this;
 
       // Camera faces the -Z direction. Flip it along the Y axis so that it is +Z.
@@ -225,8 +266,30 @@ AFRAME.registerComponent("ik-controller", {
       // hips will use vertex skinning to do the root displacement, which results in
       // frustum culling errors since three.js does not take into account skinning when
       // computing frustum culling sphere bounds.
+      if (left.foot && right.foot) {
+        const leftEyePosition = new THREE.Vector3();
+        left.eye.getWorldPosition(leftEyePosition);
+
+        const rightEyePosition = new THREE.Vector3();
+        right.eye.getWorldPosition(rightEyePosition);
+
+        const averageEyePosition = new THREE.Vector3(
+          (leftEyePosition.x + rightEyePosition.x) / 2,
+          (leftEyePosition.y + rightEyePosition.y) / 2,
+          (leftEyePosition.z + rightEyePosition.z) / 2
+        );
+
+        const avatarPosition = new THREE.Vector3();
+        avatar.getWorldPosition(avatarPosition);
+
+        const cameraHeight = averageEyePosition.y - avatarPosition.y;
+
+        camera.object3D.position.y = cameraHeight;
+        camera.matrixNeedsUpdate = true
+      } else {
       avatar.position.setFromMatrixPosition(headTransform).add(invHipsToHeadVector);
       avatar.matrixNeedsUpdate = true;
+      }
 
       // Animate the hip rotation to follow the Y rotation of the camera with some damping.
       cameraYRotation.setFromRotationMatrix(cameraForward, "YXZ");
@@ -271,9 +334,16 @@ AFRAME.registerComponent("ik-controller", {
     }
 
     const { leftHand, rightHand } = this;
+    const { left, right } = this;
+    const hasArms = left.upperArm || right.upperArm
 
+    if (hasArms) {
+      this.updateHandForFullbody(leftController, rightController, left, right);
+    }
+    else {
     if (leftHand) this.updateHand(HAND_ROTATIONS.left, leftHand, leftController.object3D, true, this.isInView);
     if (rightHand) this.updateHand(HAND_ROTATIONS.right, rightHand, rightController.object3D, false, this.isInView);
+    }
     this.forceIkUpdate = false;
 
     if (!this._hadFirstTick) {
@@ -307,6 +377,40 @@ AFRAME.registerComponent("ik-controller", {
       handObject3D.position.setFromMatrixPosition(handMatrix);
       handObject3D.rotation.setFromRotationMatrix(handMatrix);
       handObject3D.matrixNeedsUpdate = true;
+    }
+  },
+
+  updateHandForFullbody(leftController, rightController, left, right) {
+    const hasLeftController = leftController && leftController.object3D.visible
+
+    if (hasLeftController) {
+      const worldPosition = new THREE.Vector3();
+      leftController.object3D.matrixWorld.decompose(worldPosition, new THREE.Quaternion(), new THREE.Vector3());
+
+      left.handTarget.position.copy(this.avatar.worldToLocal(worldPosition.clone()))
+      left.handTarget.matrixNeedsUpdate = true;
+    }
+
+    const hasRightController = rightController && rightController.object3D.visible
+
+    if (hasRightController) {
+      const worldPosition = new THREE.Vector3();
+      rightController.object3D.matrixWorld.decompose(worldPosition, new THREE.Quaternion(), new THREE.Vector3());
+
+      right.handTarget.position.copy(this.avatar.worldToLocal(worldPosition.clone()))
+      right.handTarget.matrixNeedsUpdate = true;
+    }
+
+    if (this.IKSolver && (hasRightController || hasLeftController)) {
+      this.IKSolver.update();
+
+      left.upperArm.matrixNeedsUpdate = true;
+      left.lowerArm.matrixNeedsUpdate = true;
+      left.hand.matrixNeedsUpdate = true;
+
+      right.upperArm.matrixNeedsUpdate = true;
+      right.lowerArm.matrixNeedsUpdate = true;
+      right.hand.matrixNeedsUpdate = true;
     }
   },
 
