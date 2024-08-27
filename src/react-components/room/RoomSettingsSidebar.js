@@ -271,7 +271,7 @@ export function RoomSettingsSidebar({
               />
             </label>
           )}
-          {[...addons.entries()].map(([id, addon]) => (
+          {/* {[...addons.entries()].map(([id, addon]) => (
             <ToggleInput
               key={addon.name}
               id={id}
@@ -281,7 +281,7 @@ export function RoomSettingsSidebar({
               onChange={handleAddonChange}
               description={addon.description}
             />
-          ))}
+          ))} */}
         </InputField>
         <ApplyButton type="submit" />
       </Column>
