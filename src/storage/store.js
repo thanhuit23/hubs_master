@@ -4,6 +4,7 @@ import Cookies from "js-cookie";
 import jwtDecode from "jwt-decode";
 import { qsGet } from "../utils/qs_truthy.js";
 import detectMobile, { isAndroid, isMobileVR } from "../utils/is-mobile";
+import configs from "../utils/configs.js";
 
 const LOCAL_STORE_KEY = "___hubs_store";
 const STORE_STATE_CACHE_KEY = Symbol();
@@ -314,18 +315,71 @@ export default class Store extends EventTarget {
   };
 
   initProfile = async () => {
-    if (this._shouldResetAvatarOnInit) {
-      await this.resetToRandomDefaultAvatar();
+    // Create a new url search params object to find the query string parameters
+    const qs = new URLSearchParams(location.search);
+    let displayName = ''; // the display name to use
+    let avatarUrl = ''; // the avatar url to use
+    let personalAvatarId = ''; // the personal avatar id to use
+    let pronouns = ''; // the pronouns to use
+
+    // if the query string has a displayName parameter, use that as the display name
+    if (qs.has("displayName")) {
+      displayName = qs.get("displayName");
     } else {
-      this.update({
-        profile: { avatarId: await fetchRandomDefaultAvatarId(), ...(this.state.profile || {}) }
-      });
+      // if the current user has not changed their name or pronouns, generate a random name
+      if (!this.state.activity.hasChangedNameOrPronouns) {
+        displayName = generateRandomName();
+      } else {
+        // otherwise, use the display name from the profile
+        displayName = this.state.profile.displayName;
+        // use the personal avatar id from the profile
+        personalAvatarId = this.state.profile.personalAvatarId;
+        // use the pronouns from the profile
+        pronouns = this.state.profile.pronouns;
+      }
     }
 
-    // Regenerate name to encourage users to change it.
-    if (!this.state.activity.hasChangedNameOrPronouns) {
-      this.update({ profile: { displayName: generateRandomName() } });
+    // console.log('displayName:', displayName);
+
+    // if the query string has an avatarUrl parameter, use that as the avatar url
+    if (qs.has("avatarUrl")) {
+      avatarUrl = qs.get("avatarUrl");
+    } else {
+      // if the query string has an avatarId parameter, use that as the avatar url
+      if (qs.has("avatarId")) {
+        avatarUrl = qs.get("avatarId");
+      } else {
+        // if should reset avatar on init, fetch a random default avatar id
+        if (this._shouldResetAvatarOnInit) {
+          avatarUrl = await fetchRandomDefaultAvatarId();
+        } else {
+          // otherwise, use the avatar id from the profile
+          avatarUrl = this.state.profile.avatarId;
+        }
+      }
     }
+
+    // update the profile with the new values
+    this.update({ profile: 
+      { 
+        avatarId: avatarUrl, 
+        displayName: displayName,
+        personalAvatarId: personalAvatarId,
+        pronouns: pronouns 
+      } });
+
+    // if (this._shouldResetAvatarOnInit) {
+    //   await this.resetToRandomDefaultAvatar();
+    // } else {
+    //   this.update({
+    //     profile: { avatarId: await fetchRandomDefaultAvatarId(), ...(this.state.profile || {}) }
+    //   });
+    // }
+
+    // // Regenerate name to encourage users to change it.
+    // if (!this.state.activity.hasChangedNameOrPronouns) {
+    //   this.update({ profile: { displayName: generateRandomName() } });
+    // }
   };
 
   resetToRandomDefaultAvatar = async () => {
