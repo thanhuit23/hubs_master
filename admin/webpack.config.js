@@ -74,7 +74,7 @@ module.exports = (env, argv) => {
     Object.assign(process.env, {
       HOST: "meta2.teacherville.co.kr",
       RETICULUM_SOCKET_SERVER: "meta2.teacherville.co.kr",
-      CORS_PROXY_SERVER: "meta2.teacherville.co.kr",
+      CORS_PROXY_SERVER: "meta2.teacherville.co.kr:8080/cors-proxy",
       NON_CORS_PROXY_DOMAINS: "meta2.teacherville.co.kr,dev.reticulum.io",
       BASE_ASSETS_PATH: "https://meta2.teacherville.co.kr:8989/",
       RETICULUM_SERVER: "meta2.teacherville.co.kr",
