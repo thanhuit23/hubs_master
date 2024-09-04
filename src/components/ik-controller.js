@@ -132,6 +132,7 @@ AFRAME.registerComponent("ik-controller", {
 
   update(oldData) {
     this.avatar = this.el.object3D;
+    console.log(this.avatar);
 
     if (this.data.leftEye !== oldData.leftEye) {
       this.leftEye = this.el.object3D.getObjectByName(this.data.leftEye);
@@ -169,6 +170,7 @@ AFRAME.registerComponent("ik-controller", {
     const left = {
       eye: this.avatar.getObjectByName('LeftEye'),
       upperArm: this.avatar.getObjectByName('LeftUpperArm'),
+      foreArm: this.avatar.getObjectByName('LeftForeArm'),
       lowerArm: this.avatar.getObjectByName('LeftLowerArm'),
       hand: this.avatar.getObjectByName('LeftHand'),
       foot: this.avatar.getObjectByName('LeftFoot'),
@@ -177,12 +179,14 @@ AFRAME.registerComponent("ik-controller", {
     const right = {
       eye: this.avatar.getObjectByName('RightEye'),
       upperArm: this.avatar.getObjectByName('RightUpperArm'),
+      foreArm: this.avatar.getObjectByName('RightForeArm'),
       lowerArm: this.avatar.getObjectByName('RightLowerArm'),
       hand: this.avatar.getObjectByName('RightHand'),
       foot: this.avatar.getObjectByName('RightFoot'),
     }
 
-    const hasArms = left.upperArm && right.upperArm;
+    const hasArms = (left.upperArm && right.upperArm) || (left.foreArm && right.foreArm);
+    console.log("Has Arms? ", hasArms);
 
     if (hasArms) {
       var sphereGeometry = new THREE.SphereGeometry(0.00);
@@ -335,7 +339,7 @@ AFRAME.registerComponent("ik-controller", {
 
     const { leftHand, rightHand } = this;
     const { left, right } = this;
-    const hasArms = left.upperArm || right.upperArm
+    const hasArms = left.upperArm || right.upperArm || left.foreArm || right.foreArm;
 
     if (hasArms) {
       this.updateHandForFullbody(leftController, rightController, left, right);
