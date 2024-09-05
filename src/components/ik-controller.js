@@ -132,7 +132,7 @@ AFRAME.registerComponent("ik-controller", {
 
   update(oldData) {
     this.avatar = this.el.object3D;
-    console.log(this.avatar);
+    // console.log(this.avatar);
 
     if (this.data.leftEye !== oldData.leftEye) {
       this.leftEye = this.el.object3D.getObjectByName(this.data.leftEye);
@@ -164,8 +164,17 @@ AFRAME.registerComponent("ik-controller", {
 
 
     this.head = this.avatar.getObjectByName('Head');
+    if (!this.head) {
+      this.head = this.avatar.getObjectByName('mixamorig:Head');
+    }
     this.neck = this.avatar.getObjectByName('Neck');
+    if (!this.neck) {
+      this.neck = this.avatar.getObjectByName('mixamorig:Neck');
+    }
     this.chest = this.avatar.getObjectByName('Spine');
+    if (!this.chest) {
+      this.chest = this.avatar.getObjectByName('mixamorig:Spine');
+    }
 
     const left = {
       eye: this.avatar.getObjectByName('LeftEye'),
@@ -176,6 +185,25 @@ AFRAME.registerComponent("ik-controller", {
       foot: this.avatar.getObjectByName('LeftFoot'),
     }
 
+    if (!left.eye) {
+      left.eye = this.avatar.getObjectByName('mixamorig:LeftEye');
+    }
+    if (!left.upperArm) {
+      left.upperArm = this.avatar.getObjectByName('mixamorig:LeftUpperArm');
+    }
+    if (!left.foreArm) {
+      left.foreArm = this.avatar.getObjectByName('mixamorig:LeftForeArm');
+    }
+    if (!left.lowerArm) {
+      left.lowerArm = this.avatar.getObjectByName('mixamorig:LeftLowerArm');
+    }
+    if (!left.hand) {
+      left.hand = this.avatar.getObjectByName('mixamorig:LeftHand');
+    }
+    if (!left.foot) {
+      left.foot = this.avatar.getObjectByName('mixamorig:LeftFoot');
+    }
+
     const right = {
       eye: this.avatar.getObjectByName('RightEye'),
       upperArm: this.avatar.getObjectByName('RightUpperArm'),
@@ -183,10 +211,27 @@ AFRAME.registerComponent("ik-controller", {
       lowerArm: this.avatar.getObjectByName('RightLowerArm'),
       hand: this.avatar.getObjectByName('RightHand'),
       foot: this.avatar.getObjectByName('RightFoot'),
+    };
+    if (!right.eye) {
+      right.eye = this.avatar.getObjectByName('mixamorig:RightEye');
     }
-
+    if (!right.upperArm) {
+      right.upperArm = this.avatar.getObjectByName('mixamorig:RightUpperArm');
+    }
+    if (!right.foreArm) {
+      right.foreArm = this.avatar.getObjectByName('mixamorig:RightForeArm');
+    }
+    if (!right.lowerArm) {
+      right.lowerArm = this.avatar.getObjectByName('mixamorig:RightLowerArm');
+    }
+    if (!right.hand) {
+      right.hand = this.avatar.getObjectByName('mixamorig:RightHand');
+    }
+    if (!right.foot) {
+      right.foot = this.avatar.getObjectByName('mixamorig:RightFoot');
+    }
     const hasArms = (left.upperArm && right.upperArm) || (left.foreArm && right.foreArm);
-    console.log("Has Arms? ", hasArms);
+    // console.log("Has Arms? ", hasArms);
 
     if (hasArms) {
       var sphereGeometry = new THREE.SphereGeometry(0.00);
@@ -291,8 +336,8 @@ AFRAME.registerComponent("ik-controller", {
         camera.object3D.position.y = cameraHeight;
         camera.matrixNeedsUpdate = true
       } else {
-      avatar.position.setFromMatrixPosition(headTransform).add(invHipsToHeadVector);
-      avatar.matrixNeedsUpdate = true;
+        avatar.position.setFromMatrixPosition(headTransform).add(invHipsToHeadVector);
+        avatar.matrixNeedsUpdate = true;
       }
 
       // Animate the hip rotation to follow the Y rotation of the camera with some damping.
@@ -345,8 +390,8 @@ AFRAME.registerComponent("ik-controller", {
       this.updateHandForFullbody(leftController, rightController, left, right);
     }
     else {
-    if (leftHand) this.updateHand(HAND_ROTATIONS.left, leftHand, leftController.object3D, true, this.isInView);
-    if (rightHand) this.updateHand(HAND_ROTATIONS.right, rightHand, rightController.object3D, false, this.isInView);
+      if (leftHand) this.updateHand(HAND_ROTATIONS.left, leftHand, leftController.object3D, true, this.isInView);
+      if (rightHand) this.updateHand(HAND_ROTATIONS.right, rightHand, rightController.object3D, false, this.isInView);
     }
     this.forceIkUpdate = false;
 
