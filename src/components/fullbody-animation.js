@@ -16,34 +16,69 @@ export const ANIMATIONS = {
 AFRAME.registerComponent("fullbody-animation-change", {
     userinput: null,
 
+
     init() {
         this.userinput = AFRAME.scenes[0].systems.userinput;
+        // if user using mobile device
+        if (AFRAME.utils.device.isMobile()) {
+            this.el.addEventListener("position-update", (evt) => {
+                this.displacement = evt.detail.displacement;
+                this.isMoving = evt.detail.isMoving;
+            })
+            this.el.addEventListener("rotation-update", (evt) => {
+                this.isRotating = evt.detail.isRotating;
+                this.rotateX = evt.detail.rotateX;
+                this.rotateY = evt.detail.rotateY;
+            })
+        }
     },
 
     tick() {
-        const vector = this.userinput.get(paths.actions.characterAcceleration);
-        const boost = this.userinput.get(paths.actions.boost);
-
-        if (vector) {
-            const [right, front] = vector;
-            const isRunning = boost || 1 < Math.abs(right) || 1 < Math.abs(front)
-
-            if (front === 0 && right === 0) {
-                this.setCurrentAnimation(ANIMATIONS.IDLE)
-            } else if (Math.abs(front) < Math.abs(right)) {
-                if (0 < right) {
-                    this.setCurrentAnimation(isRunning ? ANIMATIONS.RUNNING_RIGHT : ANIMATIONS.WALKING_RIGHT);
+        if (AFRAME.utils.device.isMobile()) {
+            if (this.isMoving) {
+                if (Math.abs(this.displacement.z) < Math.abs(this.displacement.x)) {
+                    if (this.displacement.x < 0) {
+                        this.setCurrentAnimation(ANIMATIONS.WALKING_LEFT);
+                    } else if (this.displacement.x > 0) {
+                        this.setCurrentAnimation(ANIMATIONS.WALKING_RIGHT);
+                    } 
                 } else {
-                    this.setCurrentAnimation(isRunning ? ANIMATIONS.RUNNING_LEFT : ANIMATIONS.WALKING_LEFT);
+                    if (this.displacement.z < 0) {
+                        this.setCurrentAnimation(ANIMATIONS.WALKING_BACKWARD);
+                    } else {
+                        this.setCurrentAnimation(ANIMATIONS.WALKING_FORWARD);
+                    }
                 }
             } else {
-                if (0 < front) {
-                    this.setCurrentAnimation(isRunning ? ANIMATIONS.RUNNING_FORWARD : ANIMATIONS.WALKING_FORWARD);
+                this.setCurrentAnimation(ANIMATIONS.IDLE);
+            }
+        }
+        else {
+            const vector = this.userinput.get(paths.actions.characterAcceleration);
+            const boost = this.userinput.get(paths.actions.boost);
+
+            if (vector) {
+                const [right, front] = vector;
+                const isRunning = boost || 1 < Math.abs(right) || 1 < Math.abs(front)
+
+                if (front === 0 && right === 0) {
+                    this.setCurrentAnimation(ANIMATIONS.IDLE)
+                } else if (Math.abs(front) < Math.abs(right)) {
+                    if (0 < right) {
+                        this.setCurrentAnimation(isRunning ? ANIMATIONS.RUNNING_RIGHT : ANIMATIONS.WALKING_RIGHT);
+                    } else {
+                        this.setCurrentAnimation(isRunning ? ANIMATIONS.RUNNING_LEFT : ANIMATIONS.WALKING_LEFT);
+                    }
                 } else {
-                    this.setCurrentAnimation(isRunning ? ANIMATIONS.RUNNING_BACKWARD : ANIMATIONS.WALKING_BACKWARD);
+                    if (0 < front) {
+                        this.setCurrentAnimation(isRunning ? ANIMATIONS.RUNNING_FORWARD : ANIMATIONS.WALKING_FORWARD);
+                    } else {
+                        this.setCurrentAnimation(isRunning ? ANIMATIONS.RUNNING_BACKWARD : ANIMATIONS.WALKING_BACKWARD);
+                    }
                 }
             }
         }
+
     },
 
     setCurrentAnimation(animationName) {

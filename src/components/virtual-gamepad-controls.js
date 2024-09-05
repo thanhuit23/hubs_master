@@ -202,10 +202,14 @@ AFRAME.registerComponent("virtual-gamepad-controls", {
     }
     if (this.moving) {
       this.characterController.enqueueRelativeMotion(this.displacement);
+      this.el.emit("position-update", { displacement: this.displacement, isMoving: true });
+    } else {
+      this.el.emit("position-update", { isMoving: false });
     }
     if (this.rotating) {
       this.characterController.enqueueInPlaceRotationAroundWorldUp(this.lookDy);
       this.el.sceneEl.emit("rotateX", this.lookDx);
+      this.el.emit("rotation-update", { isRotating: true, rotateX: this.lookDx, rotateY: this.lookDy });
     }
   },
 
