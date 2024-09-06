@@ -78,20 +78,20 @@ export function PlacePopoverContainer({ scene, mediaSearchStore, showNonHistorie
             onSelect: () => mediaSearchStore.sourceNavigate("scenes")
           },
           // TODO: Launch system file prompt directly
-          {
-            id: "upload",
-            icon: UploadIcon,
-            color: "accent3",
-            label: <FormattedMessage id="place-popover.item-type.upload" defaultMessage="Upload" />,
-            onSelect: () => showNonHistoriedDialog(ObjectUrlModalContainer, { scene })
-          },
-          {
-            id: "object",
-            icon: ObjectIcon,
-            color: "accent2",
-            label: <FormattedMessage id="place-popover.item-type.object" defaultMessage="Object" />,
-            onSelect: () => scene.emit("spawn-interactable-object")
-          }
+          // {
+          //   id: "upload",
+          //   icon: UploadIcon,
+          //   color: "accent3",
+          //   label: <FormattedMessage id="place-popover.item-type.upload" defaultMessage="Upload" />,
+          //   onSelect: () => showNonHistoriedDialog(ObjectUrlModalContainer, { scene })
+          // },
+          // {
+          //   id: "object",
+          //   icon: ObjectIcon,
+          //   color: "accent2",
+          //   label: <FormattedMessage id="place-popover.item-type.object" defaultMessage="Object" />,
+          //   onSelect: () => scene.emit("spawn-interactable-object")
+          // }
         ];
       }
 

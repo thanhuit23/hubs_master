@@ -5,7 +5,7 @@ function insertAfter(el, referenceEl) {
   referenceEl.parentNode.insertBefore(el, referenceEl.nextSibling);
 }
 
-const ROTATION_SPEED = 0.025;
+const ROTATION_SPEED = 0.010;
 
 /**
  * Instantiates 2D virtual gamepads and emits associated events.
