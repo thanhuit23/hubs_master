@@ -332,9 +332,10 @@ AFRAME.registerComponent("ik-controller", {
         avatar.getWorldPosition(avatarPosition);
 
         const cameraHeight = averageEyePosition.y - avatarPosition.y;
+        // console.log("Camera Height: ", cameraHeight);
 
-        camera.object3D.position.y = cameraHeight;
-        camera.matrixNeedsUpdate = true
+        // camera.object3D.position.y = cameraHeight;
+        // camera.matrixNeedsUpdate = true
       } else {
         avatar.position.setFromMatrixPosition(headTransform).add(invHipsToHeadVector);
         avatar.matrixNeedsUpdate = true;
