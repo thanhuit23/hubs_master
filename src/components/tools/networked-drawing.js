@@ -514,6 +514,22 @@ AFRAME.registerComponent("networked-drawing", {
     }
   },
 
+  clearDraw() {
+    if (!NAF.connection.isConnected() || this.drawStarted) {
+      return;
+    }
+    this._clearDraw();
+    this._pushToNetworkBuffer("-");
+  },
+
+  _clearDraw() {
+    let length = this.networkBufferHistory.length;
+    while (length > 0) {
+      this.undoDraw();
+      --length;
+    }
+  },
+
   endDraw(position, direction, normal) {
     this._endDraw(position, direction, normal);
     this._updateBuffer();

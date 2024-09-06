@@ -36,6 +36,7 @@ const pathsMap = {
     startDrawing: paths.actions.cursor.right.startDrawing,
     stopDrawing: paths.actions.cursor.right.stopDrawing,
     undoDrawing: paths.actions.cursor.right.undoDrawing,
+    clearDrawing: paths.actions.cursor.right.clearDrawing,
     penNextColor: paths.actions.cursor.right.penNextColor,
     penPrevColor: paths.actions.cursor.right.penPrevColor,
     scalePenTip: paths.actions.cursor.right.scalePenTip
@@ -45,6 +46,7 @@ const pathsMap = {
     startDrawing: paths.actions.cursor.left.startDrawing,
     stopDrawing: paths.actions.cursor.left.stopDrawing,
     undoDrawing: paths.actions.cursor.left.undoDrawing,
+    clearDrawing: paths.actions.cursor.left.clearDrawing,
     penNextColor: paths.actions.cursor.left.penNextColor,
     penPrevColor: paths.actions.cursor.left.penPrevColor,
     scalePenTip: paths.actions.cursor.left.scalePenTip
@@ -282,6 +284,10 @@ AFRAME.registerComponent("pen", {
         this._undoDraw();
         sfx.playSoundOneShot(SOUND_PEN_UNDO_DRAW);
       }
+      if (userinput.get(paths.clearDrawing)) {
+        this._clearDraw();
+        sfx.playSoundOneShot(SOUND_PEN_UNDO_DRAW);
+      }
       if (paths.switchDrawMode && userinput.get(paths.switchDrawMode)) {
         this.data.drawMode = this.data.drawMode === DRAW_MODE.DEFAULT_3D ? DRAW_MODE.PROJECTION : DRAW_MODE.DEFAULT_3D;
       }
@@ -458,6 +464,13 @@ AFRAME.registerComponent("pen", {
   _undoDraw() {
     this.drawingManager.getDrawing(this).then(drawing => {
       drawing.undoDraw();
+      this.drawingManager.returnDrawing(this);
+    });
+  },
+
+  _clearDraw() {
+    this.drawingManager.getDrawing(this).then(drawing => {
+      drawing.clearDraw();
       this.drawingManager.returnDrawing(this);
     });
   },

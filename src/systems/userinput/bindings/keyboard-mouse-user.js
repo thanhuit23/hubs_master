@@ -611,11 +611,30 @@ export const keyboardMouseUserBindings = addSetsToBindings({
     },
     {
       src: {
-        bool: paths.device.keyboard.key("control"),
+        bool: paths.device.keyboard.key("shift"),
         value: paths.device.keyboard.key("z")
       },
+      dest: { value: "/var/shift+z" },
+      xform: xforms.copyIfTrue,
+      priority: 1
+    },
+    {
+      src: { value: "/var/shift+z" },
       dest: { value: paths.actions.cursor.right.undoDrawing },
-      priority: 1001,
+      xform: xforms.rising
+    },
+    {
+      src: {
+        bool: paths.device.keyboard.key("shift"),
+        value: paths.device.keyboard.key("d")
+      },
+      dest: { value: "/var/shift+d" },
+      xform: xforms.copyIfTrue,
+      priority: 1
+    },
+    {
+      src: { value: "/var/shift+d" },
+      dest: { value: paths.actions.cursor.right.clearDrawing },
       xform: xforms.rising
     },
     {
