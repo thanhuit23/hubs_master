@@ -2,16 +2,42 @@ import React, { useCallback } from "react";
 import PropTypes from "prop-types";
 import { WebGLContentModal } from "./WebGLContentModal";
 
+let urlParams = {};
 export function WebGLContentModalContainer({ scene, url, onClose }) {    
+    urlParams = {};
     // const endpoint = 'http://metatrack_xapi.tubeai.co.kr/xApi/';
-    const endpoint = 'https://melissa-albania-sides-joe.trycloudflare.com/';
+    const endpoint = 'https://metatrack-xapi.tubeai.co.kr/xApi/';
     // const initialRequestURL = 'eventdata/practice/initialized';
-    const initialRequestURL = 'initialized';
+    const initialRequestURL = 'eventdata/practice/initialized';
     // const terminateRequestURL = 'eventdata/practice/terminated';
-    const terminateRequestURL = 'terminated';
+    const terminateRequestURL = 'eventdata/practice/terminated';
     // Global variables to store URL parameters
-    let urlParams = {};
+    
     getUrlParams();
+    if (localStorage.getItem('userId')) {
+        urlParams['userId'] = localStorage.getItem('userId');
+    }
+    
+    if (localStorage.getItem('courseId')) {
+        urlParams['courseId'] = localStorage.getItem('courseId');
+    }
+
+    if (localStorage.getItem('sessionId')) {
+        urlParams['sessionId'] = localStorage.getItem('sessionId');
+    }
+
+    let contentId = '';
+    // The website url is https://hostname/contentId/contentName
+    // Get contentId from url
+    const urlURL = new URL(url);
+    const pathSegments = urlURL.pathname.split('/');
+    contentId = pathSegments[1] + '_' + pathSegments[2];
+    if (contentId) {
+        urlParams['contentId'] = contentId;
+        urlParams['contentName'] = contentId;
+    }
+    const homepage = 'meta2.teacherville.co.kr';
+    urlParams['homepage'] = homepage;    
     urlParams['startTime'] = new Date().toISOString();
     const input = {
         homepage: urlParams['homepage'] ? urlParams['homepage'] : '',
@@ -20,7 +46,7 @@ export function WebGLContentModalContainer({ scene, url, onClose }) {
         sessionId: urlParams['sessionId'] ? urlParams['sessionId'] : '',
         contentId: urlParams['contentId'] ? urlParams['contentId'] : '',
         contentName: urlParams['contentName'] ? urlParams['contentName'] : '',
-        duration: '',
+        duration: 0,
     }
     sendPostRequest(endpoint + initialRequestURL, input);
 
@@ -29,8 +55,6 @@ export function WebGLContentModalContainer({ scene, url, onClose }) {
         // Send to API
         urlParams['endTime'] = new Date().toISOString();
         urlParams['duration'] = (new Date(urlParams['endTime']) - new Date(urlParams['startTime'])) / 1000;
-        // Convert duration to string
-        urlParams['duration'] = urlParams['duration'].toString();
         const input = {
             homepage: urlParams['homepage'] ? urlParams['homepage'] : '',
             userId: urlParams['userId'] ? urlParams['userId'] : '',
@@ -38,7 +62,7 @@ export function WebGLContentModalContainer({ scene, url, onClose }) {
             sessionId: urlParams['sessionId'] ? urlParams['sessionId'] : '',
             contentId: urlParams['contentId'] ? urlParams['contentId'] : '',
             contentName: urlParams['contentName'] ? urlParams['contentName'] : '',
-            duration: urlParams['duration'] ? urlParams['duration'] : '',
+            duration: urlParams['duration'] ? urlParams['duration'] : 0,
         }
         sendPostRequest(endpoint + terminateRequestURL, input);
         onClose();
@@ -55,6 +79,7 @@ function getUrlParams() {
 }
 
 function sendPostRequest(serverUrl, input) {
+    input.duration = Math.round(input.duration);
     fetch(serverUrl, {
         method: 'POST',
         headers: {

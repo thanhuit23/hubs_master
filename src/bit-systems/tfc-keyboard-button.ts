@@ -410,6 +410,7 @@ export function TFCKeyboardButtonSystem(world: HubsWorld) {
                             createNotificationScreen(world, "오답입니다.")
                             correct = false;
                         }
+                        sendPostRequest(correct);
                 }
             }
 
@@ -443,6 +444,135 @@ export function TFCKeyboardButtonSystem(world: HubsWorld) {
         }
     });
 
+}
+
+function sendPostRequest(correct: boolean) {
+    let urlParams = {
+        homepage: "meta2.teacherville.co.kr",
+        userId: "",
+        courseId: "",
+        sessionId: "",
+        contentId: "",
+        quizId: "",
+        result: correct ? 'Y' : 'N',
+        duration: 0
+    };
+    if (localStorage.getItem('userId')) {
+        if (localStorage.getItem('userId')) {
+            urlParams['userId'] = localStorage.getItem('userId') ?? '';
+        }
+    }
+
+    if (localStorage.getItem('courseId')) {
+        if (localStorage.getItem('courseId')) {
+            urlParams['courseId'] = localStorage.getItem('courseId') ?? '';
+        }
+    }
+
+    if (localStorage.getItem('sessionId')) {
+        if (localStorage.getItem('sessionId')) {
+            urlParams['sessionId'] = localStorage.getItem('sessionId') ?? '';
+        }
+    }
+    const urlURL = new URL(window.location.href);
+    const pathSegments = urlURL.pathname.split('/');
+    const contentId = pathSegments[1] + '_' + pathSegments[2];
+    if (contentId) {
+        urlParams['contentId'] = contentId;
+        urlParams['quizId'] = contentId;
+    }
+    if (localStorage.getItem('startTime')) {
+        const startTime = localStorage.getItem('startTime');
+        const endTime = new Date().getTime();
+        const duration = (endTime - parseFloat(startTime ?? '0')) / 1000;
+        urlParams['duration'] = Math.round(duration);
+    }
+    const serverUrl = 'https://metatrack-xapi.tubeai.co.kr/xApi/eventdata/quiz/attempted';
+    fetch(serverUrl, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'Access-Control-Allow-Origin': '*'
+        },
+        body: JSON.stringify(
+            {
+                homepage: urlParams['homepage'],
+                userId: urlParams['userId'],
+                courseId: urlParams['courseId'],
+                sessionId: urlParams['sessionId'],
+                contentId: urlParams['contentId'],
+                quizId: urlParams['quizId'],
+                result: urlParams['result'],
+                duration: urlParams['duration']
+            })
+    })
+        .then(response => response.json())
+        .then(data => console.log('Success:', data))
+        .catch((error) => console.error('Error:', error));
+}
+
+
+function sendTerminatedRequest() {
+    let urlParams = {
+        homepage: "meta2.teacherville.co.kr",
+        userId: "",
+        courseId: "",
+        sessionId: "",
+        contentId: "",
+        contentName: "",
+        duration: 0
+    };
+    if (localStorage.getItem('userId')) {
+        if (localStorage.getItem('userId')) {
+            urlParams['userId'] = localStorage.getItem('userId') ?? '';
+        }
+    }
+
+    if (localStorage.getItem('courseId')) {
+        if (localStorage.getItem('courseId')) {
+            urlParams['courseId'] = localStorage.getItem('courseId') ?? '';
+        }
+    }
+
+    if (localStorage.getItem('sessionId')) {
+        if (localStorage.getItem('sessionId')) {
+            urlParams['sessionId'] = localStorage.getItem('sessionId') ?? '';
+        }
+    }
+    const urlURL = new URL(window.location.href);
+    const pathSegments = urlURL.pathname.split('/');
+    const contentId = pathSegments[1] + '_' + pathSegments[2];
+    if (contentId) {
+        urlParams['contentId'] = contentId;
+        urlParams['contentName'] = contentId;
+    }
+    if (localStorage.getItem('startTime')) {
+        const startTime = localStorage.getItem('startTime');
+        const endTime = new Date().getTime();
+        const duration = (endTime - parseFloat(startTime ?? '0')) / 1000;
+        urlParams['duration'] = Math.round(duration);
+    }
+    const serverUrl = 'https://metatrack-xapi.tubeai.co.kr/xApi/eventdata/practice/terminated';
+    fetch(serverUrl, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'Access-Control-Allow-Origin': '*'
+        },
+        body: JSON.stringify(
+            {
+                homepage: urlParams['homepage'],
+                userId: urlParams['userId'],
+                courseId: urlParams['courseId'],
+                sessionId: urlParams['sessionId'],
+                contentId: urlParams['contentId'],
+                contentName: urlParams['contentName'],                
+                duration: urlParams['duration']
+            })
+    })
+        .then(response => response.json())
+        .then(data => console.log('Success:', data))
+        .catch((error) => console.error('Error:', error));
 }
 
 function updateScreen(world: HubsWorld) {
@@ -543,6 +673,9 @@ async function changeRoom(linkUrl: string) {
             } else {
                 changeHub(gotoHubId);
             }
+
+            // Send terminated log
+            sendTerminatedRequest();
         } else {
             await exitImmersive();
             location.href = linkUrl;

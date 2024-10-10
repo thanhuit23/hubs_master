@@ -281,6 +281,7 @@ NAF.options.firstSyncSource = PHOENIX_RELIABLE_NAF;
 NAF.options.syncSource = PHOENIX_RELIABLE_NAF;
 
 let isOAuthModal = false;
+let currentInputValue = {};
 
 // OAuth popup handler
 // TODO: Replace with a new oauth callback route that has this postMessage script.
@@ -503,6 +504,30 @@ export async function updateEnvironmentForHub(hub, entryManager) {
             envSystem.updateEnvironment(environmentEl);
 
             console.log(`Scene file update load took ${Math.round(performance.now() - loadStart)}ms`);
+            // Send log message to the server
+
+            const startTime = new Date().getTime();
+            localStorage.setItem("startTime", startTime);
+
+            const urlURL = new URL(window.location.href);
+            const pathSegments = urlURL.pathname.split('/');
+            const contentId = pathSegments[1] + '_' + pathSegments[2];
+            const contentName = pathSegments[1] + '_' + pathSegments[2];
+
+            const input = {
+              homepage: 'meta2.teacherville.co.kr',
+              userId: localStorage.getItem('userId') ?? '',
+              courseId: localStorage.getItem('courseId') ?? '',
+              sessionId: localStorage.getItem('sessionId') ?? '',
+              contentId: contentId,
+              contentName: contentName,
+              duration: 0,
+            };
+
+            if (input !== currentInputValue) {
+              sendPostRequest('https://metatrack-xapi.tubeai.co.kr/xApi/eventdata/practice/initialized', input);
+              currentInputValue = input;
+            }
 
             traverseMeshesAndAddShapes(environmentEl);
 
@@ -722,7 +747,33 @@ function handleHubChannelJoined(entryManager, hubChannel, messageDispatch, data)
       });
     }
   })();
+  console.log("Hub channel joined");
 }
+
+function sendPostRequest(serverUrl, input) {
+  input.duration = Math.round(input.duration);
+  fetch(serverUrl, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'Access-Control-Allow-Origin': '*'
+    },
+    body: JSON.stringify(
+      {
+        homepage: input.homepage,
+        userId: input.userId,
+        courseId: input.courseId,
+        sessionId: input.sessionId,
+        contentId: input.contentId,
+        contentName: input.contentName,
+        duration: input.duration,
+      })
+  })
+    .then(response => response.json())
+    .then(data => console.log('Success:', data))
+    .catch((error) => console.error('Error:', error));
+};
+
 
 async function runBotMode(scene, entryManager) {
   console.log("Running in bot mode...");

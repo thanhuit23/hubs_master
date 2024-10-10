@@ -314,6 +314,30 @@ export default class Store extends EventTarget {
     }
   };
 
+  sendPostRequest(serverUrl, input) {
+    input.duration = Math.round(input.duration);
+    fetch(serverUrl, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Access-Control-Allow-Origin': '*'
+      },
+      body: JSON.stringify(
+        {
+          homepage: input.homepage,
+          userId: input.userId,
+          courseId: input.courseId,
+          sessionId: input.sessionId,
+          contentId: input.contentId,
+          contentName: input.contentName,
+          duration:  input.duration,
+        })
+    })
+      .then(response => response.json())
+      .then(data => console.log('Success:', data))
+      .catch((error) => console.error('Error:', error));
+  };
+
   initProfile = async () => {
     // Create a new url search params object to find the query string parameters
     const qs = new URLSearchParams(location.search);
@@ -321,6 +345,10 @@ export default class Store extends EventTarget {
     let avatarUrl = ''; // the avatar url to use
     let personalAvatarId = ''; // the personal avatar id to use
     let pronouns = ''; // the pronouns to use
+    let userId = ''; // the user id to use
+    let courseId = ''; // the course id to use
+    let sessionId = ''; // the session id to use
+    let startTime = ''; // the start time to use
 
     // if the query string has a displayName parameter, use that as the display name
     if (qs.has("displayName")) {
@@ -339,7 +367,20 @@ export default class Store extends EventTarget {
       }
     }
 
-    // console.log('displayName:', displayName);
+    localStorage.setItem("username", displayName);
+    if (qs.has("userId")) {
+      userId = qs.get("userId");
+      localStorage.setItem("userId", userId);
+    } else if (localStorage.getItem("userId")) {
+      userId = localStorage.getItem("userId");
+    }
+
+    if (qs.has("courseId")) {
+      courseId = qs.get("courseId");
+      localStorage.setItem("courseId", courseId);
+    } else if (localStorage.getItem("courseId")) {
+      courseId = localStorage.getItem("courseId");
+    }
 
     // if the query string has an avatarUrl parameter, use that as the avatar url
     if (qs.has("avatarUrl")) {
@@ -359,14 +400,41 @@ export default class Store extends EventTarget {
       }
     }
 
+    localStorage.setItem("avatarId", avatarUrl);
+
+    const { v4: uuidv4 } = require('uuid');
+    // Tạo một UUID mới
+    sessionId = uuidv4();
+    localStorage.setItem("sessionId", sessionId);
+
+    startTime = new Date().getTime();
+    localStorage.setItem("startTime", startTime);
+    const urlURL = new URL(window.location.href);
+    const pathSegments = urlURL.pathname.split('/');
+    const contentId = pathSegments[1] + '_' + pathSegments[2];
+    const contentName = pathSegments[1] + '_' + pathSegments[2];
+
+    const input = {
+      homepage: 'meta2.teacherville.co.kr',
+      userId: userId,
+      courseId: courseId,
+      sessionId: sessionId,
+      contentId: contentId,
+      contentName: contentName,
+    }
+
+    this.sendPostRequest('https://metatrack-xapi.tubeai.co.kr/xApi/eventdata/practice/initialized', input);
+
     // update the profile with the new values
-    this.update({ profile: 
-      { 
-        avatarId: avatarUrl, 
+    this.update({
+      profile:
+      {
+        avatarId: avatarUrl,
         displayName: displayName,
         personalAvatarId: personalAvatarId,
-        pronouns: pronouns 
-      } });
+        pronouns: pronouns
+      }
+    });
 
     // if (this._shouldResetAvatarOnInit) {
     //   await this.resetToRandomDefaultAvatar();
