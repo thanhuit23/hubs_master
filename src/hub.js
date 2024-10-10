@@ -202,6 +202,87 @@ import { loadWaypointPreviewModel, WaypointPreview } from "./prefabs/waypoint-pr
 import { preload } from "./utils/preload";
 
 window.APP = new App();
+
+function sendTerminatedRequest() {
+  let urlParams = {
+      homepage: "meta2.teacherville.co.kr",
+      userId: "",
+      courseId: "",
+      sessionId: "",
+      contentId: "",
+      contentName: "",
+      duration: 0
+  };
+  if (localStorage.getItem('userId')) {
+      if (localStorage.getItem('userId')) {
+          urlParams['userId'] = localStorage.getItem('userId') ?? '';
+      }
+  }
+
+  if (localStorage.getItem('courseId')) {
+      if (localStorage.getItem('courseId')) {
+          urlParams['courseId'] = localStorage.getItem('courseId') ?? '';
+      }
+  }
+
+  if (localStorage.getItem('sessionId')) {
+      if (localStorage.getItem('sessionId')) {
+          urlParams['sessionId'] = localStorage.getItem('sessionId') ?? '';
+      }
+  }
+  const urlURL = new URL(window.location.href);
+  const pathSegments = urlURL.pathname.split('/');
+  const contentId = pathSegments[1] + '_' + pathSegments[2];
+  if (contentId) {
+      urlParams['contentId'] = contentId;
+      urlParams['contentName'] = contentId;
+  }
+  if (localStorage.getItem('startTime')) {
+      const startTime = localStorage.getItem('startTime');
+      const endTime = new Date().getTime();
+      const duration = (endTime - parseFloat(startTime ?? '0')) / 1000;
+      urlParams['duration'] = Math.round(duration);
+  }
+  const serverUrl = 'https://metatrack-xapi.tubeai.co.kr/xApi/eventdata/practice/terminated';
+  fetch(serverUrl, {
+      method: 'POST',
+      headers: {
+          'Content-Type': 'application/json',
+          'Access-Control-Allow-Origin': '*'
+      },
+      body: JSON.stringify(
+          {
+              homepage: urlParams['homepage'],
+              userId: urlParams['userId'],
+              courseId: urlParams['courseId'],
+              sessionId: urlParams['sessionId'],
+              contentId: urlParams['contentId'],
+              contentName: urlParams['contentName'],                
+              duration: urlParams['duration']
+          })
+  })
+      .then(response => response.json())
+      .then(data => console.log('Success:', data))
+      .catch((error) => console.error('Error:', error));
+}
+
+window.addEventListener('popstate', (event) => {
+  console.log('Back or Forward button was clicked!');
+  sendTerminatedRequest();
+});
+window.addEventListener('beforeunload', (event) => {  
+  sendTerminatedRequest();
+});
+window.addEventListener('unload', (event) => {
+  console.log('Page is being unloaded (tab closed, browser closed, etc.)');
+});
+document.addEventListener('visibilitychange', () => {
+  if (document.hidden) {
+      console.log('Page is hidden (user switched tabs or minimized)');
+  } else {
+      console.log('Page is visible');
+  }
+});
 function addToScene(entityDef, visible) {
   return getScene().then(scene => {
     const eid = renderAsEntity(APP.world, entityDef);
@@ -275,6 +356,7 @@ import { loadLegacyRoomObjects } from "./utils/load-legacy-room-objects";
 import { loadSavedEntityStates } from "./utils/entity-state-utils";
 import { shouldUseNewLoader } from "./utils/bit-utils";
 import { getStore } from "./utils/store-instance";
+import { send } from "process";
 
 const PHOENIX_RELIABLE_NAF = "phx-reliable";
 NAF.options.firstSyncSource = PHOENIX_RELIABLE_NAF;
