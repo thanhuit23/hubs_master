@@ -35,6 +35,8 @@ export function TFCTextSystem(world: HubsWorld) {
         const textObjectPosition = new THREE.Vector3();
         textObject.getWorldPosition(textObjectPosition);
         //console.log("Text Position", textObjectPosition);
+        const textObjectRotation = new THREE.Quaternion();
+        textObject.getWorldQuaternion(textObjectRotation);
 
         // 객체 크기
         const textObjectScale = new THREE.Vector3();
@@ -74,6 +76,8 @@ export function TFCTextSystem(world: HubsWorld) {
         addObject3DComponent(world, textEid, textMesh);
 
         textMesh.position.set(textObjectPosition.x, textObjectPosition.y, textObjectPosition.z);
+        // textMesh.rotation.set(textObject.rotation.x, textObject.rotation.y, textObject.rotation.z);
+        textMesh.quaternion.copy(textObjectRotation);
         world.scene.add(textMesh);
     });
 
