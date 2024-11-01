@@ -110,7 +110,7 @@ function startStopAllAnimation(world: HubsWorld, entity: number, startOrStop: bo
     if (animations.length > 0) {
         for (let i = 0; i < animations.length; i++) {
             const clips = [animations[i]];
-            console.log('clips', clips);
+            // console.log('clips', clips);
             for (let j = 0; j < clips.length; j++) {
                 const clip = clips[j];
                 if (!clip) {
@@ -121,7 +121,7 @@ function startStopAllAnimation(world: HubsWorld, entity: number, startOrStop: bo
                             if (nextStepNumber > 11) {
                                 action.time = 6.6666666;
                                 action.paused = false;
-                                console.log("Paused action", action);
+                                // console.log("Paused action", action);
                             } else {
                                 action.enabled = true;
                                 // action.time = 6.6666666;
@@ -129,18 +129,18 @@ function startStopAllAnimation(world: HubsWorld, entity: number, startOrStop: bo
                                 action.clampWhenFinished = true;
                                 action.play();
                                 isPlaying = true;
-                                console.log("Starting action", action);
+                                // console.log("Starting action", action);
                             }
 
                         } else {
                             if (nextStepNumber === 11) {
                                 action.paused = true;
-                                console.log("Paused action", action);
+                                // console.log("Paused action", action);
 
                             } else {
                                 action.enabled = false;
                                 action.stop();
-                                console.log("Stopping action", action);
+                                // console.log("Stopping action", action);
                                 if (mixer !== null) {
                                     mixer.uncacheAction(action);
                                 }
@@ -190,7 +190,7 @@ export function TFCMyWebGLButtonSystem(world: HubsWorld) {
                 currentTime = 0;
                 startStopAllAnimation(world, myButtonEid, false);
                 isPlaying = false;
-                console.log("Animation is stopped");
+                // console.log("Animation is stopped");
                 if (nextStepNumber === 11) {
                     const nextButtonEid = addEntity(world);
                     const nextButton = listCNCButton[nextStepNumber];
@@ -218,7 +218,7 @@ export function TFCMyWebGLButtonSystem(world: HubsWorld) {
             }
         }
         if (nextStepNumber === 2) {
-            console.log("Enable screen");
+            // console.log("Enable screen");
             const screenObjectEid = addEntity(world);
             addObject3DComponent(world, screenObjectEid, screenObject);
             world.scene.add(screenObject);
@@ -226,12 +226,12 @@ export function TFCMyWebGLButtonSystem(world: HubsWorld) {
         const entered = TFCMyWebGLButtonEnterQuery(world);
         for (let i = 0; i < entered.length; i++) {
             const entity = entered[i];
-            console.log('TFCMyWebGLButton entered', entity);
+            // console.log('TFCMyWebGLButton entered', entity);
             // Get the entity's TFCMyWebGLButton component
             const action = APP.getString(TFCMyWebGLButton.action[entity]);
-            console.log('TFCMyWebGLButton action', action);
+            // console.log('TFCMyWebGLButton action', action);
             const content = APP.getString(TFCMyWebGLButton.content[entity])!;
-            console.log('TFCMyWebGLButton content', content);
+            // console.log('TFCMyWebGLButton content', content);
             const myButton = world.eid2obj.get(entity);
 
             const buttonChildrent = myButton?.parent?.parent?.children!;
@@ -244,13 +244,13 @@ export function TFCMyWebGLButtonSystem(world: HubsWorld) {
             if (buttonChildrent.length > 2) {
                 for (let i = 0; i < buttonChildrent.length; i++) {
                     const buttonChild = buttonChildrent[i];
-                    console.log(buttonChild.name);
+                    // console.log(buttonChild.name);
                     // check buttonChild name contains "image", "link", "text" text
                     if (buttonChild.name.toLowerCase().includes('image')) {
                         const buttonData = buttonChild.children[0].userData;
                         // Query the data inside the buttondata 
                         // buttonData -> gltfExtension -> MOZ_hubs_components -> image
-                        console.log(buttonData);
+                        // console.log(buttonData);
                         buttonImage = buttonData.gltfExtensions.MOZ_hubs_components.image.src;
                         // console.log('buttonImage', buttonImage);
                         TFCMyWebGLButton.buttonImage[entity] = APP.getSid(buttonImage);
@@ -259,7 +259,7 @@ export function TFCMyWebGLButtonSystem(world: HubsWorld) {
                         const buttonData = buttonChild.children[0].userData;
                         // Query the data inside the buttondata
                         // buttonData -> gltfExtension -> MOZ_hubs_components -> link
-                        console.log(buttonData);
+                        // console.log(buttonData);
                         buttonLink = buttonData.gltfExtensions.MOZ_hubs_components.link.href;
                         // console.log('buttonLink', buttonLink);
                         TFCMyWebGLButton.buttonLink[entity] = APP.getSid(buttonLink);
@@ -269,7 +269,7 @@ export function TFCMyWebGLButtonSystem(world: HubsWorld) {
                         const buttonData = buttonChild.children[0].userData;
                         // Query the data inside the buttondata
                         // buttonData -> gltfExtension -> MOZ_hubs_components -> text
-                        console.log(buttonData);
+                        // console.log(buttonData);
                         buttonText = buttonData.gltfExtensions.MOZ_hubs_components.text.value;
                         // console.log('buttonText', buttonText);
                         TFCMyWebGLButton.buttonText[entity] = APP.getSid(buttonText);
@@ -395,11 +395,11 @@ export function TFCMyWebGLButtonSystem(world: HubsWorld) {
     const exited = TFCMyWebGLButtonExitQuery(world);
     for (let i = 0; i < exited.length; i++) {
         const entity = exited[i];
-        console.log('TFCMyWebGLButton exited', entity)
+        // console.log('TFCMyWebGLButton exited', entity)
 
         for (let j = 0; j < objectsInScene.length; j++) {
             const object = objectsInScene[j];
-            console.log("Removing object from scene: " + object.name);
+            // console.log("Removing object from scene: " + object.name);
             world.scene.remove(object);
         }
         objectsInScene.length = 0;
@@ -437,25 +437,25 @@ export function TFCMyWebGLButtonSystem(world: HubsWorld) {
         let networkedEid = anyEntityWith(world, TFCNetworkedContentData)!;
         if (clicked(world, entity)) {
             const scene = AFRAME.scenes[0];
-            console.log("My Button clicked", entity);
+            // console.log("My Button clicked", entity);
             const action = APP.getString(TFCMyWebGLButton.action[entity]);
-            console.log('TFCMyWebGLButton action', action);
+            // console.log('TFCMyWebGLButton action', action);
             const content = APP.getString(TFCMyWebGLButton.content[entity])!;
-            console.log('TFCMyWebGLButton content', content);
+            // console.log('TFCMyWebGLButton content', content);
             const buttonImage = APP.getString(TFCMyWebGLButton.buttonImage[entity]);
-            console.log('TFCMyWebGLButton buttonImage', buttonImage);
+            // console.log('TFCMyWebGLButton buttonImage', buttonImage);
             const buttonLink = APP.getString(TFCMyWebGLButton.buttonLink[entity])!;
-            console.log('TFCMyWebGLButton buttonLink', buttonLink);
+            // console.log('TFCMyWebGLButton buttonLink', buttonLink);
             const buttonText = APP.getString(TFCMyWebGLButton.buttonText[entity])!;
-            console.log('TFCMyWebGLButton buttonText', buttonText);
+            // console.log('TFCMyWebGLButton buttonText', buttonText);
             let myButton = world.eid2obj.get(entity)!;
 
             if (action === '1') {
-                console.log("current step", TFCNetworkedContentData.steps[networkedEid]);
+                // console.log("current step", TFCNetworkedContentData.steps[networkedEid]);
                 const currentStep = buttonText;
                 // convert currentStep to integer
                 const currentStepNumber = parseInt(currentStep);
-                console.log("current step number", currentStepNumber);
+                // console.log("current step number", currentStepNumber);
                 world.scene.remove(listCNCButton[currentStepNumber]);
                 myButton.visible = false;
                 world.scene.remove(myButton);
@@ -465,12 +465,12 @@ export function TFCMyWebGLButtonSystem(world: HubsWorld) {
                 }
                 nextStepNumber = currentStepNumber + 1;
                 if (nextStepNumber === 11) {
-                    console.log("All steps are completed");
+                    // console.log("All steps are completed");
                     startStopAllAnimation(world, entity, true);
 
                 } else
                     if (nextStepNumber === 20) {
-                        console.log("All steps are completed");
+                        // console.log("All steps are completed");
                         startStopAllAnimation(world, entity, true);
                     } else {
                         const nextButtonEid = addEntity(world);
@@ -514,7 +514,7 @@ export function TFCMyWebGLButtonSystem(world: HubsWorld) {
                 TFCNetworkedContentData.steps[networkedEid] !== -1) {
                 if (TFCNetworkedContentData.steps[networkedEid] !== currentSteps) {
                     currentSteps = TFCNetworkedContentData.steps[networkedEid];
-                    console.log("Syncing button", currentSteps);
+                    // console.log("Syncing button", currentSteps);
                     // convert currentStep to integer
                     const currentStepNumber = currentSteps;
                     for (let i = 0; i < listCNCButton.length; i++) {
@@ -529,11 +529,11 @@ export function TFCMyWebGLButtonSystem(world: HubsWorld) {
                     // listCNCButton.splice(currentStepNumber, 1);
                     nextStepNumber = currentStepNumber;
                     if (nextStepNumber === 11) {
-                        console.log("All steps are completed");
+                        // console.log("All steps are completed");
                         startStopAllAnimation(world, entity, true);
                     } else
                         if (nextStepNumber === 20) {
-                            console.log("All steps are completed");
+                            // console.log("All steps are completed");
                             startStopAllAnimation(world, entity, true);
                         } else {
                             const nextButtonEid = addEntity(world);
