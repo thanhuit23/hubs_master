@@ -329,7 +329,8 @@ export class WaypointSystem {
       const waypointName = window.location.hash.replace("#", "");
       const waypoint = this.ready.find(c => c.el.object3D.name === waypointName);
       if (waypoint) {
-        this.moveToWaypoint(waypoint, this.previousWaypointHash === null);
+        // Thanh - if the waypoint is occupied, we need to wait for it to be unoccupied before moving to it
+        this.moveToWaypoint(waypoint, false);
         window.history.replaceState(null, null, window.location.href.split("#")[0]); // Reset so you can re-activate the same waypoint
       }
       this.previousWaypointHash = window.location.hash;

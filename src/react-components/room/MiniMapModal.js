@@ -9,6 +9,9 @@ import { handleExitTo2DInterstitial } from "../../utils/vr-interstitial";
 import { changeHub } from "../../change-hub";
 
 async function changeRoom(linkUrl) {
+    // Get current url
+    const cur_url = window.location.href;
+    linkUrl = cur_url + linkUrl;
     if (linkUrl == null || linkUrl == undefined) {
         return;
     }
@@ -85,20 +88,20 @@ export function MiniMapModal({ onClose, json }) {
             }}>
                 <ToolbarButton
                     icon={<ShowIcon />}
-                    preset={"primary"}
-                    onClick={() => changeRoom('https://meta2.teacherville.co.kr/XF7b8yM/meta-course-01#WayPoint02')} // Optional: Add functionality
+                    preset={"accept"}
+                    onClick={() => changeRoom('#WayPoint02')} // Optional: Add functionality
                     style={{ flex: 1, marginRight: '5px' }}
                 />
                 <ToolbarButton
                     icon={<ShowIcon />}
-                    preset={"primary"}
-                    onClick={() => changeRoom('https://meta2.teacherville.co.kr/XF7b8yM/meta-course-01#WayPoint03')} // Optional: Add functionality
+                    preset={"accept"}
+                    onClick={() => changeRoom('#WayPoint03')} // Optional: Add functionality
                     style={{ flex: 1 }}
                 />
                 <ToolbarButton
                     icon={<PinIcon />}
-                    preset={"primary"}
-                    onClick={() => changeRoom('https://meta2.teacherville.co.kr/XF7b8yM/meta-course-01#WayPoint01')} // Optional: Add functionality
+                    preset={"accept"}
+                    onClick={() => changeRoom('#WayPoint01')} // Optional: Add functionality
                     style={{ flex: 1, marginLeft: '5px' }}
                 />
             </div>
