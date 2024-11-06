@@ -85,7 +85,7 @@ export const proxiedUrlFor = url => {
     // Ignore
   }
 
-  return `https://${configs.CORS_PROXY_SERVER}/${url}`;
+  return `${url}`;
 };
 
 export function getAbsoluteUrl(baseUrl, relativeUrl) {

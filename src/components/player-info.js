@@ -163,7 +163,7 @@ AFRAME.registerComponent("player-info", {
     const modelEl = this.el.querySelector(".model");
     if (this.data.avatarSrc && modelEl) {
       modelEl.components["gltf-model-plus"].jsonPreprocessor = ensureAvatarNodes;
-      modelEl.setAttribute("gltf-model-plus", "src", this.data.avatarSrc);
+      modelEl.setAttribute("gltf-model-plus", "src", this.data.avatarSrc.replace("https://meta2.teacherville.co.kr/https", ""));
     }
 
     if (!e || e.target === modelEl) {

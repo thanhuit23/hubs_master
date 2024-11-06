@@ -64,9 +64,9 @@ export const SCHEMA = {
       type: "object",
       additionalProperties: false,
       properties: {
-        displayName: { type: "string", pattern: "^[A-Za-z0-9_~\\s\\-]{3,32}$" },
+        displayName: { type: "string", pattern: "^[A-Za-z0-9_~\\s\\-\\uAC00-\\uD7A3]{3,32}$" },
         avatarId: { type: "string" },
-        pronouns: { type: "string", pattern: "^([a-zA-Z]{1,32}\\/){0,4}[a-zA-Z]{1,32}$" },
+        pronouns: { type: "string", pattern: "^([a-zA-Z\\uAC00-\\uD7A3]{1,32}\\/){0,4}[a-zA-Z\\uAC00-\\uD7A3]{1,32}$" },
         // personalAvatarId is obsolete, but we need it here for backwards compatibility.
         personalAvatarId: { type: "string" }
       }
@@ -330,7 +330,7 @@ export default class Store extends EventTarget {
           sessionId: input.sessionId,
           contentId: input.contentId,
           contentName: input.contentName,
-          duration:  input.duration,
+          duration: input.duration,
         })
     })
       .then(response => response.json())
@@ -350,46 +350,49 @@ export default class Store extends EventTarget {
     let sessionId = ''; // the session id to use
     let startTime = ''; // the start time to use
 
-    // if the query string has a displayName parameter, use that as the display name
-    if (qs.has("displayName")) {
-      displayName = qs.get("displayName");
-    } else {
-      // if the current user has not changed their name or pronouns, generate a random name
-      if (!this.state.activity.hasChangedNameOrPronouns) {
-        displayName = generateRandomName();
+    if (qs.has("hubsParam")) {
+      const urlObj = new URL(window.location.href);
+
+      const hubsParam = decodeURIComponent(urlObj.searchParams.get("hubsParam"));
+      const hubsParamValues = hubsParam.split("|");
+      console.log("hubsParam Values:", hubsParamValues);
+
+      if (hubsParamValues.length > 0) {
+        const courseId = hubsParamValues[0];
+        localStorage.setItem("courseId", courseId);
       } else {
-        // otherwise, use the display name from the profile
-        displayName = this.state.profile.displayName;
-        // use the personal avatar id from the profile
-        personalAvatarId = this.state.profile.personalAvatarId;
-        // use the pronouns from the profile
-        pronouns = this.state.profile.pronouns;
+        courseId = localStorage.getItem("courseId");
       }
-    }
 
-    localStorage.setItem("username", displayName);
-    if (qs.has("userId")) {
-      userId = qs.get("userId");
-      localStorage.setItem("userId", userId);
-    } else if (localStorage.getItem("userId")) {
-      userId = localStorage.getItem("userId");
-    }
+      if (hubsParamValues.length > 1) {
+        const userId = hubsParamValues[1];
+        localStorage.setItem("userId", userId);
+      } else if (localStorage.getItem("userId")) {
+        userId = localStorage.getItem("userId");
+      }
 
-    if (qs.has("courseId")) {
-      courseId = qs.get("courseId");
-      localStorage.setItem("courseId", courseId);
-    } else if (localStorage.getItem("courseId")) {
-      courseId = localStorage.getItem("courseId");
-    }
-
-    // if the query string has an avatarUrl parameter, use that as the avatar url
-    if (qs.has("avatarUrl")) {
-      avatarUrl = qs.get("avatarUrl");
-    } else {
-      // if the query string has an avatarId parameter, use that as the avatar url
-      if (qs.has("avatarId")) {
-        avatarUrl = qs.get("avatarId");
+      if (hubsParamValues.length > 2) {
+        displayName = hubsParamValues[2];
       } else {
+        // if the current user has not changed their name or pronouns, generate a random name
+        if (!this.state.activity.hasChangedNameOrPronouns) {
+          displayName = generateRandomName();
+        } else {
+          // otherwise, use the display name from the profile
+          displayName = this.state.profile.displayName;
+          // use the personal avatar id from the profile
+          personalAvatarId = this.state.profile.personalAvatarId;
+          // use the pronouns from the profile
+          pronouns = this.state.profile.pronouns;
+        }
+      }
+      localStorage.setItem("username", displayName);
+
+      if (hubsParamValues.length > 3) {
+        avatarUrl = hubsParamValues[3];
+      } else {
+        // if the query string has an avatarId parameter, use that as the avatar url
+
         // if should reset avatar on init, fetch a random default avatar id
         if (this._shouldResetAvatarOnInit) {
           avatarUrl = await fetchRandomDefaultAvatarId();
@@ -398,9 +401,69 @@ export default class Store extends EventTarget {
           avatarUrl = this.state.profile.avatarId;
         }
       }
-    }
+      localStorage.setItem("avatarUrl", avatarUrl);
 
-    localStorage.setItem("avatarId", avatarUrl);
+    } else {
+      // if the query string has a displayName parameter, use that as the display name
+      if (qs.has("displayName")) {
+        displayName = qs.get("displayName");
+      } else {
+        // if the current user has not changed their name or pronouns, generate a random name
+        if (!this.state.activity.hasChangedNameOrPronouns) {
+          displayName = generateRandomName();
+        } else {
+          // otherwise, use the display name from the profile
+          displayName = this.state.profile.displayName;
+          // use the personal avatar id from the profile
+          personalAvatarId = this.state.profile.personalAvatarId;
+          // use the pronouns from the profile
+          pronouns = this.state.profile.pronouns;
+        }
+      }
+
+      localStorage.setItem("username", displayName);
+
+      if (qs.has("userId")) {
+        userId = qs.get("userId");
+        localStorage.setItem("userId", userId);
+      } else if (localStorage.getItem("userId")) {
+        userId = localStorage.getItem("userId");
+      }
+
+      if (qs.has("courseId")) {
+        courseId = qs.get("courseId");
+        localStorage.setItem("courseId", courseId);
+      } else if (localStorage.getItem("courseId")) {
+        courseId = localStorage.getItem("courseId");
+      }
+      // // if the query string has an avatarUrl parameter, use that as the avatar url
+      if (qs.has("avatarUrl")) {
+        avatarUrl = qs.get("avatarUrl");
+      } else {
+        // if the query string has an avatarId parameter, use that as the avatar url
+        if (qs.has("avatarId")) {
+          avatarUrl = qs.get("avatarId");
+        } else {
+          // if should reset avatar on init, fetch a random default avatar id
+          if (this._shouldResetAvatarOnInit) {
+            avatarUrl = await fetchRandomDefaultAvatarId();
+          } else {
+            // otherwise, use the avatar id from the profile
+            avatarUrl = this.state.profile.avatarId;
+          }
+        }
+      }
+    }
+    // if (qs.has("avatarUrl")) {
+    //   avatarUrl = `${qs.get("avatarUrl")}`
+    // } else {
+    //     avatarUrl = await fetchRandomDefaultAvatarId();
+    // }
+
+    console.log(`displayName=${displayName}`);
+    console.log(`avatarUrl=${avatarUrl}`);
+
+    // localStorage.setItem("avatarUrl", avatarUrl);
 
     const { v4: uuidv4 } = require('uuid');
     // Tạo một UUID mới
