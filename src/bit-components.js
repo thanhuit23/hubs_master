@@ -738,6 +738,13 @@ export const TFCIframe = defineComponent({
   href: Types.ui32,
 });
 TFCIframe.href[$isStringType] = true;
+
+export const pdfviewer = defineComponent({
+  pdfViewerServer: Types.ui32,
+  pdfFileUrl: Types.ui32,
+});
+pdfviewer.pdfViewerServer[$isStringType] = true;
+pdfviewer.pdfFileUrl[$isStringType] = true;
 //
 
 // TFC Learning Frame

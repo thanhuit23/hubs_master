@@ -42,7 +42,8 @@ import {
   HoverableVisuals,
   MirrorMenu,
   TFCKeyboardButton,
-  TFCIframe
+  TFCIframe,
+  pdfviewer
 } from "../bit-components";
 import { inflateMediaLoader } from "../inflators/media-loader";
 import { inflateMediaFrame } from "../inflators/media-frame";
@@ -129,6 +130,8 @@ import { TFCNetworkedContentDataParams, inflateTFCNetworkedContentData } from ".
 import { TFCMyWebGLButtonParams, inflateTFCMyWebGLButton } from "../inflators/tfc-my-webgl-button";
 import { TFCKeyboardButtonParams, inflateTFCKeyboardButton } from "../inflators/tfc-keyboard-button";
 import { TFCIframeParams, inflateTFCIframe } from "../inflators/iframe";
+import { pdfviewerParams, inflatepdfviewer } from "../inflators/pdfviewer";
+
 //
 import { TFCGatewayLinkParams, inflateTFCGatewayLink } from "../inflators/tfc-gateway-link";
 import { TFCGatewayParams, inflateTFCGateway } from "../inflators/tfc-gateway";
@@ -446,6 +449,7 @@ export interface JSXComponentData extends ComponentData {
   tfcMyWebGLButton?: TFCMyWebGLButtonParams;
   tfcKeyboardButton?: TFCKeyboardButtonParams;
   tfcIframe?: TFCIframeParams;
+  pdfviewer?: pdfviewerParams;
   //
 
   tfcGatewayLink?: TFCGatewayLinkParams;
@@ -515,6 +519,7 @@ export interface GLTFComponentData extends ComponentData {
   tfcMyWebGLButton?: TFCMyWebGLButtonParams;
   tfcKeyboardButton?: TFCKeyboardButtonParams;
   tfcIframe?: TFCIframeParams;
+  pdfviewer?: pdfviewerParams;
   ////
 
   tfcGatewayLink?: TFCGatewayLinkParams;
@@ -637,6 +642,7 @@ export const jsxInflators: Required<{ [K in keyof ComponentDataT]: InflatorFn }>
   tfcMyWebGLButton: inflateTFCMyWebGLButton,
   tfcKeyboardButton: inflateTFCKeyboardButton,
   tfcIframe: inflateTFCIframe,
+  pdfviewer: inflatepdfviewer,
   //
 
   tfcGatewayLink: inflateTFCGatewayLink,
@@ -707,6 +713,7 @@ export const gltfInflators: Required<{ [K in keyof ComponentDataT]: InflatorFn }
   tfcMyWebGLButton: inflateTFCMyWebGLButton,
   tfcKeyboardButton: inflateTFCKeyboardButton,
   tfcIframe: inflateTFCIframe,
+  pdfviewer: inflatepdfviewer,
   //
 
   tfcGatewayLink: inflateTFCGatewayLink,

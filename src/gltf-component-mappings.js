@@ -30,6 +30,8 @@ import { inflateTFCMyThreeJS } from "./inflators/tfc-my-threejs";
 import { inflateTFCMyWebGLButton } from "./inflators/tfc-my-webgl-button";
 import { inflateTFCKeyboardButton } from "./inflators/tfc-keyboard-button";
 import { inflateTFCIframe } from "./inflators/iframe";
+import { inflatepdfviewer } from "./inflators/pdfviewer";
+
 //
 
 import { inflateTFCGatewayLink } from "./inflators/tfc-gateway-link";
@@ -649,6 +651,8 @@ AFRAME.GLTFModelPlus.registerComponent("tfc-my-threejs", "tfc-my-threejs", infla
 AFRAME.GLTFModelPlus.registerComponent("tfc-my-button", "tfc-my-button", inflatorWrapper(inflateTFCMyWebGLButton));
 AFRAME.GLTFModelPlus.registerComponent("tfc-keyboard-button", "tfc-keyboard-button", inflatorWrapper(inflateTFCKeyboardButton));
 AFRAME.GLTFModelPlus.registerComponent("iframe", "iframe", inflatorWrapper(inflateTFCIframe));
+AFRAME.GLTFModelPlus.registerComponent("pdfviewer", "pdfviewer", inflatorWrapper(inflatepdfviewer));
+
 //
 
 AFRAME.GLTFModelPlus.registerComponent("tfc-gateway-link", "tfc-gateway-link", inflatorWrapper(inflateTFCGatewayLink));

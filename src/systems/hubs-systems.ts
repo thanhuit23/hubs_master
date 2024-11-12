@@ -117,6 +117,8 @@ import { TFCKeyboardButton } from "../bit-components";
 import { TFCKeyboardButtonSystem } from "../bit-systems/tfc-keyboard-button";
 import { TFCIframeSystem } from "../bit-systems/iframe";
 import { InteractableObjectSystem } from "./interactable-object-system";
+import { pdfviewerSystem } from "../bit-systems/pdfviewer-system";
+
 
 //
 import { TFCGatewayLinkSystem } from "../bit-systems/tfc-gateway-link";
@@ -356,6 +358,8 @@ export function mainTick(xrFrame: XRFrame, renderer: WebGLRenderer, scene: Scene
   TFCMyWebGLButtonSystem(world);
   TFCKeyboardButtonSystem(world);
   TFCIframeSystem(world);
+  pdfviewerSystem(world);
+
   //
 
   TFCGatewayLinkSystem(world);
