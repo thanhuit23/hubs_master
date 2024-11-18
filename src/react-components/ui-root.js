@@ -70,6 +70,10 @@ import { ReactComponent as VRIcon } from "./icons/VR.svg";
 import { ReactComponent as LeaveIcon } from "./icons/Leave.svg";
 import { ReactComponent as EnterIcon } from "./icons/Enter.svg";
 import { ReactComponent as InviteIcon } from "./icons/Invite.svg";
+// Thanh add
+import { ReactComponent as CodeBranch } from "./icons/CodeBranch.svg";
+import { ReactComponent as Map } from "./icons/map-2.svg";
+//
 import hubsLogo from "../assets/images/hubs-logo.png";
 import { PeopleSidebarContainer, userFromPresence } from "./room/PeopleSidebarContainer";
 import { ObjectListProvider } from "./room/hooks/useObjectList";
@@ -229,7 +233,10 @@ class UIRoot extends Component {
     sidebarId: null,
     presenceCount: 0,
     chatPrefix: "",
-    chatAutofocus: false
+    chatAutofocus: false,
+    // Thanh add
+    mapEnable: false
+    //
   };
 
   constructor(props) {
@@ -466,6 +473,22 @@ class UIRoot extends Component {
 
     scene.addEventListener("action_media_tweet", this.onTweet);
   }
+
+  // Thanh add
+  closeWorldMap() {
+    this.closeDialog();
+    this.setState({ enableMap: false });
+  }
+
+  openWorldMap() {
+    if (this.state.enableMap) {
+      this.closeDialog();
+    } else {
+      this.showNonHistoriedDialog(WebGLContentModalContainer, { scene: this.props.scene, url: "https://visualinfinity.asia/webcnc/m1/",  onClose: this.closeWorldMap.bind(this) });
+    }
+    this.setState({ enableMap: !this.state.enableMap });
+  }
+  //
 
   UNSAFE_componentWillMount() {
     this.props.store.addEventListener("statechanged", this.storeUpdated);
@@ -1712,6 +1735,15 @@ class UIRoot extends Component {
                       <ChatToolbarButton
                         onClick={() => this.toggleSidebar("chat", { chatPrefix: "", chatAutofocus: false })}
                         selected={this.state.sidebarId === "chat"}
+                      />
+                    )}
+                    {entered && (
+                      <ToolbarButton
+                        icon={<Map />}
+                        preset="accent1"
+                        label={<FormattedMessage id="toolbar.world-map-button" defaultMessage="Map" />}
+                        onClick={() => this.openWorldMap()}
+                        selected={this.state.enableMap}
                       />
                     )}
                     {entered && isMobileVR && (
