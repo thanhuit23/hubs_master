@@ -484,7 +484,7 @@ class UIRoot extends Component {
     if (this.state.enableMap) {
       this.closeDialog();
     } else {
-      this.showNonHistoriedDialog(WebGLContentModalContainer, { scene: this.props.scene, url: "https://visualinfinity.asia/webcnc/m1/",  onClose: this.closeWorldMap.bind(this) });
+      this.showNonHistoriedDialog(WebGLContentModalContainer, { scene: this.props.scene, url: "https://metacon.teacherville.co.kr/map/",  onClose: this.closeWorldMap.bind(this) });
     }
     this.setState({ enableMap: !this.state.enableMap });
   }
