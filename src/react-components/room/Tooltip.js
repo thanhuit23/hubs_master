@@ -8,6 +8,8 @@ import { Button } from "../input/Button";
 import { IconButton } from "../input/IconButton";
 import { ReactComponent as InviteIcon } from "../icons/Invite.svg";
 import { ReactComponent as MoreIcon } from "../icons/More.svg";
+import tekvilleHowToTurning from "../../assets/images/tips2.png";
+import tekvilleHowToLocomotion from "../../assets/images/tips1.png";
 
 // These keys are hardcoded in the input system to be based on the physical location on the keyboard rather than character
 let moveKeyFront = "W";
@@ -52,11 +54,13 @@ const onboardingMessages = defineMessages({
   },
   "tips.desktop.locomotion": {
     id: "tips.desktop.locomotion2",
-    defaultMessage: "<p>Move around with</p> {wasd} or {arrows}"
+    // defaultMessage: "<p>Move around with</p> {wasd} or {arrows}"
+    defaultMessage: "<p>{image}</p>"
   },
   "tips.desktop.turning": {
     id: "tips.desktop.turning2",
-    defaultMessage: "Use {left} or {right} or click and drag to look around"
+    // defaultMessage: "Use {left} or {right} or click and drag to look around"
+    defaultMessage: "<p>{image}</p>"
   },
   "tips.desktop.invite": {
     id: "tips.desktop.invite2",
@@ -154,7 +158,13 @@ MoveKeys.propTypes = {
 
 function Step({ step, params }) {
   const intl = useIntl();
-  return <>{intl.formatMessage(onboardingMessages[step], params)}</>;
+  // return <>{intl.formatMessage(onboardingMessages[step], params)}</>;
+  if (step === "tips.desktop.locomotion" || step === "tips.desktop.turning") {
+    return <>{params.image}</>
+  } else {
+    const intl = useIntl();
+    return <>{intl.formatMessage(onboardingMessages[step], params)}</>;
+  }
 }
 
 Step.propTypes = {
@@ -240,9 +250,14 @@ function onboardingSteps({ intl, step }) {
         control: {
           type: Step,
           params: {
-            p: chunks => <p style={{ width: "100%" }}>{chunks}</p>,
-            wasd: <MoveKeys up={moveKeyFront} left={moveKeyLeft} down={moveKeyBack} right={moveKeyRight} />,
-            arrows: <MoveKeys up={"↑"} left={"←"} down={"↓"} right={"→"} />
+            // p: chunks => <p style={{ width: "100%" }}>{chunks}</p>,
+            // wasd: <MoveKeys up={moveKeyFront} left={moveKeyLeft} down={moveKeyBack} right={moveKeyRight} />,
+            // arrows: <MoveKeys up={"↑"} left={"←"} down={"↓"} right={"→"} />
+            image: <img
+              src={tekvilleHowToLocomotion}
+              className={styles.tekvilleHowToControl}
+              alt={"how to control"}
+            />
           }
         },
         navigationBar: {
@@ -257,8 +272,13 @@ function onboardingSteps({ intl, step }) {
         control: {
           type: Step,
           params: {
-            left: <Key>{turnLeftKey}</Key>,
-            right: <Key>{turnRightKey}</Key>
+            // left: <Key>{turnLeftKey}</Key>,
+            // right: <Key>{turnRightKey}</Key>
+            image: <img
+              src={tekvilleHowToTurning}
+              className={styles.tekvilleHowToControl}
+              alt={"how to turning"}
+            />
           }
         },
         navigationBar: {
