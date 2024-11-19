@@ -754,9 +754,29 @@ animationControl.animationName[$isStringType] = true;
 
 export const animationControlUI = defineComponent({
   animationName: Types.ui32,
+  animationType: Types.ui32,
   parentNode: Types.ui32
 });
 animationControlUI.animationName[$isStringType] = true;
+animationControlUI.animationType[$isStringType] = true;
+
+export const animationControlPlayUI = defineComponent({
+  animationName: Types.ui32,
+  parentNode: Types.ui32
+});
+animationControlPlayUI.animationName[$isStringType] = true;
+
+export const animationControlStopUI = defineComponent({
+  animationName: Types.ui32,
+  parentNode: Types.ui32
+});
+animationControlStopUI.animationName[$isStringType] = true;
+
+export const animationControlLoopUI = defineComponent({
+  animationName: Types.ui32,
+  parentNode: Types.ui32
+});
+animationControlLoopUI.animationName[$isStringType] = true;
 //
 
 // TFC Learning Frame
