@@ -23,6 +23,25 @@ export function WebGLContentModal({ onClose, url }) {
         }
     });
 
+    // Get current url 
+    const currentUrl = window.location.href;
+    // Get the room id from the url
+    const roomParams = currentUrl.split("/");
+    if (roomParams.length < 4) {
+        console.error("Invalid room URL");
+        return;
+    }
+    const roomId = roomParams[3];
+    let roomName = "";
+    if (roomParams.length < 5) {
+        console.error("No room name found in the URL");
+    } else {
+        roomName = roomParams[4];
+    }
+    
+    const roomUrl = url + '?roomId=' + roomId + '&roomName=' + roomName;
+    console.log("Room URL: " + roomUrl);
+
     return (
         <div style={{ position: 'relative', width: '80%', height: '80%' }}>
             <ToolbarButton
@@ -36,7 +55,7 @@ export function WebGLContentModal({ onClose, url }) {
                 title="반응과 반사의 구조"
                 width="100%"
                 height="100%"
-                src={url} scrolling="no" style={{ borderWidth: 5 }} frameBorder="10px" allow="xr-spatial-tracking">
+                src={roomUrl} scrolling="no" style={{ borderWidth: 5 }} frameBorder="10px" allow="xr-spatial-tracking">
             </iframe>
 
         </div>

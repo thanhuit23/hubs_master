@@ -110,6 +110,8 @@ import SeePlansCTA from "./room/components/SeePlansCTA/SeePlansCTA";
 // Thanh add
 import { WebGLContentModalContainer } from "./room/WebGLContentModalContainer";
 import { AIChatModalContainer } from "./room/AIChatModalContainer";
+import { isLocalHubsUrl, isHubsRoomUrl } from "../utils/media-url-utils";
+import { changeHub } from "../change-hub";
 //
 const avatarEditorDebug = qsTruthy("avatarEditorDebug");
 
@@ -335,11 +337,52 @@ class UIRoot extends Component {
     }
   };
 
+  changeRoom = async (linkUrl) => {
+    this.closeDialog();
+    this.setState({ enableMap: false });
+    if (linkUrl == null || linkUrl == undefined) {
+      return;
+    }
+
+    const currnetHubId = await isHubsRoomUrl(window.location.href);
+    //console.log("currnet HubId :", currnetHubId);
+
+    const exitImmersive = async () => await handleExitTo2DInterstitial(false, () => { }, true);
+
+    let gotoHubId;
+    // URL이 허브 룸인지 확인
+    if ((gotoHubId = await isHubsRoomUrl(linkUrl))) {
+      //console.log("go to HubId", gotoHubId);
+      const url = new URL(linkUrl);
+      if (currnetHubId === gotoHubId && url.hash) {
+        // 같은 방에서 Way Point으로 이동할 경우
+        window.history.replaceState(null, "", window.location.href.split("#")[0] + url.hash);
+      } else if (await isLocalHubsUrl(linkUrl)) {
+        // 같은 도메인에 있는 허브 경로일 경우
+        let waypoint = "";
+        if (url.hash) {
+          waypoint = url.hash.substring(1);
+        }
+        // 페이지 로드 또는 입장 진행 없이 새 방으로
+        changeHub(gotoHubId, true, waypoint);
+      } else {
+        await exitImmersive();
+        location.href = linkUrl;
+      }
+    }
+  };
+
   componentDidMount() {
     window.addEventListener("concurrentload", this.onConcurrentLoad);
     window.addEventListener("idle_detected", this.onIdleDetected);
     window.addEventListener("activity_detected", this.onActivityDetected);
     window.addEventListener("focus_chat", this.onFocusChat);
+    window.addEventListener('message', event => {
+      if (event.data.type === 'navigate') {
+        console.log("Navigate to: " + event.data.url);
+        this.changeRoom(event.data.url);
+      }
+    });
     document.querySelector(".a-canvas").addEventListener("mouseup", () => {
       if (this.state.showShareDialog) {
         this.setState({ showShareDialog: false });
@@ -393,6 +436,10 @@ class UIRoot extends Component {
 
     this.props.scene.addEventListener("action_toggle_ai_chat", (action, content) =>
       this.showNonHistoriedDialog(AIChatModalContainer, { url: action.detail["href"] })
+    );
+
+    this.props.scene.addEventListener("message", (action, content) =>
+      console.log("Navigate to: " + action.detail["url"])
     );
 
     this.props.scene.addEventListener("action_toggle_third_camera_mode", () => {
@@ -478,13 +525,15 @@ class UIRoot extends Component {
   closeWorldMap() {
     this.closeDialog();
     this.setState({ enableMap: false });
+    const frame = document.getElementById('inlineFrameExample');
+    frame.contentWindow.postMessage("hello", 'https://metacon.teacherville.co.kr/');
   }
 
   openWorldMap() {
     if (this.state.enableMap) {
       this.closeDialog();
     } else {
-      this.showNonHistoriedDialog(WebGLContentModalContainer, { scene: this.props.scene, url: "https://metacon.teacherville.co.kr/map/",  onClose: this.closeWorldMap.bind(this) });
+      this.showNonHistoriedDialog(WebGLContentModalContainer, { scene: this.props.scene, url: "https://metacon.teacherville.co.kr/map/", onClose: this.closeWorldMap.bind(this) });
     }
     this.setState({ enableMap: !this.state.enableMap });
   }
