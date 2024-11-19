@@ -131,6 +131,7 @@ import { TFCMyWebGLButtonParams, inflateTFCMyWebGLButton } from "../inflators/tf
 import { TFCKeyboardButtonParams, inflateTFCKeyboardButton } from "../inflators/tfc-keyboard-button";
 import { TFCIframeParams, inflateTFCIframe } from "../inflators/iframe";
 import { pdfviewerParams, inflatepdfviewer } from "../inflators/pdfviewer";
+import { inflateanimationcontrol, animationcontrolParams } from "../inflators/animationcontrol";
 
 //
 import { TFCGatewayLinkParams, inflateTFCGatewayLink } from "../inflators/tfc-gateway-link";
@@ -450,6 +451,7 @@ export interface JSXComponentData extends ComponentData {
   tfcKeyboardButton?: TFCKeyboardButtonParams;
   tfcIframe?: TFCIframeParams;
   pdfviewer?: pdfviewerParams;
+  animationcontrol?: animationcontrolParams;
   //
 
   tfcGatewayLink?: TFCGatewayLinkParams;
@@ -520,6 +522,8 @@ export interface GLTFComponentData extends ComponentData {
   tfcKeyboardButton?: TFCKeyboardButtonParams;
   tfcIframe?: TFCIframeParams;
   pdfviewer?: pdfviewerParams;
+  animationcontrol?: animationcontrolParams;
+
   ////
 
   tfcGatewayLink?: TFCGatewayLinkParams;
@@ -643,6 +647,8 @@ export const jsxInflators: Required<{ [K in keyof ComponentDataT]: InflatorFn }>
   tfcKeyboardButton: inflateTFCKeyboardButton,
   tfcIframe: inflateTFCIframe,
   pdfviewer: inflatepdfviewer,
+  animationcontrol: inflateanimationcontrol,
+
   //
 
   tfcGatewayLink: inflateTFCGatewayLink,
@@ -714,6 +720,7 @@ export const gltfInflators: Required<{ [K in keyof ComponentDataT]: InflatorFn }
   tfcKeyboardButton: inflateTFCKeyboardButton,
   tfcIframe: inflateTFCIframe,
   pdfviewer: inflatepdfviewer,
+  animationcontrol: inflateanimationcontrol,
   //
 
   tfcGatewayLink: inflateTFCGatewayLink,
