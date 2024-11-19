@@ -57,20 +57,20 @@ function playAnimation(world: HubsWorld, parentEid: number, animationName: Strin
             if (animationType === "Play") {
                 action.reset();
                 action.setLoop(THREE.LoopOnce, 1);
-                action.clampWhenFinished = true;
+                // action.clampWhenFinished = true;
                 action.play();
-                return;
+                // return;
             }
             if (animationType === "Stop") {
                 action.stop();
-                return;
+                // return;
             }
             if (animationType === "Play Loop") {
                 action.reset();
                 action.setLoop(THREE.LoopRepeat, Infinity);
-                action.clampWhenFinished = true;
+                // action.clampWhenFinished = true;
                 action.play();
-                return;
+                // return;
             }
         }
     }
