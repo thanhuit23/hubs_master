@@ -4,6 +4,7 @@ import classNames from "classnames";
 import copy from "copy-to-clipboard";
 import { FormattedMessage } from "react-intl";
 import screenfull from "screenfull";
+import { ToolTip } from "@mozilla/lilypad-ui";
 
 import configs from "../utils/configs";
 import { isLockedDownDemoRoom } from "../utils/hub-utils";
@@ -377,6 +378,7 @@ class UIRoot extends Component {
     window.addEventListener("idle_detected", this.onIdleDetected);
     window.addEventListener("activity_detected", this.onActivityDetected);
     window.addEventListener("focus_chat", this.onFocusChat);
+    window.addEventListener("map", this.openWorldMap.bind(this));
     window.addEventListener('message', event => {
       if (event.data.type === 'navigate') {
         console.log("Navigate to: " + event.data.url);
@@ -555,6 +557,7 @@ class UIRoot extends Component {
     window.removeEventListener("idle_detected", this.onIdleDetected);
     window.removeEventListener("activity_detected", this.onActivityDetected);
     window.removeEventListener("focus_chat", this.onFocusChat);
+    window.removeEventListener("map", this.openWorldMap.bind(this));
   }
 
   storeUpdated = () => {
@@ -1787,13 +1790,15 @@ class UIRoot extends Component {
                       />
                     )}
                     {entered && (
-                      <ToolbarButton
-                        icon={<Map />}
-                        preset="accent1"
-                        label={<FormattedMessage id="toolbar.world-map-button" defaultMessage="Map" />}
-                        onClick={() => this.openWorldMap()}
-                        selected={this.state.enableMap}
-                      />
+                      <ToolTip description="Open the world map (M)">
+                        <ToolbarButton
+                          icon={<Map />}
+                          preset="accent1"
+                          label={<FormattedMessage id="toolbar.world-map-button" defaultMessage="Map" />}
+                          onClick={() => this.openWorldMap()}
+                          selected={this.state.enableMap}
+                        />
+                      </ToolTip>
                     )}
                     {entered && isMobileVR && (
                       <ToolbarButton

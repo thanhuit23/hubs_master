@@ -203,7 +203,7 @@ export const keyboardMouseUserBindings = addSetsToBindings({
     },
     {
       src: {
-        value: paths.device.keyboard.key("m")
+        value: paths.device.keyboard.key("u")
       },
       dest: {
         value: paths.actions.muteMic
@@ -216,6 +216,15 @@ export const keyboardMouseUserBindings = addSetsToBindings({
       },
       dest: {
         value: paths.actions.focusChat
+      },
+      xform: xforms.rising
+    },
+    {
+      src: {
+        value: paths.device.keyboard.key("m")
+      },
+      dest: {
+        value: paths.actions.map
       },
       xform: xforms.rising
     },
@@ -980,7 +989,7 @@ export const keyboardMouseUserBindings = addSetsToBindings({
   ],
   [sets.debugUserInput]: [
     {
-      src: { value: paths.device.keyboard.key("m") },
+      src: { value: paths.device.keyboard.key("u") },
       dest: { value: paths.actions.debugUserInput.describeCurrentMasks },
       xform: xforms.rising,
       priority: 10

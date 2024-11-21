@@ -346,7 +346,7 @@
   "more-menu.whats-new": "Què hi ha de nou",
   "more-menu.you-signed-in-as": "Sessió iniciada com: {email}",
   "mute": "Silencia",
-  "mute-tooltip.description": "{muteStatus} Micròfon (M)",
+  "mute-tooltip.description": "{muteStatus} Micròfon (U)",
   "new-token-scopes.read-rooms.description": "Llegeix les dades de la sala",
   "new-token-scopes.write-rooms.description": "Escriu les dades de la sala",
   "new-token.back": "Enrere",

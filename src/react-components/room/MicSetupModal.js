@@ -93,7 +93,7 @@ export function MicSetupModal({
                       <ToolTip
                         location="right"
                         category="primary"
-                        description="Toggle mic on/off anytime after you enter the room (M)"
+                        description="Toggle mic on/off anytime after you enter the room (U)"
                       >
                         <InfoIcon className={styles.infoIcon} />
                       </ToolTip>

@@ -29,6 +29,10 @@ AFRAME.registerSystem("ui-hotkeys", {
         window.dispatchEvent(new CustomEvent("focus_chat", { detail: { prefix: "" } }));
       }
 
+      if (this.userinput.get(paths.actions.map)) {
+        window.dispatchEvent(new CustomEvent("map", { detail: { prefix: "" } }));
+      }
+
       if (this.userinput.get(paths.actions.focusChatCommand)) {
         window.dispatchEvent(new CustomEvent("focus_chat", { detail: { prefix: "/" } }));
       }

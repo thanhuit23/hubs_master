@@ -432,7 +432,7 @@ export const wmrUserBindings = addSetsToBindings({
     ...characterAccelerationBindings(),
     {
       src: {
-        value: paths.device.keyboard.key("m")
+        value: paths.device.keyboard.key("u")
       },
       dest: {
         value: paths.actions.muteMic
