@@ -95,15 +95,15 @@ function playAnimation(world: HubsWorld, parentEid: number, animationName: strin
     }
     const clipAction = mixer.clipAction(animations[clipIndices[animationIndex]]);
 
-    if (animationType === "Play") {
+    if (animationType === "play") {
         clipAction.reset();
         clipAction.setLoop(THREE.LoopOnce, 1);
         clipAction.play();
     }
-    if (animationType === "Stop") {
+    if (animationType === "stop") {
         clipAction.stop();
     }
-    if (animationType === "Play Loop") {
+    if (animationType === "loop") {
         clipAction.reset();
         clipAction.setLoop(THREE.LoopRepeat, Infinity);
         clipAction.play();
@@ -124,6 +124,7 @@ export function animationcontrolSystem(world: HubsWorld) {
         const controlObject = world.eid2obj.get(entity);
         const animationName = APP.getString(animationControl.animationName[entity]);
         const animationTarget = APP.getString(animationControl.animationTarget[entity]);
+        const animationType = APP.getString(animationControl.animationType[entity]);
         console.log('entered', { entity, animationName });
         if (controlObject) {
             const controlPosition = new THREE.Vector3();
@@ -140,7 +141,7 @@ export function animationcontrolSystem(world: HubsWorld) {
             let text_color = "#000000";
             let bg_color = "Play Button";
             let font_size = 16;
-            let playButtonText = "Play";
+            let buttonText = "Play";
             let font = "Arial";
 
             const playButtonEid = addEntity(world);
@@ -149,12 +150,13 @@ export function animationcontrolSystem(world: HubsWorld) {
                 height: btn_height,
                 backgroundColor: bg_color,
                 textColor: text_color,
-                text: playButtonText,
+                text: buttonText,
                 fontSize: font_size,
                 font: font,
             });
 
             playButton.position.copy(controlPosition);
+            playButton.position.x -= 0.3;
             playButton.quaternion.copy(controlRotation);
             playButton.scale.copy(controlScale);
 
@@ -162,13 +164,44 @@ export function animationcontrolSystem(world: HubsWorld) {
             addComponent(world, animationControlPlayUI, playButtonEid);
             animationControlPlayUI.animationName[playButtonEid] = APP.getSid(animationName ? animationName : "");
             animationControlPlayUI.animationTarget[playButtonEid] = APP.getSid(animationTarget ? animationTarget.replace('.', '') : "");
-            animationControlPlayUI.animationType[playButtonEid] = APP.getSid("Play");
+            animationControlPlayUI.animationType[playButtonEid] = APP.getSid(animationType ? animationType : "play");
             animationControlPlayUI.parentNode[playButtonEid] = entity;
             // Add mouse events to the mesh
             addComponent(world, CursorRaycastable, playButtonEid); // Raycast
             addComponent(world, RemoteHoverTarget, playButtonEid); // Hover
             addComponent(world, SingleActionButton, playButtonEid); // Click
             world.scene.add(playButton);
+
+
+            const stopButtonEid = addEntity(world);
+            bg_color = "Stop Button";
+            buttonText = "Stop";
+            const stopButton = createUIButton({
+                width: btn_width,
+                height: btn_height,
+                backgroundColor: bg_color,
+                textColor: text_color,
+                text: buttonText,
+                fontSize: font_size,
+                font: font,
+            });
+
+            stopButton.position.copy(controlPosition);
+            stopButton.position.x += 0.3;
+            stopButton.quaternion.copy(controlRotation);
+            stopButton.scale.copy(controlScale);
+
+            addObject3DComponent(world, stopButtonEid, stopButton);
+            addComponent(world, animationControlPlayUI, stopButtonEid);
+            animationControlPlayUI.animationName[stopButtonEid] = APP.getSid(animationName ? animationName : "");
+            animationControlPlayUI.animationTarget[stopButtonEid] = APP.getSid(animationTarget ? animationTarget.replace('.', '') : "");
+            animationControlPlayUI.animationType[stopButtonEid] = APP.getSid("stop");
+            animationControlPlayUI.parentNode[stopButtonEid] = entity;
+            // Add mouse events to the mesh
+            addComponent(world, CursorRaycastable, stopButtonEid); // Raycast
+            addComponent(world, RemoteHoverTarget, stopButtonEid); // Hover
+            addComponent(world, SingleActionButton, stopButtonEid); // Click
+            world.scene.add(stopButton);
         }
 
     }

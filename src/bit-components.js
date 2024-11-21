@@ -749,10 +749,12 @@ pdfviewer.pdfFileUrl[$isStringType] = true;
 
 export const animationControl = defineComponent({
   animationName: Types.ui32,
-  animationTarget: Types.ui32
+  animationTarget: Types.ui32,
+  animationType: Types.ui32
 });
 animationControl.animationName[$isStringType] = true;
 animationControl.animationTarget[$isStringType] = true;
+animationControl.animationType[$isStringType] = true;
 
 export const animationControlUI = defineComponent({
   animationName: Types.ui32,
@@ -775,10 +777,12 @@ animationControlPlayUI.animationType[$isStringType] = true;
 export const animationControlStopUI = defineComponent({
   animationName: Types.ui32,
   animationTarget: Types.ui32,
+  animationType: Types.ui32,
   parentNode: Types.ui32
 });
 animationControlStopUI.animationName[$isStringType] = true;
 animationControlStopUI.animationTarget[$isStringType] = true;
+animationControlStopUI.animationType[$isStringType] = true;
 
 export const animationControlLoopUI = defineComponent({
   animationName: Types.ui32,

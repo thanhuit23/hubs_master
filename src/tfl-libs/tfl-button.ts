@@ -67,13 +67,16 @@ export function createUIButton(options: CreateUIButtonOptions): THREE.Mesh {
       case "Play":
         drawImage("play_btn_img", 512, 512);
         break;
+      case "Stop":
+        drawImage("stop_btn_img", 512, 512);
+        break;
       default:
         console.log("No matching image for the text provided.");
     }
   } else {
     canvas.width = 1028 * width; // Texture width (power of 2)
     canvas.height = 1028 * height; // Texture height (power of 2)
-    
+
     context.fillStyle = backgroundColor;
     context.fillRect(0, 0, canvas.width, canvas.height);
     // Draw text
@@ -94,7 +97,7 @@ export function createUIButton(options: CreateUIButtonOptions): THREE.Mesh {
   } else if (text !== "screen") {
     transparent = true;
   }
-  
+
   // Create material with texture
   const materialParams = { map: texture, side: THREE.DoubleSide, transparent: transparent };
   const material = new THREE.MeshBasicMaterial(materialParams);

@@ -5,11 +5,13 @@ import { animationControl, CursorRaycastable,  RemoteHoverTarget, SingleActionBu
 export type animationcontrolParams = {
     animation_name: string;
     animation_target: string;
+    animation_type: string;
 };
 
 const DEFAULTS: Required<animationcontrolParams> = {
     animation_name: "",
-    animation_target: ""
+    animation_target: "",
+    animation_type: "",
 };
 
 export function inflateanimationcontrol(world: HubsWorld, eid: number, params: animationcontrolParams) {
@@ -18,6 +20,7 @@ export function inflateanimationcontrol(world: HubsWorld, eid: number, params: a
     addComponent(world, animationControl, eid);
     animationControl.animationName[eid] = APP.getSid(requiredParams.animation_name);
     animationControl.animationTarget[eid] = APP.getSid(requiredParams.animation_target);
+    animationControl.animationType[eid] = APP.getSid(requiredParams.animation_type);
     addComponent(world, CursorRaycastable, eid);
     addComponent(world, RemoteHoverTarget, eid);
     addComponent(world, SingleActionButton, eid);
