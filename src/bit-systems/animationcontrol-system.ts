@@ -29,7 +29,7 @@ function clicked(world: HubsWorld, entity: number): boolean {
     return hasComponent(world, Interacted, entity);
 }
 
-function playAnimation(world: HubsWorld, parentEid: number, animationName: String, animationType: String): void {
+function playAnimation(world: HubsWorld, parentEid: number, animationName: string, animationType: string, targetClassName: string): void {
     const parentObject = world.eid2obj.get(parentEid);
 
     if (!parentObject) {
@@ -51,30 +51,63 @@ function playAnimation(world: HubsWorld, parentEid: number, animationName: Strin
         return;
     }
 
-    for (let i = 0; i < animations.length; i++) {
-        if (animations[i].name === animationName) {
-            const action = mixer.clipAction(animations[i]);
-            if (animationType === "Play") {
-                action.reset();
-                action.setLoop(THREE.LoopOnce, 1);
-                // action.clampWhenFinished = true;
-                action.play();
-                // return;
-            }
-            if (animationType === "Stop") {
-                action.stop();
-                // return;
-            }
-            if (animationType === "Play Loop") {
-                action.reset();
-                action.setLoop(THREE.LoopRepeat, Infinity);
-                // action.clampWhenFinished = true;
-                action.play();
-                // return;
-            }
-        }
+    if (!targetClassName || targetClassName === "") {
+        return;
+    }    
+
+    if (!animationName || animationName === "") {
+        return;
     }
 
+    if (!animationType || animationType === "") {
+        return;
+    }
+
+    // Try to start the animation on the robot object instead of all the objects
+    const targetObject = document.getElementsByClassName(targetClassName)[0];
+    if (!targetObject) {
+        return;
+    }
+    // Get all clip names from the loop-animation component on the robot object
+    const targetObjectLoopAnimation = findAncestorWithComponent(targetObject, "loop-animation");
+    const targetObjectLoopAnimationComponent = targetObjectLoopAnimation.components["loop-animation"];
+    if (!targetObjectLoopAnimationComponent) {
+        return;
+    }
+    const clipNames = targetObjectLoopAnimationComponent.data.allClipNames;
+    if (!clipNames) {
+        return;
+    }
+    const clipIndices = targetObjectLoopAnimationComponent.data.allClipIndices;
+    if (!clipIndices) {
+        return;
+    }
+    // Index of the animation to play
+    let animationIndex = -1;
+    for (let i = 0; i < clipNames.length; i++) {
+        if (clipNames[i] === animationName) {
+            animationIndex = i;
+            break;
+        }
+    }
+    if (animationIndex === -1) {
+        return;
+    }
+    const clipAction = mixer.clipAction(animations[clipIndices[animationIndex]]);
+
+    if (animationType === "Play") {
+        clipAction.reset();
+        clipAction.setLoop(THREE.LoopOnce, 1);
+        clipAction.play();
+    }
+    if (animationType === "Stop") {
+        clipAction.stop();
+    }
+    if (animationType === "Play Loop") {
+        clipAction.reset();
+        clipAction.setLoop(THREE.LoopRepeat, Infinity);
+        clipAction.play();
+    }
 }
 
 export function animationcontrolSystem(world: HubsWorld) {
@@ -90,6 +123,7 @@ export function animationcontrolSystem(world: HubsWorld) {
         const entity = entered[i];
         const controlObject = world.eid2obj.get(entity);
         const animationName = APP.getString(animationControl.animationName[entity]);
+        const animationTarget = APP.getString(animationControl.animationTarget[entity]);
         console.log('entered', { entity, animationName });
         if (controlObject) {
             const controlPosition = new THREE.Vector3();
@@ -121,69 +155,20 @@ export function animationcontrolSystem(world: HubsWorld) {
             });
 
             playButton.position.copy(controlPosition);
-            playButton.position.x -= 0.7;
             playButton.quaternion.copy(controlRotation);
+            playButton.scale.copy(controlScale);
 
             addObject3DComponent(world, playButtonEid, playButton);
             addComponent(world, animationControlPlayUI, playButtonEid);
             animationControlPlayUI.animationName[playButtonEid] = APP.getSid(animationName ? animationName : "");
+            animationControlPlayUI.animationTarget[playButtonEid] = APP.getSid(animationTarget ? animationTarget.replace('.', '') : "");
+            animationControlPlayUI.animationType[playButtonEid] = APP.getSid("Play");
             animationControlPlayUI.parentNode[playButtonEid] = entity;
             // Add mouse events to the mesh
             addComponent(world, CursorRaycastable, playButtonEid); // Raycast
             addComponent(world, RemoteHoverTarget, playButtonEid); // Hover
             addComponent(world, SingleActionButton, playButtonEid); // Click
             world.scene.add(playButton);
-
-            const playLoopButtonEid = addEntity(world);
-            const playLoopText = "Loop";
-            const playLoopButton = createUIButton({
-                width: btn_width,
-                height: btn_height,
-                backgroundColor: bg_color,
-                textColor: text_color,
-                text: playLoopText,
-                fontSize: font_size,
-                font: font,
-            });
-
-            playLoopButton.position.copy(controlPosition);
-            playLoopButton.position.x += 0.7;
-            playLoopButton.quaternion.copy(controlRotation);
-
-            addObject3DComponent(world, playLoopButtonEid, playLoopButton);
-            addComponent(world, animationControlLoopUI, playLoopButtonEid);
-            animationControlLoopUI.animationName[playLoopButtonEid] = APP.getSid(animationName ? animationName : "");
-            animationControlLoopUI.parentNode[playLoopButtonEid] = entity;
-            // Add mouse events to the mesh
-            addComponent(world, CursorRaycastable, playLoopButtonEid); // Raycast
-            addComponent(world, RemoteHoverTarget, playLoopButtonEid); // Hover
-            addComponent(world, SingleActionButton, playLoopButtonEid); // Click
-            world.scene.add(playLoopButton);
-
-            const stopButtonEid = addEntity(world);
-            const stopText = "Stop";
-            const stopButton = createUIButton({
-                width: btn_width,
-                height: btn_height,
-                backgroundColor: bg_color,
-                textColor: text_color,
-                text: stopText,
-                fontSize: font_size,
-                font: font,
-            });
-
-            stopButton.position.copy(controlPosition);
-            stopButton.quaternion.copy(controlRotation);
-
-            addObject3DComponent(world, stopButtonEid, stopButton);
-            addComponent(world, animationControlStopUI, stopButtonEid);
-            animationControlStopUI.animationName[stopButtonEid] = APP.getSid(animationName ? animationName : "");
-            animationControlStopUI.parentNode[stopButtonEid] = entity;
-            // Add mouse events to the mesh
-            addComponent(world, CursorRaycastable, stopButtonEid); // Raycast
-            addComponent(world, RemoteHoverTarget, stopButtonEid); // Hover
-            addComponent(world, SingleActionButton, stopButtonEid); // Click
-            world.scene.add(stopButton);
         }
 
     }
@@ -215,13 +200,17 @@ export function animationcontrolSystem(world: HubsWorld) {
 
     const entitiesUIPlay = animationControlPlayUIQuery(world);
     for (let i = 0; i < entitiesUIPlay.length; i++) {
-        const networkedEid = anyEntityWith(world, animationControlPlayUI)!;
+        // Get the entity with the animation control component using entitiesUIPlay[i]
+        // const networkedEid = anyEntityWith(world, animationControlPlayUI)!;
+        const networkedEid = entitiesUIPlay[i];
         if (networkedEid) {
             const animationName = APP.getString(animationControlPlayUI.animationName[networkedEid]);
+            const animationTarget = APP.getString(animationControlPlayUI.animationTarget[networkedEid]);
+            const animationType = APP.getString(animationControlPlayUI.animationType[networkedEid]);
             const parentEid = animationControlPlayUI.parentNode[networkedEid];
             if (clicked(world, networkedEid)) {
                 if (animationName && animationName !== "") {
-                    playAnimation(world, parentEid, animationName ? animationName : "", "Play");
+                    playAnimation(world, parentEid, animationName ? animationName : "", animationType ? animationType : "", animationTarget ? animationTarget : "");
                 }
             }
         }
@@ -231,53 +220,6 @@ export function animationcontrolSystem(world: HubsWorld) {
     for (let i = 0; i < exitedUIPlay.length; i++) {
         console.log('~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~');
         const entity = exitedUIPlay[i];
-        const controlObject = world.eid2obj.get(entity);
-        if (controlObject) {
-            world.scene.remove(controlObject);
-        }
-    }
-
-    const entitiesUILoop = animationControlLoopUIQuery(world);
-    for (let i = 0; i < entitiesUILoop.length; i++) {
-        const networkedEid = anyEntityWith(world, animationControlLoopUI)!;
-        if (networkedEid) {
-            const animationName = APP.getString(animationControlLoopUI.animationName[networkedEid]);
-            const parentEid = animationControlLoopUI.parentNode[networkedEid];
-            if (clicked(world, networkedEid)) {
-                if (animationName && animationName !== "") {
-                    playAnimation(world, parentEid, animationName ? animationName : "", "Play Loop");
-                }
-            }
-        }
-    }
-    const exitedUILoop = animationControlLoopUIExitQuery(world);
-    for (let i = 0; i < exitedUILoop.length; i++) {
-        console.log('~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~');
-        const entity = exitedUILoop[i];
-        const controlObject = world.eid2obj.get(entity);
-        if (controlObject) {
-            world.scene.remove(controlObject);
-        }
-    }
-
-    const entitiesUIStop = animationControlStopUIQuery(world);
-    for (let i = 0; i < entitiesUIStop.length; i++) {
-        const networkedEid = anyEntityWith(world, animationControlStopUI)!;
-        if (networkedEid) {
-            const animationName = APP.getString(animationControlStopUI.animationName[networkedEid]);
-            const parentEid = animationControlStopUI.parentNode[networkedEid];
-            if (clicked(world, networkedEid)) {
-                if (animationName && animationName !== "") {
-                    playAnimation(world, parentEid, animationName ? animationName : "", "Stop");
-                }
-            }
-        }
-    }
-
-    const exitedUIStop = animationControlStopUIExitQuery(world);
-    for (let i = 0; i < exitedUIStop.length; i++) {
-        console.log('~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~');
-        const entity = exitedUIStop[i];
         const controlObject = world.eid2obj.get(entity);
         if (controlObject) {
             world.scene.remove(controlObject);

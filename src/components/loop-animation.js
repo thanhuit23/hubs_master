@@ -12,7 +12,9 @@ AFRAME.registerComponent("loop-animation", {
     activeClipIndex: { type: "int", default: 0 },
     startOffset: { type: "number", default: 0 },
     timeScale: { type: "number", default: 1 },
-    activeClipIndices: { type: "array" }
+    activeClipIndices: { type: "array" },
+    allClipIndices: { type: "array" },
+    allClipNames: { type: "array" }
   },
 
   init() {

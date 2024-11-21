@@ -748,9 +748,11 @@ pdfviewer.pdfFileUrl[$isStringType] = true;
 
 
 export const animationControl = defineComponent({
-  animationName: Types.ui32
+  animationName: Types.ui32,
+  animationTarget: Types.ui32
 });
 animationControl.animationName[$isStringType] = true;
+animationControl.animationTarget[$isStringType] = true;
 
 export const animationControlUI = defineComponent({
   animationName: Types.ui32,
@@ -762,21 +764,29 @@ animationControlUI.animationType[$isStringType] = true;
 
 export const animationControlPlayUI = defineComponent({
   animationName: Types.ui32,
+  animationTarget: Types.ui32,
+  animationType: Types.ui32,
   parentNode: Types.ui32
 });
 animationControlPlayUI.animationName[$isStringType] = true;
+animationControlPlayUI.animationTarget[$isStringType] = true;
+animationControlPlayUI.animationType[$isStringType] = true;
 
 export const animationControlStopUI = defineComponent({
   animationName: Types.ui32,
+  animationTarget: Types.ui32,
   parentNode: Types.ui32
 });
 animationControlStopUI.animationName[$isStringType] = true;
+animationControlStopUI.animationTarget[$isStringType] = true;
 
 export const animationControlLoopUI = defineComponent({
   animationName: Types.ui32,
+  animationTarget: Types.ui32,
   parentNode: Types.ui32
 });
 animationControlLoopUI.animationName[$isStringType] = true;
+animationControlLoopUI.animationTarget[$isStringType] = true;
 //
 
 // TFC Learning Frame
