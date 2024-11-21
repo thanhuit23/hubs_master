@@ -1,5 +1,6 @@
 // Thanh add
 import * as THREE from 'three';
+import PlayButton from '../assets/images/play-button.png';
 
 interface CreateUIButtonOptions {
   width: number;
@@ -26,6 +27,23 @@ export function createUIButton(options: CreateUIButtonOptions): THREE.Mesh {
     }
   };
 
+  const drawImageCanvas = (imageUrl: string, canvasWidth: number, canvasHeight: number) => {
+    // Open the image from imageUrl
+    const image = new Image();
+    image.src = imageUrl;
+    image.onload = () => {
+      canvas.width = canvasWidth;
+      canvas.height = canvasHeight;
+      context.drawImage(image, 0, 0, canvas.width, canvas.height);
+    }
+
+    // if (image instanceof HTMLImageElement) {
+    //   canvas.width = canvasWidth;
+    //   canvas.height = canvasHeight;
+    //   context.drawImage(imageTexture, 0, 0, canvas.width, canvas.height);
+    // }
+  };
+
   if (backgroundColor[0] !== '#') {
     switch (text) {
       case "cnc":
@@ -45,6 +63,9 @@ export function createUIButton(options: CreateUIButtonOptions): THREE.Mesh {
         break;
       case "lock":
         drawImage("lock_btn_img", 512, 512);
+        break;
+      case "Play":
+        drawImage("play_btn_img", 512, 512);
         break;
       default:
         console.log("No matching image for the text provided.");

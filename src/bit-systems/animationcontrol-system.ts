@@ -135,10 +135,10 @@ export function animationcontrolSystem(world: HubsWorld) {
 
             controlObject.visible = true;
 
-            let btn_width = 0.6;
-            let btn_height = 0.4;
+            let btn_width = 1;
+            let btn_height = 1;
             let text_color = "#000000";
-            let bg_color = "#ffffff";
+            let bg_color = "Play Button";
             let font_size = 16;
             let playButtonText = "Play";
             let font = "Arial";
