@@ -74,6 +74,7 @@ import { ReactComponent as InviteIcon } from "./icons/Invite.svg";
 // Thanh add
 import { ReactComponent as CodeBranch } from "./icons/CodeBranch.svg";
 import { ReactComponent as Map } from "./icons/map-2.svg";
+import { ReactComponent as ReactionIcon } from "./icons/Reaction.svg"
 //
 import hubsLogo from "../assets/images/hubs-logo.png";
 import { PeopleSidebarContainer, userFromPresence } from "./room/PeopleSidebarContainer";
@@ -113,6 +114,7 @@ import { WebGLContentModalContainer } from "./room/WebGLContentModalContainer";
 import { AIChatModalContainer } from "./room/AIChatModalContainer";
 import { isLocalHubsUrl, isHubsRoomUrl } from "../utils/media-url-utils";
 import { changeHub } from "../change-hub";
+
 //
 const avatarEditorDebug = qsTruthy("avatarEditorDebug");
 
@@ -238,7 +240,8 @@ class UIRoot extends Component {
     chatPrefix: "",
     chatAutofocus: false,
     // Thanh add
-    mapEnable: false
+    mapEnable: false,
+    reacted: false
     //
   };
 
@@ -836,6 +839,25 @@ class UIRoot extends Component {
 
     this.setState({ isStreaming });
   };
+
+  // Thanh add
+  togglePlayAnimation = (animationName) => {
+    const avatarRoot = document.querySelectorAll("[fullbody-animation-play]");
+    let status = true;
+    if (avatarRoot && avatarRoot.length > 0) {
+      if (this.state.reacted) {
+        animationName = "Idle";
+      }
+      status = avatarRoot[0].components["fullbody-animation-play"].playAnimation(animationName);
+    }
+
+    if (!status) {
+      return;
+    } else {
+      this.setState({ reacted: !this.state.reacted });
+    }
+  };
+  //
 
   renderDialog = (DialogClass, props = {}) => <DialogClass {...{ onClose: this.closeDialog, ...props }} />;
 
@@ -1810,6 +1832,15 @@ class UIRoot extends Component {
                       />
                     )}
                     {/* Thanh add */}
+                    {entered && (
+                      <ToolbarButton
+                        icon={<ReactionIcon />}
+                        preset="accent1"
+                        label={<FormattedMessage id="toolbar.reactive-button" defaultMessage="AniReact" />}
+                        onClick={() => this.togglePlayAnimation("A0_Waving")}
+                        selected={this.state.reacted === true}
+                      />
+                    )}
                     {entered && (
                       <ToolbarButton
                         icon={<VRIcon />}

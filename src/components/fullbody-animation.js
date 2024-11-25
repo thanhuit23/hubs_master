@@ -180,6 +180,9 @@ AFRAME.registerComponent("fullbody-animation-play", {
             }
 
             action.play()
+            return true
+        } else {
+            return false
         }
     },
 
