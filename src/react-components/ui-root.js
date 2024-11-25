@@ -1804,10 +1804,10 @@ class UIRoot extends Component {
                               scene={this.props.scene}
                               hubChannel={this.props.hubChannel}
                             />
-                            <ReactionPopoverContainer
+                            {/* <ReactionPopoverContainer
                               scene={this.props.scene}
                               initialPresence={getPresenceProfileForSession(this.props.presences, this.props.sessionId)}
-                            />
+                            /> */}
                           </>
                         )}
                       </>

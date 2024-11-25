@@ -1,5 +1,9 @@
 @use "../styles/theme.scss";
 
+:local(.tooltip-text-z-index) {
+  z-index: 1000;
+}
+
 :local(.image-grid-popover) {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(48px, 1fr));

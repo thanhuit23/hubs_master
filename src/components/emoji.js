@@ -48,6 +48,21 @@ const reactionNames = [
   "손 흔들기"
 ];
 
+// Detect is mobile or not
+const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+console.log("isMobile: ", isMobile);
+
+const reactionTooltipLocation = [
+  "bottom",
+  "bottom",
+  "bottom",
+  isMobile ? "bottom" : "top",
+  isMobile ? "bottom" : "top",
+  isMobile ? "bottom" : "top",
+  isMobile ? "bottom" : "top",
+  isMobile ? "bottom" : "top"
+]
+
 const reactionAnimationNames = [
   "Clapping",
   "Defeat",
@@ -64,7 +79,8 @@ export const animations = reactionSrcs.map((src, index) => {
   return {
     id: `reaction-animation-${reactionAnimationNames[index]}`,
     src,
-    label: reactionNames[index]
+    label: reactionNames[index],
+    location: reactionTooltipLocation[index]
   };
 });
 //
