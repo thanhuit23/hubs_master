@@ -114,6 +114,7 @@ import { WebGLContentModalContainer } from "./room/WebGLContentModalContainer";
 import { AIChatModalContainer } from "./room/AIChatModalContainer";
 import { isLocalHubsUrl, isHubsRoomUrl } from "../utils/media-url-utils";
 import { changeHub } from "../change-hub";
+import { AnimationReactionPopoverContainer } from "./room/AnimationReactionPopoverContainer";
 
 //
 const avatarEditorDebug = qsTruthy("avatarEditorDebug");
@@ -1798,10 +1799,16 @@ class UIRoot extends Component {
                           </>
                         )}
                         {this.props.hubChannel.can("spawn_emoji") && (
-                          <ReactionPopoverContainer
-                            scene={this.props.scene}
-                            initialPresence={getPresenceProfileForSession(this.props.presences, this.props.sessionId)}
-                          />
+                          <>
+                            <AnimationReactionPopoverContainer
+                              scene={this.props.scene}
+                              hubChannel={this.props.hubChannel}
+                            />
+                            <ReactionPopoverContainer
+                              scene={this.props.scene}
+                              initialPresence={getPresenceProfileForSession(this.props.presences, this.props.sessionId)}
+                            />
+                          </>
                         )}
                       </>
                     )}

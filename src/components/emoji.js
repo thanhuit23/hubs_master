@@ -7,6 +7,7 @@ import emoji3Particle from "../assets/images/emojis/emoji_3.png";
 import emoji4Particle from "../assets/images/emojis/emoji_4.png";
 import emoji5Particle from "../assets/images/emojis/emoji_5.png";
 import emoji6Particle from "../assets/images/emojis/emoji_6.png";
+
 import emoji0Model from "../assets/models/emojis/emoji_0.glb";
 import emoji1Model from "../assets/models/emojis/emoji_1.glb";
 import emoji2Model from "../assets/models/emojis/emoji_2.glb";
@@ -14,6 +15,59 @@ import emoji3Model from "../assets/models/emojis/emoji_3.glb";
 import emoji4Model from "../assets/models/emojis/emoji_4.glb";
 import emoji5Model from "../assets/models/emojis/emoji_5.glb";
 import emoji6Model from "../assets/models/emojis/emoji_6.glb";
+
+// Thanh add
+import reaction0Src from "../assets/images/reactions/clap.png";
+import reaction1Src from "../assets/images/reactions/sad.png";
+import reaction2Src from "../assets/images/reactions/fly.png";
+import reaction3Src from "../assets/images/reactions/dance.png";
+import reaction4Src from "../assets/images/reactions/no.png";
+import reaction5Src from "../assets/images/reactions/salute.png";
+import reaction6Src from "../assets/images/reactions/dance.png";
+import reaction7Src from "../assets/images/reactions/waving.png";
+
+const reactionSrcs = [
+  reaction0Src,
+  reaction1Src,
+  reaction2Src,
+  reaction3Src,
+  reaction4Src,
+  reaction5Src,
+  reaction6Src,
+  reaction7Src
+];
+
+const reactionNames = [
+  "박수",
+  "좌절",
+  "공중부양",
+  "힙합",
+  "NO",
+  "경례",
+  "웨이브댄스",
+  "손 흔들기"
+];
+
+const reactionAnimationNames = [
+  "Clapping",
+  "Defeat",
+  "Fly",
+  "Hiphop",
+  "No",
+  "Salute",
+  "WaveDance",
+  "Waving"
+];
+
+
+export const animations = reactionSrcs.map((src, index) => {
+  return {
+    id: `reaction-animation-${reactionAnimationNames[index]}`,
+    src,
+    label: reactionNames[index]
+  };
+});
+//
 
 export const emojis = [
   { id: "smile", model: emoji0Model, particle: emoji0Particle },
