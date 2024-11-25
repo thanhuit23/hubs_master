@@ -33,7 +33,8 @@ export function AnimationReactionPopoverContainer({ scene, hubChannel }) {
                 return {
                     id: animation.id,
                     src: animation.src,
-                    label: <FormattedMessageFixed id={messageId} defaultMessage={animation.label} />,
+                    label: animation.label,
+                    location: animation.location,
                 };
             });
 
