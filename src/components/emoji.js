@@ -116,6 +116,16 @@ export const emojis = [
   };
 });
 
+// const currentTimeoutIds = [];
+
+export function playAnimationReaction({ id, src, label, location }) {
+  let animationName = id.replace("reaction-animation-", "");
+  const avatarRoot = document.querySelectorAll("[fullbody-animation-play]");
+  if (avatarRoot && avatarRoot.length > 0) {
+    avatarRoot[0].components["fullbody-animation-play"].playAnimation(animationName, false, false, 1);
+  }
+}
+
 export function spawnEmojiInFrontOfUser({ model, particleEmitterConfig }) {
   const { entity } = addMedia(model, "#interactable-emoji");
   entity.setAttribute("offset-relative-to", {

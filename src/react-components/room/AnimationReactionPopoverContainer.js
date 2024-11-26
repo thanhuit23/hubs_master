@@ -5,7 +5,7 @@ import PropTypes from "prop-types";
 import { AnimationReactionPopover } from "./AnimationReactionPopover";
 import { FormattedMessage } from "react-intl";
 // import { defineMessage, defineMessages, useIntl } from "react-intl";
-import { animations } from "../../components/emoji";
+import { animations, playAnimationReaction } from "../../components/emoji";
 function FormattedMessageFixed(props) {
     return <FormattedMessage {...props} />;
 }
@@ -29,12 +29,13 @@ export function AnimationReactionPopoverContainer({ scene, hubChannel }) {
             // };
 
             const items = animations.map(animation => {
-                const messageId = "animation-reaction-tooltip" + animation.id;
+                // const messageId = "animation-reaction-tooltip" + animation.id;
                 return {
                     id: animation.id,
                     src: animation.src,
                     label: animation.label,
                     location: animation.location,
+                    onSelect: playAnimationReaction
                 };
             });
 

@@ -102,6 +102,9 @@ AFRAME.registerComponent("fullbody-animation-play", {
         this.avatarRoot = this.findAvatarRoot();
         this.networkedAvatar = this.findNetworkAvatarEl(this.el);
         this.mixer = new THREE.AnimationMixer(this.avatarRoot);
+        this.mixer.addEventListener('finished', () => {
+            this.playAnimation('Idle')
+        });
     },
 
     remove() {
@@ -156,7 +159,7 @@ AFRAME.registerComponent("fullbody-animation-play", {
         return currentObject.animations;
     },
 
-    playAnimation(animationName) {
+    playAnimation(animationName, clamp = true, loop = true, times_scale = 2.3) {
         if (this.currentClip) {
             this.mixer.stopAllAction()
             this.mixer.uncacheClip(this.currentClip)
@@ -169,11 +172,17 @@ AFRAME.registerComponent("fullbody-animation-play", {
 
             const action = this.mixer.clipAction(this.currentClip)
             action.clampWhenFinished = true
+            if (!clamp) {
+                action.clampWhenFinished = false
+            }
+            if (!loop) {
+                action.setLoop(THREE.LoopOnce)
+            }
             /**
              * 2.3 is an arbitrary value that takes into account how fast
              * the avatar is moving and adjusts the speed of the animation accordingly.
              */
-            action.timeScale = 2.3
+            action.timeScale = times_scale
 
             if (animationName === 'Idle') {
                 action.paused = true
