@@ -9,7 +9,7 @@ export function ImageGridPopover({ fullscreen, items, closePopover }) {
     <div className={classNames(styles.imageGridPopover, { [styles.fullscreen]: fullscreen })}>
       {items.map(item => {
         return (
-          <ToolTip description={item.label} location={item.location}>
+          // <ToolTip description={item.label} location={item.location}>
             <img
               key={item.id}
               // crossOrigin: "anonymous" is a workaround for CORS error on Chrome. See #4400
@@ -24,7 +24,7 @@ export function ImageGridPopover({ fullscreen, items, closePopover }) {
                 closePopover();
               }}
             />
-          </ToolTip>
+          // </ToolTip>
         );
       })}
     </div>

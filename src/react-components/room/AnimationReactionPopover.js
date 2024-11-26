@@ -39,7 +39,7 @@ export function AnimationReactionPopover({ items }) {
       offsetDistance={28}
     >
       {({ togglePopover, popoverVisible, triggerRef }) => (
-        <ToolTip description={description}>
+        // <ToolTip description={description}>
           <ToolbarButton
             ref={triggerRef}
             icon={<ReactionIcon />}
@@ -48,7 +48,7 @@ export function AnimationReactionPopover({ items }) {
             label={title}
             preset="accent2"
           />
-        </ToolTip>
+        // </ToolTip>
       )}
     </Popover>
   );
