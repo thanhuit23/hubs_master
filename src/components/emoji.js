@@ -25,6 +25,7 @@ import reaction4Src from "../assets/images/reactions/no.png";
 import reaction5Src from "../assets/images/reactions/salute.png";
 import reaction6Src from "../assets/images/reactions/dance.png";
 import reaction7Src from "../assets/images/reactions/waving.png";
+import reaction8Src from "../assets/images/reactions/cheers.png";
 
 const reactionSrcs = [
   reaction0Src,
@@ -37,22 +38,50 @@ const reactionSrcs = [
   reaction7Src
 ];
 
-const reactionNames = [
-  "박수",
-  "좌절",
-  "공중부양",
-  "힙합",
-  "NO",
-  "경례",
-  "웨이브댄스",
-  "손 흔들기"
+let emojisSrcs = [
+  emoji0Particle,
+  emoji1Particle,
+  emoji2Particle,
+  emoji3Particle,
+  emoji4Particle,
+  emoji5Particle,
+  emoji6Particle,
+  reaction8Src,
+  reaction3Src,
+  reaction5Src,
+  reaction6Src
+];
+
+// let reactionNames = [
+//   "박수", // Clapping
+//   "좌절", // Defeat
+//   "공중부양", // Fly
+//   "힙합", // Hiphop
+//   "NO", // No
+//   "경례", // Salute
+//   "웨이브댄스", // WaveDance
+//   "손 흔들기" // Waving
+// ];
+
+let reactionNames = [
+  "Happy", // Happy
+  "Laugh", // Laugh
+  "박수", // Clapping
+  "Heart", // Heart
+  "손 흔들기", // Waving
+  "Angry", // Angry
+  "좌절", // Defeat
+  "승리", // Victory
+  "힙합", // Hiphop
+  "경례", // Salute
+  "웨이브댄스", // WaveDance
 ];
 
 // Detect is mobile or not
 const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
 console.log("isMobile: ", isMobile);
 
-const reactionTooltipLocation = [
+let reactionTooltipLocation = [
   "bottom",
   "bottom",
   "bottom",
@@ -60,22 +89,40 @@ const reactionTooltipLocation = [
   isMobile ? "bottom" : "top",
   isMobile ? "bottom" : "top",
   isMobile ? "bottom" : "top",
-  isMobile ? "bottom" : "top"
+  isMobile ? "bottom" : "top",
+  isMobile ? "bottom" : "top",
+  isMobile ? "bottom" : "top",
+  isMobile ? "bottom" : "top",
 ]
 
-const reactionAnimationNames = [
-  "Clapping",
-  "Defeat",
-  "Fly",
-  "Hiphop",
-  "No",
-  "Salute",
-  "WaveDance",
-  "Waving"
+// const reactionAnimationNames = [
+//   "Clapping", // Happy
+//   "Defeat", // Laugh
+//   "Fly", // Clap
+//   "Hiphop", // Heart
+//   "No", // Wave
+//   "Salute", // Angry
+//   "WaveDance", // Sad
+//   "Waving"
+// ];
+
+let reactionAnimationNames = [
+  "Happy", // Happy
+  "Laugh", // Laugh
+  "Clapping", // Clap
+  "Heart", // Heart
+  "Waving", // Wave
+  "Angry", // Angry
+  "Defeat", // Sad
+  "Victory", // Victory
+  "Hiphop", // Hiphop
+  "Salute", // Salute
+  "WaveDance", // WaveDance
 ];
 
 
-export const animations = reactionSrcs.map((src, index) => {
+
+export const animations = emojisSrcs.map((src, index) => {
   return {
     id: `reaction-animation-${reactionAnimationNames[index]}`,
     src,

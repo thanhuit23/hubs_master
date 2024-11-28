@@ -1839,7 +1839,7 @@ class UIRoot extends Component {
                       />
                     )}
                     {/* Thanh add */}
-                    {entered && (
+                    {/* {entered && (
                       <ToolbarButton
                         icon={<ReactionIcon />}
                         preset="accent1"
@@ -1847,7 +1847,7 @@ class UIRoot extends Component {
                         onClick={() => this.togglePlayAnimation("A0_Waving")}
                         selected={this.state.reacted === true}
                       />
-                    )}
+                    )} */}
                     {entered && (
                       <ToolbarButton
                         icon={<VRIcon />}
