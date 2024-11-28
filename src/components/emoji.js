@@ -169,7 +169,8 @@ export function playAnimationReaction({ id, src, label, location }) {
   let animationName = id.replace("reaction-animation-", "");
   const avatarRoot = document.querySelectorAll("[fullbody-animation-play]");
   if (avatarRoot && avatarRoot.length > 0) {
-    avatarRoot[0].components["fullbody-animation-play"].playAnimation(animationName, false, false, 1);
+    // avatarRoot[0].components["fullbody-animation-play"].playAnimation(animationName, false, false, 1);
+    window.dispatchEvent(new CustomEvent("start-animation", { detail: { animationName: animationName } }));
   }
 }
 

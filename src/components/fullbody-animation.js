@@ -1,3 +1,4 @@
+// Thanh add
 import { AnimationClip } from 'three';
 import { paths } from "../systems/userinput/paths";
 
@@ -13,9 +14,39 @@ export const ANIMATIONS = {
     RUNNING_RIGHT: "RightStrafe",
 };
 
+const reactionAnimationNames = [
+    "Happy", // Happy
+    "Laugh", // Laugh
+    "Clapping", // Clap
+    "Heart", // Heart
+    "Waving", // Wave
+    "Angry", // Angry
+    "Defeat", // Sad
+    "Victory", // Victory
+    "Hiphop", // Hiphop
+    "Salute", // Salute
+    "WaveDance", // WaveDance
+];
+
+const reactionTimes = {
+    "Happy": 2.3,
+    "Laugh": 2.3,
+    "Clapping": 1,
+    "Heart": 2.3,
+    "Waving": 2.3,
+    "Angry": 2.3,
+    "Defeat": 2.3,
+    "Victory": 2.3,
+    "Hiphop": 2.3,
+    "Salute": 2.3,
+    "WaveDance": 2.3,
+};
+
 AFRAME.registerComponent("fullbody-animation-change", {
     userinput: null,
 
+    currentAnimationName: ANIMATIONS.IDLE,
+    currentThreads: [],
 
     init() {
         this.userinput = AFRAME.scenes[0].systems.userinput;
@@ -31,6 +62,20 @@ AFRAME.registerComponent("fullbody-animation-change", {
                 this.rotateY = evt.detail.rotateY;
             })
         }
+
+        window.addEventListener("start-animation", event => {
+            this.currentAnimationName = event.detail.animationName;
+            for (let i = 0; i < this.currentThreads.length; i++) {
+                clearTimeout(this.currentThreads[i]);
+            }
+
+            // stop animation after 2.3 seconds
+            if (reactionAnimationNames.includes(this.currentAnimationName)) {
+                this.currentThreads.push(setTimeout(() => {
+                    this.currentAnimationName = ANIMATIONS.IDLE;
+                }, reactionTimes[event.detail.animationName] * 1000));
+            }   
+        });
     },
 
     tick() {
@@ -41,7 +86,7 @@ AFRAME.registerComponent("fullbody-animation-change", {
                         this.setCurrentAnimation(ANIMATIONS.WALKING_LEFT);
                     } else if (this.displacement.x > 0) {
                         this.setCurrentAnimation(ANIMATIONS.WALKING_RIGHT);
-                    } 
+                    }
                 } else {
                     if (this.displacement.z < 0) {
                         this.setCurrentAnimation(ANIMATIONS.WALKING_BACKWARD);
@@ -50,7 +95,11 @@ AFRAME.registerComponent("fullbody-animation-change", {
                     }
                 }
             } else {
-                this.setCurrentAnimation(ANIMATIONS.IDLE);
+                let animation_speed = 2.3;
+                if (reactionAnimationNames.includes(this.currentAnimationName)) {
+                    animation_speed = 1;
+                }
+                this.setCurrentAnimation(this.currentAnimationName, animation_speed)
             }
         }
         else {
@@ -62,7 +111,11 @@ AFRAME.registerComponent("fullbody-animation-change", {
                 const isRunning = boost || 1 < Math.abs(right) || 1 < Math.abs(front)
 
                 if (front === 0 && right === 0) {
-                    this.setCurrentAnimation(ANIMATIONS.IDLE)
+                    let animation_speed = 2.3;
+                    if (reactionAnimationNames.includes(this.currentAnimationName)) {
+                        animation_speed = 1;
+                    }
+                    this.setCurrentAnimation(this.currentAnimationName, animation_speed)
                 } else if (Math.abs(front) < Math.abs(right)) {
                     if (0 < right) {
                         this.setCurrentAnimation(isRunning ? ANIMATIONS.RUNNING_RIGHT : ANIMATIONS.WALKING_RIGHT);
@@ -81,11 +134,11 @@ AFRAME.registerComponent("fullbody-animation-change", {
 
     },
 
-    setCurrentAnimation(animationName) {
+    setCurrentAnimation(animationName, animation_speed = 2.3) {
         const attrs = this.el.getAttribute('networked-avatar')
 
         if (attrs.avatar_pose !== animationName) {
-            this.el.setAttribute("networked-avatar", { avatar_pose: animationName });
+            this.el.setAttribute("networked-avatar", { avatar_pose: animationName, animation_speed: animation_speed });
         }
     },
 });
@@ -97,8 +150,13 @@ AFRAME.registerComponent("fullbody-animation-play", {
 
     init() {
         this.playAnimation = this.playAnimation.bind(this);
-
         this.animations = this.findAnimations();
+        // Update the animation time
+        for (let i = 0; i < this.animations.length; i++) {
+            if (reactionAnimationNames.includes(this.animations[i].name)) {
+                reactionTimes[this.animations[i].name] = this.animations[i].duration;
+            }
+        }
         this.avatarRoot = this.findAvatarRoot();
         this.networkedAvatar = this.findNetworkAvatarEl(this.el);
         this.mixer = new THREE.AnimationMixer(this.avatarRoot);
@@ -201,7 +259,7 @@ AFRAME.registerComponent("fullbody-animation-play", {
         const attrs = this.networkedAvatar.getAttribute('networked-avatar')
 
         if (this.currentAnimationName !== attrs.avatar_pose) {
-            this.playAnimation(attrs.avatar_pose)
+            this.playAnimation(attrs.avatar_pose, true, true, attrs.animation_speed)
             this.currentAnimationName = attrs.avatar_pose
         }
     },
