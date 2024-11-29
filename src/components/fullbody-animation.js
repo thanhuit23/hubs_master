@@ -20,8 +20,8 @@ const reactionAnimationNames = [
     "Clapping", // Clap
     "Heart", // Heart
     "Waving", // Wave
-    "Angry", // Angry
-    "Defeat", // Sad
+    "Anger", // Angry
+    "Sad", // Sad
     "Victory", // Victory
     "Hiphop", // Hiphop
     "Salute", // Salute
@@ -34,8 +34,8 @@ const reactionTimes = {
     "Clapping": 1,
     "Heart": 2.3,
     "Waving": 2.3,
-    "Angry": 2.3,
-    "Defeat": 2.3,
+    "Anger": 2.3,
+    "Sad": 2.3,
     "Victory": 2.3,
     "Hiphop": 2.3,
     "Salute": 2.3,

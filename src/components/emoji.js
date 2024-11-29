@@ -69,8 +69,8 @@ let reactionNames = [
   "박수", // Clapping
   "Heart", // Heart
   "손 흔들기", // Waving
-  "Angry", // Angry
-  "좌절", // Defeat
+  "화남", // Angry
+  "슬픔", // Sad
   "승리", // Victory
   "힙합", // Hiphop
   "경례", // Salute
@@ -112,8 +112,8 @@ let reactionAnimationNames = [
   "Clapping", // Clap
   "Heart", // Heart
   "Waving", // Wave
-  "Angry", // Angry
-  "Defeat", // Sad
+  "Anger", // Angry
+  "Sad", // Sad
   "Victory", // Victory
   "Hiphop", // Hiphop
   "Salute", // Salute
