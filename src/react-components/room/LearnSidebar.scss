@@ -1,0 +1,91 @@
+@use "../styles/theme.scss";
+
+$primary-color: #4CAF50;
+$secondary-color: #f4f4f4;
+$text-color: #333;
+$header-text-color: white;
+
+:local(.object) {
+  font-size: theme.$font-size-sm;
+
+  &>* {
+    margin-right: 8px;
+
+    &:last-child {
+      margin-right: 0;
+    }
+  }
+
+  svg {
+    color: theme.$text1-color;
+  }
+}
+
+:local(.learn-title) {
+  text-align: left;
+  list-style: none;
+  margin-top: 20px;
+
+  p {
+    margin: 20px;
+    color: black;
+  }
+}
+:local header {
+  background-color: $primary-color;
+  color: $header-text-color;
+  padding: 20px;
+  text-align: center;
+}
+
+:local main {
+  padding: 20px;
+  max-width: 800px;
+  margin: 0 auto;
+
+  h1 {
+    font-size: 2.5em;
+    text-align: center;
+    margin-bottom: 10px;
+  }
+
+  p {
+    font-size: 1.2em;
+    margin-bottom: 20px;
+    text-align: justify;
+  }
+
+  ul {
+    list-style: circle;
+    margin-left: 20px;
+    margin-bottom: 20px;
+
+    li {
+      font-size: 1.2em;
+      margin-bottom: 10px;
+    }
+  }
+
+  .image-container {
+    text-align: center;
+    margin-top: 20px;
+
+    h2 {
+      margin-bottom: 10px;
+    }
+
+    img {
+      max-width: 100%;
+      height: auto;
+      border: 1px solid #ddd;
+      border-radius: 5px;
+    }
+  }
+}
+
+:local footer {
+  background-color: $secondary-color;
+  text-align: center;
+  padding: 10px;
+  margin-top: 20px;
+}

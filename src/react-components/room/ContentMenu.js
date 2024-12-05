@@ -4,6 +4,7 @@ import PropTypes from "prop-types";
 import { joinChildren } from "../misc/joinChildren";
 import styles from "./ContentMenu.scss";
 import { ReactComponent as ObjectsIcon } from "../icons/Objects.svg";
+import { ReactComponent as LearnIcon } from "../icons/Book.svg";
 import { ReactComponent as PeopleIcon } from "../icons/People.svg";
 import { FormattedMessage } from "react-intl";
 
@@ -41,6 +42,17 @@ export function ObjectsMenuButton(props) {
       <ObjectsIcon />
       <span>
         <FormattedMessage id="content-menu.objects-menu-button" defaultMessage="Objects" />
+      </span>
+    </ContentMenuButton>
+  );
+}
+
+export function LearnMenuButton(props) {
+  return (
+    <ContentMenuButton {...props}>
+      <LearnIcon />
+      <span>
+        <FormattedMessage id="content-menu.learn-menu-button" defaultMessage="Learn" />
       </span>
     </ContentMenuButton>
   );

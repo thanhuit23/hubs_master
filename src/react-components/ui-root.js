@@ -52,7 +52,7 @@ import { MicSetupModalContainer } from "./room/MicSetupModalContainer";
 import { InvitePopoverContainer } from "./room/InvitePopoverContainer";
 import { MoreMenuPopoverButton, CompactMoreMenuButton, MoreMenuContextProvider } from "./room/MoreMenuPopover";
 import { ChatSidebarContainer } from "./room/ChatSidebarContainer";
-import { ContentMenu, PeopleMenuButton, ObjectsMenuButton, ECSDebugMenuButton } from "./room/ContentMenu";
+import { ContentMenu, PeopleMenuButton, ObjectsMenuButton, LearnMenuButton, ECSDebugMenuButton } from "./room/ContentMenu";
 import { ReactComponent as CameraIcon } from "./icons/Camera.svg";
 import { ReactComponent as AvatarIcon } from "./icons/Avatar.svg";
 import { ReactComponent as AddIcon } from "./icons/Add.svg";
@@ -80,6 +80,7 @@ import hubsLogo from "../assets/images/hubs-logo.png";
 import { PeopleSidebarContainer, userFromPresence } from "./room/PeopleSidebarContainer";
 import { ObjectListProvider } from "./room/hooks/useObjectList";
 import { ObjectsSidebarContainer } from "./room/ObjectsSidebarContainer";
+import { LearnSidebarContainer } from "./room/LearnSidebarContainer";
 import { ObjectMenuContainer } from "./room/ObjectMenuContainer";
 import { useCssBreakpoints } from "react-use-css-breakpoints";
 import { PlacePopoverContainer } from "./room/PlacePopoverContainer";
@@ -858,6 +859,25 @@ class UIRoot extends Component {
       this.setState({ reacted: !this.state.reacted });
     }
   };
+
+  broadcastReaction = () => {
+    if (!this.state.reacted) {
+      const avatarRoot = document.querySelectorAll("[fullbody-animation-play]");
+      if (avatarRoot && avatarRoot.length > 0) {
+        for (let i = 0; i < avatarRoot.length; i++) {
+          avatarRoot[i].components["fullbody-animation-play"].playAnimation("Hiphop", false, false, 1);
+        }
+      }
+    } else {
+      const avatarRoot = document.querySelectorAll("[fullbody-animation-play]");
+      if (avatarRoot && avatarRoot.length > 0) {
+        for (let i = 0; i < avatarRoot.length; i++) {
+          avatarRoot[i].components["fullbody-animation-play"].playAnimation("Idle", false, false, 1);
+        }
+      }
+    }
+    this.setState({ reacted: !this.state.reacted });
+  }
   //
 
   renderDialog = (DialogClass, props = {}) => <DialogClass {...{ onClose: this.closeDialog, ...props }} />;
@@ -1578,6 +1598,10 @@ class UIRoot extends Component {
                               onClick={() => this.toggleSidebar("objects")}
                             />
                           )}
+                          <LearnMenuButton
+                            active={this.state.sidebarId === "learn"}
+                            onClick={() => this.toggleSidebar("learn")}
+                          />
                           <PeopleMenuButton
                             active={this.state.sidebarId === "people"}
                             disabled={isLockedDownDemo}
@@ -1671,6 +1695,13 @@ class UIRoot extends Component {
                       {this.state.sidebarId === "objects" && (
                         <ObjectsSidebarContainer
                           hubChannel={this.props.hubChannel}
+                          onClose={() => this.setSidebar(null)}
+                        />
+                      )}
+                      {this.state.sidebarId === "learn" && (
+                        <LearnSidebarContainer
+                          hubChannel={this.props.hubChannel}
+                          room={this.props.hub}
                           onClose={() => this.setSidebar(null)}
                         />
                       )}
@@ -1843,8 +1874,8 @@ class UIRoot extends Component {
                       <ToolbarButton
                         icon={<ReactionIcon />}
                         preset="accent1"
-                        label={<FormattedMessage id="toolbar.reactive-button" defaultMessage="AniReact" />}
-                        onClick={() => this.togglePlayAnimation("A0_Waving")}
+                        label={<FormattedMessage id="toolbar.reactive-button" defaultMessage="Test" />}
+                        onClick={() => this.broadcastReaction()}
                         selected={this.state.reacted === true}
                       />
                     )} */}
