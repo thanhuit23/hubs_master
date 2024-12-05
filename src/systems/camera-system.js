@@ -537,6 +537,8 @@ export class CameraSystem {
         } else {
           this.avatarPOV.object3D.updateMatrices();
           this.avatarPOV.object3D.matrixWorld.decompose(position, quat, scale);
+          // Move the camera up a bit so that the camera is at eye level
+          position.y += 0.3;
           tmpMat.compose(position, quat, V_ONE);
           setMatrixWorld(this.viewingCamera, tmpMat);
         }
