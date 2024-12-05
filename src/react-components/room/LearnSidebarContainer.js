@@ -7,8 +7,8 @@ export function LearnSidebarContainer({ onClose, hubChannel, room }) {
     const roomDescription = room.description;
     // Split the description into an array of strings by newlines
     const roomDescriptionLines = roomDescription.split("\n");
-    // Remove any empty strings from the array
-
+    
+    const roomName = room.name;
 
     const onCloseWrapper = useCallback(() => {
         onClose();
@@ -17,6 +17,7 @@ export function LearnSidebarContainer({ onClose, hubChannel, room }) {
     return (
         <LearnSidebar onClose={onCloseWrapper}>
             <LearnObject>
+                <h2>{roomName}</h2>
                 {roomDescriptionLines.map((line, index) => (
                     <p key={index}>{line}</p>
                 ))}
