@@ -449,7 +449,16 @@ export default class Store extends EventTarget {
             avatarUrl = await fetchRandomDefaultAvatarId();
           } else {
             // otherwise, use the avatar id from the profile
-            avatarUrl = this.state.profile.avatarId;
+            if (this.state.profile.avatarId) {
+              // check if the avatar id contains "DefaultAvatar"
+              if (!this.state.profile.avatarId.includes("DefaultAvatar")) {
+                avatarUrl = this.state.profile.avatarId;
+              } else {
+                avatarUrl = await fetchRandomDefaultAvatarId();
+              }
+            } else {
+              avatarUrl = await fetchRandomDefaultAvatarId();
+            }
           }
         }
       }
