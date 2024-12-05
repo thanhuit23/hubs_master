@@ -3,6 +3,7 @@ import { HubsWorld } from "../app";
 import {
   CursorRaycastable,
   HandCollisionTarget,
+  Holdable,
   OffersHandConstraint,
   OffersRemoteConstraint,
   RemoteHoverTarget
@@ -23,4 +24,5 @@ export function inflateGrabbable(world: HubsWorld, eid: number, props: Grabbable
     addComponent(world, OffersRemoteConstraint, eid);
   }
   inflateHoldable(world, eid);
+  addComponent(world, Holdable, eid);
 }
