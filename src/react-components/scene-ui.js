@@ -7,7 +7,7 @@ import configs from "../utils/configs";
 import { createAndRedirectToNewHub, getReticulumFetchUrl } from "../utils/phoenix-utils";
 import { ReactComponent as CodeBranch } from "./icons/CodeBranch.svg";
 import { ReactComponent as Pen } from "./icons/Pen.svg";
-import { ReactComponent as Twitter } from "./icons/Twitter.svg";
+import { ReactComponent as X } from "./icons/X.svg";
 import IfFeature from "./if-feature";
 import { AppLogo } from "./misc/AppLogo";
 
@@ -61,7 +61,7 @@ class SceneUI extends Component {
         shareHashtag: configs.translation("share-hashtag")
       }
     );
-    const tweetLink = `https://twitter.com/share?url=${encodeURIComponent(sceneUrl)}&text=${encodeURIComponent(
+    const tweetLink = `https://x.com/share?url=${encodeURIComponent(sceneUrl)}&text=${encodeURIComponent(
       tweetText
     )}`;
 
@@ -236,9 +236,9 @@ class SceneUI extends Component {
                 )}
               </IfFeature>
               <a href={tweetLink} rel="noopener noreferrer" target="_blank" className={styles.scenePreviewButton}>
-                <Twitter />
+                <X />
                 <div>
-                  <FormattedMessage id="scene-page.tweet-button" defaultMessage="Share on Twitter" />
+                  <FormattedMessage id="scene-page.tweet-button" defaultMessage="Share on X" />
                 </div>
               </a>
             </div>
