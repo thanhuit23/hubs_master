@@ -22,14 +22,18 @@ const animationControlLoopUIExitQuery = exitQuery(animationControlLoopUIQuery);
 const animationControlStopUIQuery = defineQuery([animationControlStopUI]);
 const animationControlStopUIExitQuery = exitQuery(animationControlStopUIQuery);
 
-
+let playButton = new THREE.Mesh();
+let stopButton = new THREE.Mesh();
 
 // let controlMesh = new THREE.Mesh();
 function clicked(world: HubsWorld, entity: number): boolean {
     return hasComponent(world, Interacted, entity);
 }
 
-function playAnimation(world: HubsWorld, parentEid: number, animationName: string, animationType: string, targetClassName: string): void {
+const objectsInScene: THREE.Object3D[] = [];
+const buttonEids: number[] = [];
+
+export function playAnimation(world: HubsWorld, parentEid: number, animationName: string, animationType: string, targetClassName: string): void {
     const parentObject = world.eid2obj.get(parentEid);
 
     if (!parentObject) {
@@ -53,7 +57,7 @@ function playAnimation(world: HubsWorld, parentEid: number, animationName: strin
 
     if (!targetClassName || targetClassName === "") {
         return;
-    }    
+    }
 
     if (!animationName || animationName === "") {
         return;
@@ -112,123 +116,125 @@ function playAnimation(world: HubsWorld, parentEid: number, animationName: strin
 
 export function animationcontrolSystem(world: HubsWorld) {
     const myanimationcontrolEid = anyEntityWith(world, animationControl);
-    if (myanimationcontrolEid === null) {
-        return;
-    }
+    if (myanimationcontrolEid !== null) {
+        const entered = animationcontrolEnterQuery(world);
+        for (let i = 0; i < entered.length; i++) {
+            console.log('~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~');
+            const entity = entered[i];
+            const controlObject = world.eid2obj.get(entity);
+            const animationName = APP.getString(animationControl.animationName[entity]);
+            const animationTarget = APP.getString(animationControl.animationTarget[entity]);
+            const animationType = APP.getString(animationControl.animationType[entity]);
+            console.log('entered', { entity, animationName });
+            if (controlObject) {
+                const controlPosition = new THREE.Vector3();
+                controlObject.getWorldPosition(controlPosition);
+                const controlRotation = new THREE.Quaternion();
+                controlObject.getWorldQuaternion(controlRotation);
+                const controlScale = new THREE.Vector3();
+                controlObject.getWorldScale(controlScale);
 
-    const entered = animationcontrolEnterQuery(world);
+                controlObject.visible = true;
 
-    for (let i = 0; i < entered.length; i++) {
-        console.log('~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~');
-        const entity = entered[i];
-        const controlObject = world.eid2obj.get(entity);
-        const animationName = APP.getString(animationControl.animationName[entity]);
-        const animationTarget = APP.getString(animationControl.animationTarget[entity]);
-        const animationType = APP.getString(animationControl.animationType[entity]);
-        console.log('entered', { entity, animationName });
-        if (controlObject) {
-            const controlPosition = new THREE.Vector3();
-            controlObject.getWorldPosition(controlPosition);
-            const controlRotation = new THREE.Quaternion();
-            controlObject.getWorldQuaternion(controlRotation);
-            const controlScale = new THREE.Vector3();
-            controlObject.getWorldScale(controlScale);
+                let btn_width = 1;
+                let btn_height = 1;
+                let text_color = "#000000";
+                let bg_color = "Play Button";
+                let font_size = 16;
+                let buttonText = "Play";
+                let font = "Arial";
 
-            controlObject.visible = true;
+                const playButtonEid = addEntity(world);
+                buttonEids.push(playButtonEid);
+                playButton = createUIButton({
+                    width: btn_width,
+                    height: btn_height,
+                    backgroundColor: bg_color,
+                    textColor: text_color,
+                    text: buttonText,
+                    fontSize: font_size,
+                    font: font,
+                });
 
-            let btn_width = 1;
-            let btn_height = 1;
-            let text_color = "#000000";
-            let bg_color = "Play Button";
-            let font_size = 16;
-            let buttonText = "Play";
-            let font = "Arial";
+                playButton.position.copy(controlPosition);
+                playButton.position.x -= 0.3;
+                playButton.quaternion.copy(controlRotation);
+                playButton.scale.copy(controlScale);
 
-            const playButtonEid = addEntity(world);
-            const playButton = createUIButton({
-                width: btn_width,
-                height: btn_height,
-                backgroundColor: bg_color,
-                textColor: text_color,
-                text: buttonText,
-                fontSize: font_size,
-                font: font,
-            });
-
-            playButton.position.copy(controlPosition);
-            playButton.position.x -= 0.3;
-            playButton.quaternion.copy(controlRotation);
-            playButton.scale.copy(controlScale);
-
-            addObject3DComponent(world, playButtonEid, playButton);
-            addComponent(world, animationControlPlayUI, playButtonEid);
-            animationControlPlayUI.animationName[playButtonEid] = APP.getSid(animationName ? animationName : "");
-            animationControlPlayUI.animationTarget[playButtonEid] = APP.getSid(animationTarget ? animationTarget.replace('.', '') : "");
-            animationControlPlayUI.animationType[playButtonEid] = APP.getSid(animationType ? animationType : "play");
-            animationControlPlayUI.parentNode[playButtonEid] = entity;
-            // Add mouse events to the mesh
-            addComponent(world, CursorRaycastable, playButtonEid); // Raycast
-            addComponent(world, RemoteHoverTarget, playButtonEid); // Hover
-            addComponent(world, SingleActionButton, playButtonEid); // Click
-            world.scene.add(playButton);
+                addObject3DComponent(world, playButtonEid, playButton);
+                addComponent(world, animationControlPlayUI, playButtonEid);
+                animationControlPlayUI.animationName[playButtonEid] = APP.getSid(animationName ? animationName : "");
+                animationControlPlayUI.animationTarget[playButtonEid] = APP.getSid(animationTarget ? animationTarget.replace('.', '') : "");
+                animationControlPlayUI.animationType[playButtonEid] = APP.getSid(animationType ? animationType : "play");
+                animationControlPlayUI.parentNode[playButtonEid] = entity;
+                // Add mouse events to the mesh
+                addComponent(world, CursorRaycastable, playButtonEid); // Raycast
+                addComponent(world, RemoteHoverTarget, playButtonEid); // Hover
+                addComponent(world, SingleActionButton, playButtonEid); // Click
+                world.scene.add(playButton);
+                objectsInScene.push(playButton);
 
 
-            const stopButtonEid = addEntity(world);
-            bg_color = "Stop Button";
-            buttonText = "Stop";
-            const stopButton = createUIButton({
-                width: btn_width,
-                height: btn_height,
-                backgroundColor: bg_color,
-                textColor: text_color,
-                text: buttonText,
-                fontSize: font_size,
-                font: font,
-            });
+                const stopButtonEid = addEntity(world);
+                buttonEids.push(stopButtonEid);
+                bg_color = "Stop Button";
+                buttonText = "Stop";
+                stopButton = createUIButton({
+                    width: btn_width,
+                    height: btn_height,
+                    backgroundColor: bg_color,
+                    textColor: text_color,
+                    text: buttonText,
+                    fontSize: font_size,
+                    font: font,
+                });
 
-            stopButton.position.copy(controlPosition);
-            stopButton.position.x += 0.3;
-            stopButton.quaternion.copy(controlRotation);
-            stopButton.scale.copy(controlScale);
+                stopButton.position.copy(controlPosition);
+                stopButton.position.x += 0.3;
+                stopButton.quaternion.copy(controlRotation);
+                stopButton.scale.copy(controlScale);
 
-            addObject3DComponent(world, stopButtonEid, stopButton);
-            addComponent(world, animationControlPlayUI, stopButtonEid);
-            animationControlPlayUI.animationName[stopButtonEid] = APP.getSid(animationName ? animationName : "");
-            animationControlPlayUI.animationTarget[stopButtonEid] = APP.getSid(animationTarget ? animationTarget.replace('.', '') : "");
-            animationControlPlayUI.animationType[stopButtonEid] = APP.getSid("stop");
-            animationControlPlayUI.parentNode[stopButtonEid] = entity;
-            // Add mouse events to the mesh
-            addComponent(world, CursorRaycastable, stopButtonEid); // Raycast
-            addComponent(world, RemoteHoverTarget, stopButtonEid); // Hover
-            addComponent(world, SingleActionButton, stopButtonEid); // Click
-            world.scene.add(stopButton);
+                addObject3DComponent(world, stopButtonEid, stopButton);
+                addComponent(world, animationControlPlayUI, stopButtonEid);
+                animationControlPlayUI.animationName[stopButtonEid] = APP.getSid(animationName ? animationName : "");
+                animationControlPlayUI.animationTarget[stopButtonEid] = APP.getSid(animationTarget ? animationTarget.replace('.', '') : "");
+                animationControlPlayUI.animationType[stopButtonEid] = APP.getSid("stop");
+                animationControlPlayUI.parentNode[stopButtonEid] = entity;
+                // Add mouse events to the mesh
+                addComponent(world, CursorRaycastable, stopButtonEid); // Raycast
+                addComponent(world, RemoteHoverTarget, stopButtonEid); // Hover
+                addComponent(world, SingleActionButton, stopButtonEid); // Click
+                world.scene.add(stopButton);
+                objectsInScene.push(stopButton);
+            }
+
         }
-
     }
-
     const exited = animationcontrolExitQuery(world);
     for (let i = 0; i < exited.length; i++) {
         console.log('~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~');
         const entity = exited[i];
         const controlObject = world.eid2obj.get(entity);
-
-        const animationName = APP.getString(animationControl.animationName[entity]);
-        console.log('exited', { entity, animationName });
         if (controlObject) {
             world.scene.remove(controlObject);
         }
-    }
 
-    const entities = animationcontrolQuery(world);
+        world.scene.remove(playButton);
+        world.scene.remove(stopButton);
 
-    for (let i = 0; i < entities.length; i++) {
-        const networkedEid = anyEntityWith(world, animationControl)!;
-        if (networkedEid) {
-            const animationName = APP.getString(animationControl.animationName[networkedEid]);
-            if (clicked(world, networkedEid)) {
-                console.log('clicked', { networkedEid, animationName });
+        for (let j = 0; j < buttonEids.length; j++) {
+            const buttonEid = buttonEids[j];
+            const buttonObject = world.eid2obj.get(buttonEid);
+            if (buttonObject) {
+                world.scene.remove(buttonObject);
             }
         }
+
+        for (let j = 0; j < objectsInScene.length; j++) {
+            const object = objectsInScene[j];
+            world.scene.remove(object);
+        }
+        objectsInScene.length = 0;
     }
 
     const entitiesUIPlay = animationControlPlayUIQuery(world);
@@ -257,5 +263,69 @@ export function animationcontrolSystem(world: HubsWorld) {
         if (controlObject) {
             world.scene.remove(controlObject);
         }
+
+        world.scene.remove(playButton);
+        world.scene.remove(stopButton);
+
+        for (let j = 0; j < buttonEids.length; j++) {
+            const buttonEid = buttonEids[j];
+            const buttonObject = world.eid2obj.get(buttonEid);
+            if (buttonObject) {
+                world.scene.remove(buttonObject);
+            }
+        }
+
+        for (let j = 0; j < objectsInScene.length; j++) {
+            const object = objectsInScene[j];
+            world.scene.remove(object);
+        }
+
+        objectsInScene.length = 0;
     }
+
+    const exitedUILoop = animationControlLoopUIExitQuery(world);
+    for (let i = 0; i < exitedUILoop.length; i++) {
+        console.log('~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~');
+        const entity = exitedUILoop[i];
+        const controlObject = world.eid2obj.get(entity);
+        if (controlObject) {
+            world.scene.remove(controlObject);
+        }
+
+        world.scene.remove(playButton);
+        world.scene.remove(stopButton);
+
+        for (let j = 0; j < buttonEids.length; j++) {
+            const buttonEid = buttonEids[j];
+            const buttonObject = world.eid2obj.get(buttonEid);
+            if (buttonObject) {
+                world.scene.remove(buttonObject);
+            }
+        }
+
+        for (let j = 0; j < objectsInScene.length; j++) {
+            const object = objectsInScene[j];
+            world.scene.remove(object);
+        }
+
+        objectsInScene.length = 0;
+    }
+
+    const exitedUIStop = animationControlStopUIExitQuery(world);
+    for (let i = 0; i < exitedUIStop.length; i++) {
+        console.log('~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~');
+        const entity = exitedUIStop[i];
+        const controlObject = world.eid2obj.get(entity);
+        if (controlObject) {
+            world.scene.remove(controlObject);
+        }
+
+        for (let j = 0; j < objectsInScene.length; j++) {
+            const object = objectsInScene[j];
+            world.scene.remove(object);
+        }
+
+        objectsInScene.length = 0;
+    }
+
 }
