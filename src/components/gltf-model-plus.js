@@ -413,7 +413,10 @@ const OBJECT3D_EXT = new Set([
   "spot-light",
   "text",
   "video",
-  "waypoint"
+  "waypoint",
+  // Thanh add
+  "interactive-area"
+  //
 ]);
 
 class GLTFHubsPlugin {

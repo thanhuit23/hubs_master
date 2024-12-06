@@ -653,7 +653,7 @@ AFRAME.GLTFModelPlus.registerComponent("tfc-keyboard-button", "tfc-keyboard-butt
 AFRAME.GLTFModelPlus.registerComponent("iframe", "iframe", inflatorWrapper(inflateTFCIframe));
 AFRAME.GLTFModelPlus.registerComponent("pdfviewer", "pdfviewer", inflatorWrapper(inflatepdfviewer));
 AFRAME.GLTFModelPlus.registerComponent("animationcontrol", "animationcontrol", inflatorWrapper(inflateanimationcontrol));
-
+AFRAME.GLTFModelPlus.registerComponent("interactive-area", "interactive-area");
 //
 
 AFRAME.GLTFModelPlus.registerComponent("tfc-gateway-link", "tfc-gateway-link", inflatorWrapper(inflateTFCGatewayLink));

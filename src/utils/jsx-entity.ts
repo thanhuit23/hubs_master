@@ -132,7 +132,7 @@ import { TFCKeyboardButtonParams, inflateTFCKeyboardButton } from "../inflators/
 import { TFCIframeParams, inflateTFCIframe } from "../inflators/iframe";
 import { pdfviewerParams, inflatepdfviewer } from "../inflators/pdfviewer";
 import { inflateanimationcontrol, animationcontrolParams } from "../inflators/animationcontrol";
-
+import { interactiveAreaParams, inflateInteractiveArea } from "../inflators/interactiveArea";
 //
 import { TFCGatewayLinkParams, inflateTFCGatewayLink } from "../inflators/tfc-gateway-link";
 import { TFCGatewayParams, inflateTFCGateway } from "../inflators/tfc-gateway";
@@ -303,6 +303,9 @@ export interface ComponentData {
   networked?: any;
   networkedTransform?: any;
   grabbable?: GrabbableParams;
+  // Thanh add
+  interactiveArea?: interactiveAreaParams;
+  //
 }
 
 type OptionalParams<T> = Partial<T> | true;
@@ -565,7 +568,10 @@ export const commonInflators: Required<{ [K in keyof ComponentDataT]: InflatorFn
   mediaFrame: inflateMediaFrame,
   text: inflateText,
   networkedTransform: createDefaultInflator(NetworkedTransform),
-  networked: createDefaultInflator(Networked)
+  networked: createDefaultInflator(Networked),
+  // Thanh add
+  interactiveArea: inflateInteractiveArea,
+  //
 };
 
 export const jsxInflators: Required<{ [K in keyof ComponentDataT]: InflatorFn }> = {

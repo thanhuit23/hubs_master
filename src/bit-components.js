@@ -791,6 +791,14 @@ export const animationControlLoopUI = defineComponent({
 });
 animationControlLoopUI.animationName[$isStringType] = true;
 animationControlLoopUI.animationTarget[$isStringType] = true;
+
+export const interactiveArea = defineComponent({
+  triggerType: Types.ui32,
+  triggerTarget: Types.ui32
+});
+
+interactiveArea.triggerType[$isStringType] = true;
+interactiveArea.triggerTarget[$isStringType] = true;
 //
 
 // TFC Learning Frame

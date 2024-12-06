@@ -31,3 +31,6 @@ import "./audio-zone-source";
 import "./troika-text";
 import "./frustrum";
 import "./inject-main-camera-here";
+// Thanh add
+import "./interactive-area";
+//
