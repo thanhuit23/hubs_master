@@ -27,6 +27,9 @@ import { getCurrentStreamer } from "../utils/component-utils";
 import { isIOS } from "../utils/is-mobile";
 
 import ProfileEntryPanel from "./profile-entry-panel";
+// Thanh add
+import ChangeProfilePanel from "./change-profile-panel";
+//
 import MediaBrowserContainer from "./media-browser";
 
 import EntryStartPanel from "./entry-start-panel.js";
@@ -1721,7 +1724,7 @@ class UIRoot extends Component {
                         />
                       )}
                       {this.state.sidebarId === "profile" && (
-                        <ProfileEntryPanel
+                        <ChangeProfilePanel
                           history={this.props.history}
                           containerType="sidebar"
                           displayNameOverride={displayNameOverride}
