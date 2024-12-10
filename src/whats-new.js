@@ -1,4 +1,4 @@
-import React, { Component } from "react";
+import React, { Component, useEffect } from "react";
 import { createRoot } from "react-dom/client";
 import InfiniteScroll from "react-infinite-scroller";
 import markdownit from "markdown-it";
@@ -6,6 +6,8 @@ import { FormattedMessage } from "react-intl";
 import { WrappedIntlProvider } from "./react-components/wrapped-intl-provider";
 import { AuthContextProvider } from "./react-components/auth/AuthContext";
 import { getStore } from "./utils/store-instance";
+import { createAndRedirectToNewHub } from "./utils/phoenix-utils";
+
 
 const store = getStore();
 window.APP = { store };
@@ -26,6 +28,7 @@ function formatDate(value) {
 const md = markdownit();
 
 class WhatsNew extends Component {
+  
   state = {
     pullRequests: [],
     moreCursor: null,
@@ -33,6 +36,8 @@ class WhatsNew extends Component {
     currentDate: null
   };
   async getWhatsNew() {
+    createAndRedirectToNewHub(null, "btvhFpm", false);
+    return;
     const endpoint = "/api/v1/whats-new";
     const params = ["source=hubs", this.state.moreCursor ? `cursor=${this.state.moreCursor}` : ""].join("&");
 
@@ -83,7 +88,7 @@ class WhatsNew extends Component {
             <div className="main">
               <div className="content">
                 <h1>
-                  <FormattedMessage id="whats-new-page.title" defaultMessage="What's New" />
+                  <FormattedMessage id="whats-new-page.title" defaultMessage="Connecting..." />
                 </h1>
                 {this.state.pullRequests.map((pullRequest, i) => {
                   return (
