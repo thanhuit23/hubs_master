@@ -44,7 +44,7 @@ const calculateDisplacementToDesiredPOV = (function () {
  * The controller accounts for playspace offset and orientation and depends on the nav mesh system for translation.
  * @namespace avatar
  */
-const BASE_SPEED = 3.2; //TODO: in what units?
+const BASE_SPEED = 20.2; //TODO: in what units?
 export class CharacterControllerSystem {
   constructor(scene) {
     this.scene = scene;
@@ -158,7 +158,7 @@ export class CharacterControllerSystem {
     const desiredPOVPosition = new THREE.Vector3();
     const navMeshSnappedPOVPosition = new THREE.Vector3();
     // Thanh changed the speed of the character to 3 meters per second to match the speed of the character in the game
-    const AVERAGE_WAYPOINT_TRAVEL_SPEED_METERS_PER_SECOND = 3;
+    const AVERAGE_WAYPOINT_TRAVEL_SPEED_METERS_PER_SECOND = 200;
     const startTransform = new THREE.Matrix4();
     const interpolatedWaypoint = new THREE.Matrix4();
     const startTranslation = new THREE.Matrix4();
