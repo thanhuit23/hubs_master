@@ -70,6 +70,12 @@ export function createUIButton(options: CreateUIButtonOptions): THREE.Mesh {
       case "Stop":
         drawImage("stop_btn_img", 512, 512);
         break;
+      case "Record":
+        drawImage("record_btn_img", 512, 512);
+        break;
+      case "Recording":
+        drawImage("recording_btn_img", 512, 512);
+        break;
       default:
         console.log("No matching image for the text provided.");
     }

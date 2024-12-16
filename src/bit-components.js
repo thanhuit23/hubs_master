@@ -799,6 +799,11 @@ export const interactiveArea = defineComponent({
 
 interactiveArea.triggerType[$isStringType] = true;
 interactiveArea.triggerTarget[$isStringType] = true;
+
+export const voiceButtonData = defineComponent({
+  clicked: Types.ui32,
+});
+voiceButtonData.clicked[$isStringType] = true;
 //
 
 // TFC Learning Frame
