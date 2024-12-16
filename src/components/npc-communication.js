@@ -12,9 +12,23 @@ AFRAME.registerComponent("npc-communication", {
 
     init: function () {
         this.eid = null;
+        this.mediaRecorder = null;
+        this.recordedChunks = [];
         // this.audioMap = {}; // Map to store audio objects
         // this.loadAudioFiles(); // Preload audio files
         this.createOrUpdateUI("Record");
+        console.log(this.fetchAppConfigs("GET").then(r => r.json()));
+    },
+
+    fetchAppConfigs: function (method, body) {
+        return fetch("/api/v1/app_configs", {
+            method,
+            headers: {
+                Authorization: `Bearer`,
+                "Content-Type": "application/json"
+            },
+            body
+        });
     },
 
     // Preload audio files
@@ -90,16 +104,161 @@ AFRAME.registerComponent("npc-communication", {
             const clickedState = APP.getString(voiceButtonData.clicked[this.eid]);
             const buttonText = clickedState === "true" ? "Record" : "Recording";
 
-            // if (clickedState === "true") {
-            //     this.playAudio("stopRecording");
-            // } else {
-            //     this.playAudio("startRecording");
-            // }
+            if (clickedState === "true") {
+                // this.playAudio("stopRecording");
+                this.stopRecording();
+            } else {
+                // this.playAudio("startRecording");
+                this.toggleRecording();
+            }
 
             const voiceButton = APP.world.eid2obj.get(this.eid);
             this.el.object3D.remove(voiceButton);
             // Add a new object 3D component to the entity
             this.createOrUpdateUI(buttonText);
+        }
+    },
+    toggleRecording: async function () {
+        try {
+            const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+            this.mediaRecorder = new MediaRecorder(stream);
+
+            this.mediaRecorder.ondataavailable = (event) => {
+                if (event.data.size > 0) {
+                    this.recordedChunks.push(event.data);
+                }
+            };
+
+            this.mediaRecorder.start();
+        } catch (error) {
+            console.error("Error starting recording:", error);
+        }
+    },
+
+    stopRecording: function () {
+        this.mediaRecorder.stop();
+        this.mediaRecorder.onstop = async () => {
+            const audioBlob = new Blob(this.recordedChunks, { type: 'audio/webm' });
+            this.recordedChunks = []; // Clear chunks
+
+            // Convert to a file object for upload
+            const audioFile = new File([audioBlob], 'recording.webm', { type: 'audio/webm' });
+            const dataTransfer = new DataTransfer();
+            dataTransfer.items.add(audioFile);
+            document.getElementById('audioInput').files = dataTransfer.files;
+            await this.voiceProcess();
+        };
+
+    },
+
+    voiceProcess: async function () {
+        const fileInput = document.getElementById('audioInput');
+        const outputTextarea = document.getElementById('audioText');
+        const apiKey = "";
+
+        if (!fileInput.files.length) {
+            alert('Please select an audio file first!');
+            return;
+        }
+        const file = fileInput.files[0];
+
+        try {
+            const transcriptionFormData = new FormData();
+            transcriptionFormData.append('file', file); // Use the original file directly
+            transcriptionFormData.append('model', 'whisper-1');
+
+            // Using OpenAI Whisper API
+            const apiUrl = 'https://api.openai.com/v1/audio/transcriptions';
+            const response = await fetch(apiUrl, {
+                method: 'POST',
+                headers: {
+                    'Authorization': `Bearer ${apiKey}`,
+                },
+                body: transcriptionFormData,
+            });
+
+            if (response.ok) {
+                const data = await response.json();
+                outputTextarea.value = data.text || 'No transcription available';
+
+                const audioText = data.text;
+                const npcResponseTextarea = document.getElementById('npcResponse');
+
+                if (!audioText) {
+                    alert('Please transcribe audio first!');
+                    return;
+                }
+
+                try {
+                    // OpenAI GPT API for NPC interaction
+                    const apiUrl = 'https://api.openai.com/v1/chat/completions';
+                    const response = await fetch(apiUrl, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'Authorization': `Bearer ${apiKey}`,
+                        },
+                        body: JSON.stringify({
+                            model: 'gpt-4',
+                            messages: [
+                                { role: 'system', content: 'You are a concise and knowledgeable NPC who only responds with accurate and brief answers. If you do not know the answer, clearly state that you are unsure or do not have the information.' },
+                                { role: 'user', content: audioText }
+                            ]
+                        }),
+                    });
+
+                    if (response.ok) {
+                        const data = await response.json();
+                        npcResponseTextarea.value = data.choices[0].message.content || 'No response from NPC';
+
+                        const npcResponse = npcResponseTextarea.value;
+                        const npcAudio = document.getElementById('npcAudio');
+
+                        if (!npcResponse) {
+                            alert('Please get a response from the NPC first!');
+                            return;
+                        }
+
+                        try {
+                            // Use a Text-to-Speech API
+                            const apiUrl = 'https://api.openai.com/v1/audio/speech'; // Example endpoint, replace with actual TTS endpoint
+                            const response = await fetch(apiUrl, {
+                                method: 'POST',
+                                headers: {
+                                    'Content-Type': 'application/json',
+                                    'Authorization': `Bearer ${apiKey}`,
+                                },
+                                body: JSON.stringify({
+                                    model: 'tts-1',
+                                    input: npcResponse,
+                                    voice: 'alloy' // Example voice, replace with available options
+                                }),
+                            });
+
+                            if (response.ok) {
+                                const audioBlob = await response.blob();
+                                const audioUrl = URL.createObjectURL(audioBlob);
+                                npcAudio.src = audioUrl;
+                                npcAudio.play();
+                            } else {
+                                console.error('Error in TTS API:', response.statusText);
+                            }
+                        } catch (error) {
+                            console.error('Error during text-to-audio conversion:', error);
+                        }
+                    } else {
+                        console.error('Error in NPC API:', response.statusText);
+                        npcResponseTextarea.value = 'Error in NPC response';
+                    }
+                } catch (error) {
+                    console.error('Error during NPC interaction:', error);
+                }
+            } else {
+                console.error('Error in transcription API:', response.statusText);
+                outputTextarea.value = 'Error in transcription';
+            }
+        } catch (error) {
+            console.error('Error converting audio to text:', error);
         }
     },
 
@@ -108,11 +267,7 @@ AFRAME.registerComponent("npc-communication", {
             const voiceButton = APP.world.eid2obj.get(this.eid);
             if (voiceButton) {
                 this.el.object3D.remove(voiceButton);
-                console.log("Removing UI");
             }
         }
-
-        // Stop all playing audio
-        // this.stopAllAudio();
     },
 });
