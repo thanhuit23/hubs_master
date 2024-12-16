@@ -141,6 +141,8 @@ import "./components/mirror";
 // Thanh add
 import "./components/interactable-object";
 import "./components/fullbody-animation";
+import "./components/npc-communication";
+//
 
 import React from "react";
 import { createRoot } from "react-dom/client";

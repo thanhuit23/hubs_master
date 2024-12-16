@@ -52,7 +52,10 @@ export function HomePage() {
     }
   }, [qs]);
 
-  const canCreateRooms = !configs.feature("disable_room_creation") || auth.isAdmin;
+  // Thanh add
+  let canCreateRooms = !configs.feature("disable_room_creation") || auth.isAdmin;
+  canCreateRooms = canCreateRooms && auth.isSignedIn;
+  //
   const email = auth.email;
   return (
     !newScene && (

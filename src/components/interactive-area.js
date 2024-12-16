@@ -15,34 +15,36 @@ AFRAME.registerComponent("interactive-area", {
         this.initialScale = this.el.object3D.scale.x;
         this.initialPosition = this.el.object3D.position;
         this.player = document.querySelector("#avatar-pov-node");
+        this.portalEntity = null;
+        this.enablePortal = false;
     },
 
     update: function () {
     },
 
-    playAnimation(mixerEl, animationName, animationType, targetClassName) {    
+    playAnimation(mixerEl, animationName, animationType, targetClassName) {
         const { mixer, animations } = mixerEl.components["animation-mixer"];
-    
+
         if (!mixer) {
             return;
         }
-    
+
         if (!animations) {
             return;
         }
-    
+
         if (!targetClassName || targetClassName === "") {
             return;
         }
-    
+
         if (!animationName || animationName === "") {
             return;
         }
-    
+
         if (!animationType || animationType === "") {
             return;
         }
-    
+
         // Try to start the animation on the robot object instead of all the objects
         const targetObject = document.getElementsByClassName(targetClassName)[0];
         if (!targetObject) {
@@ -74,7 +76,7 @@ AFRAME.registerComponent("interactive-area", {
             return;
         }
         const clipAction = mixer.clipAction(animations[clipIndices[animationIndex]]);
-    
+
         if (animationType === "play") {
             clipAction.reset();
             clipAction.setLoop(THREE.LoopOnce, 1);
@@ -113,6 +115,8 @@ AFRAME.registerComponent("interactive-area", {
         console.log(`Trigger target: ${this.data.triggerTarget}`);
         if (state) {
             if (this.data.triggerType === "npc") {
+                this.enablePortal = true;
+                this.onSpawnPortal();
                 const mixerEl = findAncestorWithComponent(this.el.object3D.parent?.parent?.el, "animation-mixer");
                 if (!mixerEl) {
                     return;
@@ -123,6 +127,9 @@ AFRAME.registerComponent("interactive-area", {
             }
         } else {
             if (this.data.triggerType === "npc") {
+                // Remove the portal entity from the scene
+                this.el.sceneEl.removeChild(this.portalEntity);
+                this.enablePortal = false;
                 const mixerEl = findAncestorWithComponent(this.el.object3D.parent?.parent?.el, "animation-mixer");
                 if (!mixerEl) {
                     return;
@@ -130,6 +137,15 @@ AFRAME.registerComponent("interactive-area", {
                 this.playAnimation(mixerEl, "Waving", "stop", this.data.triggerTarget);
             }
         }
+    },
+
+    onSpawnPortal: function (event) {
+        this.portalEntity = document.createElement("a-entity");
+        this.portalEntity.setAttribute("npc-communication", { height: 0.5, width: 0.5 });
+        // Set the position of the portal entity to the player's position
+        this.portalEntity.object3D.position.set(this.initialPosition.x - 1, this.initialPosition.y, this.initialPosition.z);
+        // Add the portal entity to the scene
+        this.el.sceneEl.appendChild(this.portalEntity);
     },
 
     remove: function () {
@@ -144,7 +160,7 @@ async function changeRoom(linkUrl) {
 
     const currnetHubId = await isHubsRoomUrl(window.location.href);
 
-    const exitImmersive = async () => await handleExitTo2DInterstitial(false, () => {}, true);
+    const exitImmersive = async () => await handleExitTo2DInterstitial(false, () => { }, true);
 
     let gotoHubId;
     if ((gotoHubId = await isHubsRoomUrl(linkUrl))) {
