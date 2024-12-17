@@ -221,6 +221,8 @@ AFRAME.registerComponent("npc-communication", {
             const voiceButton = APP.world.eid2obj.get(this.eid);
             if (voiceButton) {
                 this.el.object3D.remove(voiceButton);
+                const npcAudio = document.getElementById('npcAudio');
+                npcAudio.pause();
             }
         }
     },
