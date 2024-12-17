@@ -3,6 +3,7 @@ import { addObject3DComponent } from "../utils/jsx-entity";
 import { CursorRaycastable, RemoteHoverTarget, SingleActionButton } from "../bit-components";
 import { Interacted, voiceButtonData } from "../bit-components";
 import { hasComponent, addComponent, addEntity } from "bitecs";
+import configs from "../utils/configs";
 
 AFRAME.registerComponent("npc-communication", {
     schema: {
@@ -14,55 +15,8 @@ AFRAME.registerComponent("npc-communication", {
         this.eid = null;
         this.mediaRecorder = null;
         this.recordedChunks = [];
-        // this.audioMap = {}; // Map to store audio objects
-        // this.loadAudioFiles(); // Preload audio files
         this.createOrUpdateUI("Record");
-        console.log(this.fetchAppConfigs("GET").then(r => r.json()));
-    },
-
-    fetchAppConfigs: function (method, body) {
-        return fetch("/api/v1/app_configs", {
-            method,
-            headers: {
-                Authorization: `Bearer`,
-                "Content-Type": "application/json"
-            },
-            body
-        });
-    },
-
-    // Preload audio files
-    loadAudioFiles: function () {
-        const audioLoader = new THREE.AudioLoader();
-        const listener = new THREE.AudioListener();
-        this.el.object3D.add(listener);
-
-        this.audioMap.startRecording = new THREE.Audio(listener);
-        this.audioMap.stopRecording = new THREE.Audio(listener);
-
-        audioLoader.load("path-to-start-recording.mp3", (buffer) => {
-            this.audioMap.startRecording.setBuffer(buffer);
-        });
-
-        audioLoader.load("path-to-stop-recording.mp3", (buffer) => {
-            this.audioMap.stopRecording.setBuffer(buffer);
-        });
-    },
-
-    // Play audio by key
-    playAudio: function (key) {
-        if (this.audioMap[key] && !this.audioMap[key].isPlaying) {
-            this.audioMap[key].play();
-        }
-    },
-
-    // Stop all playing audio
-    stopAllAudio: function () {
-        Object.values(this.audioMap).forEach((audio) => {
-            if (audio.isPlaying) {
-                audio.stop();
-            }
-        });
+        this.openaiKey = configs.feature("default_openai_api_key");
     },
 
     clicked: function (world, entity) {
@@ -154,7 +108,7 @@ AFRAME.registerComponent("npc-communication", {
     voiceProcess: async function () {
         const fileInput = document.getElementById('audioInput');
         const outputTextarea = document.getElementById('audioText');
-        const apiKey = "";
+        const apiKey = this.openaiKey;
 
         if (!fileInput.files.length) {
             alert('Please select an audio file first!');
