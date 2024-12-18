@@ -210,6 +210,7 @@ AFRAME.registerComponent("npc-communication", {
             const animationEl = animationEntity.object3D.el;
             this.mixerEl = findAncestorWithComponent(animationEl, "animation-mixer");
             if (!this.mixerEl) {
+                this.stopNPCSection();
                 return;
             }
         }
@@ -220,7 +221,7 @@ AFRAME.registerComponent("npc-communication", {
             if (audioBlob.size < 25000) { // Check if recording is too short
                 console.log('Recording too short, skipping upload.');
                 this.recordedChunks = [];
-                this.playAnimation(this.mixerEl, this.thinkingAnimationName, "stop", "npc");
+                this.stopNPCSection();
                 return;
             }
             this.recordedChunks = []; // Clear chunks
@@ -235,6 +236,11 @@ AFRAME.registerComponent("npc-communication", {
 
     },
 
+    stopNPCSection: function () {
+        this.playAnimation(this.mixerEl, this.answerAnimationName, "stop", "npc");
+        this.playAnimation(this.mixerEl, this.thinkingAnimationName, "stop", "npc");
+    },
+
     voiceProcess: async function () {
         const fileInput = document.getElementById('audioInput');
         const outputTextarea = document.getElementById('audioText');
@@ -242,6 +248,7 @@ AFRAME.registerComponent("npc-communication", {
 
         if (!fileInput.files.length) {
             alert('Please select an audio file first!');
+            this.stopNPCSection();
             return;
         }
         const file = fileInput.files[0];
@@ -270,12 +277,20 @@ AFRAME.registerComponent("npc-communication", {
 
                 if (!audioText) {
                     console.log('Please transcribe audio first!');
+                    this.stopNPCSection();
                     return;
                 }
 
-                // Detect the text is too short
+                // check the number of words in the audioText
+                if (audioText.split(' ').length < 4) {
+                    alert('The audio transcription is too short. Please try again.');
+                    this.stopNPCSection();
+                    return;
+                }
+
                 if (audioText.length < 4) {
                     alert('The audio transcription is too short. Please try again.');
+                    this.stopNPCSection();
                     return;
                 }
 
@@ -306,6 +321,7 @@ AFRAME.registerComponent("npc-communication", {
 
                         if (!npcResponse) {
                             alert('Please get a response from the NPC first!');
+                            this.stopNPCSection();
                             return;
                         }
 
@@ -333,40 +349,33 @@ AFRAME.registerComponent("npc-communication", {
                                 npcAudio.src = audioUrl;
                                 npcAudio.play();
                                 npcAudio.onended = () => {
-                                    this.playAnimation(this.mixerEl, this.answerAnimationName, "stop", "npc");
-                                    this.playAnimation(this.mixerEl, this.thinkingAnimationName, "stop", "npc");
+                                    this.stopNPCSection();
                                 };
                             } else {
-                                this.playAnimation(this.mixerEl, this.answerAnimationName, "stop", "npc");
-                                this.playAnimation(this.mixerEl, this.thinkingAnimationName, "stop", "npc");
+                                this.stopNPCSection();
                                 npcAudio.pause();
                                 console.error('Error in TTS API:', response.statusText);
                             }
                         } catch (error) {
-                            this.playAnimation(this.mixerEl, this.answerAnimationName, "stop", "npc");
-                            this.playAnimation(this.mixerEl, this.thinkingAnimationName, "stop", "npc");
+                            this.stopNPCSection();
                             console.error('Error during text-to-audio conversion:', error);
                         }
                     } else {
-                        this.playAnimation(this.mixerEl, this.answerAnimationName, "stop", "npc");
-                        this.playAnimation(this.mixerEl, this.thinkingAnimationName, "stop", "npc");
+                        this.stopNPCSection();
                         console.error('Error in NPC API:', response.statusText);
                         npcResponseTextarea.value = 'Error in NPC response';
                     }
                 } catch (error) {
-                    this.playAnimation(this.mixerEl, this.answerAnimationName, "stop", "npc");
-                    this.playAnimation(this.mixerEl, this.thinkingAnimationName, "stop", "npc");
+                    this.stopNPCSection();
                     console.error('Error during NPC interaction:', error);
                 }
             } else {
-                this.playAnimation(this.mixerEl, this.answerAnimationName, "stop", "npc");
-                this.playAnimation(this.mixerEl, this.thinkingAnimationName, "stop", "npc");
+                this.stopNPCSection();
                 console.error('Error in transcription API:', response.statusText);
                 outputTextarea.value = 'Error in transcription';
             }
         } catch (error) {
-            this.playAnimation(this.mixerEl, this.answerAnimationName, "stop", "npc");
-            this.playAnimation(this.mixerEl, this.thinkingAnimationName, "stop", "npc");
+            this.stopNPCSection();
             console.error('Error converting audio to text:', error);
         }
     },
