@@ -23,6 +23,7 @@ AFRAME.registerComponent("npc-communication", {
         this.thinkingAnimationName = "Sit";
         this.answerAnimationName = "Idle";
         this.byAnimationName = "Salute";
+        this.shouldTalk = true;
     },
 
     clicked: function (world, entity) {
@@ -324,7 +325,7 @@ AFRAME.registerComponent("npc-communication", {
                                 }),
                             });
 
-                            if (response.ok) {
+                            if (response.ok && this.shouldTalk) {
                                 this.playAnimation(this.mixerEl, this.thinkingAnimationName, "stop", "npc");
                                 this.playAnimation(this.mixerEl, this.answerAnimationName, "loop", "npc");
                                 const audioBlob = await response.blob();
@@ -338,6 +339,7 @@ AFRAME.registerComponent("npc-communication", {
                             } else {
                                 this.playAnimation(this.mixerEl, this.answerAnimationName, "stop", "npc");
                                 this.playAnimation(this.mixerEl, this.thinkingAnimationName, "stop", "npc");
+                                npcAudio.pause();
                                 console.error('Error in TTS API:', response.statusText);
                             }
                         } catch (error) {
@@ -376,6 +378,7 @@ AFRAME.registerComponent("npc-communication", {
                 this.el.object3D.remove(voiceButton);
                 const npcAudio = document.getElementById('npcAudio');
                 npcAudio.pause();
+                this.shouldTalk = false;
             }
         }
     },
