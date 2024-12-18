@@ -371,7 +371,7 @@ AFRAME.registerComponent("ik-controller", {
       // Take the head orientation computed from the hmd, remove the Y rotation already applied to it by the hips,
       // and apply it to the head
       invHipsQuaternion.copy(avatar.quaternion).invert();
-      head.quaternion.setFromRotationMatrix(headTransform).premultiply(invHipsQuaternion);
+      // head.quaternion.setFromRotationMatrix(headTransform).premultiply(invHipsQuaternion);
 
       avatar.updateMatrix();
       rootToChest.multiplyMatrices(avatar.matrix, chest.matrix);
@@ -379,7 +379,7 @@ AFRAME.registerComponent("ik-controller", {
 
       root.matrixNeedsUpdate = true;
       neck.matrixNeedsUpdate = true;
-      head.matrixNeedsUpdate = true;
+      // head.matrixNeedsUpdate = true;
       chest.matrixNeedsUpdate = true;
     }
 
