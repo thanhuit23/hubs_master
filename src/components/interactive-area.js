@@ -135,6 +135,8 @@ AFRAME.registerComponent("interactive-area", {
                     return;
                 }
                 this.playAnimation(mixerEl, "Waving", "stop", this.data.triggerTarget);
+                this.playAnimation(mixerEl, "Sit", "stop", this.data.triggerTarget);
+                this.playAnimation(mixerEl, "Happy", "stop", this.data.triggerTarget);
             }
         }
     },

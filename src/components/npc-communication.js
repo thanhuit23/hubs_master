@@ -3,6 +3,7 @@ import { addObject3DComponent } from "../utils/jsx-entity";
 import { CursorRaycastable, RemoteHoverTarget, SingleActionButton } from "../bit-components";
 import { Interacted, voiceButtonData } from "../bit-components";
 import { hasComponent, addComponent, addEntity } from "bitecs";
+import { findAncestorWithComponent } from "../utils/scene-graph";
 import configs from "../utils/configs";
 
 AFRAME.registerComponent("npc-communication", {
@@ -15,8 +16,9 @@ AFRAME.registerComponent("npc-communication", {
         this.eid = null;
         this.mediaRecorder = null;
         this.recordedChunks = [];
-        this.createOrUpdateUI("Record");
+        this.createOrUpdateUI("Recording");
         this.openaiKey = configs.feature("default_openai_api_key");
+        this.toggleRecording();
     },
 
     clicked: function (world, entity) {
@@ -84,15 +86,138 @@ AFRAME.registerComponent("npc-communication", {
             };
 
             this.mediaRecorder.start();
+
+            // Added code to detect silence
+            const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+            const source = audioContext.createMediaStreamSource(stream);
+            const analyser = audioContext.createAnalyser();
+            source.connect(analyser);
+            analyser.fftSize = 512;
+            const dataArray = new Uint8Array(analyser.frequencyBinCount);
+            const silenceThreshold = 10;
+            const silenceDuration = 1500;
+            let silenceStart = null;
+            let keepListening = true;
+
+            const checkSilence = () => {
+                if (keepListening) {
+                    analyser.getByteFrequencyData(dataArray);
+                    const average = dataArray.reduce((a, b) => a + b) / dataArray.length;
+                    if (average < silenceThreshold) {
+                        if (!silenceStart) {
+                            silenceStart = Date.now();
+                        } else if (Date.now() - silenceStart > silenceDuration) {
+                            this.stopRecording();
+                            const voiceButton = APP.world.eid2obj.get(this.eid);
+                            this.el.object3D.remove(voiceButton);
+                            this.createOrUpdateUI("Record");
+                            silenceStart = null;
+                            cancelAnimationFrame(checkSilence);
+                            keepListening = false;
+                        }
+                    } else {
+                        silenceStart = null;
+                    }
+                    requestAnimationFrame(checkSilence);
+                }
+            };
+            checkSilence();
         } catch (error) {
             console.error("Error starting recording:", error);
         }
     },
 
+    playAnimation(mixerEl, animationName, animationType, targetClassName) {
+        const { mixer, animations } = mixerEl.components["animation-mixer"];
+
+        if (!mixer) {
+            return;
+        }
+
+        if (!animations) {
+            return;
+        }
+
+        if (!targetClassName || targetClassName === "") {
+            return;
+        }
+
+        if (!animationName || animationName === "") {
+            return;
+        }
+
+        if (!animationType || animationType === "") {
+            return;
+        }
+
+        // Try to start the animation on the robot object instead of all the objects
+        const targetObject = document.getElementsByClassName(targetClassName)[0];
+        if (!targetObject) {
+            return;
+        }
+        // Get all clip names from the loop-animation component on the robot object
+        const targetObjectLoopAnimation = findAncestorWithComponent(targetObject, "loop-animation");
+        const targetObjectLoopAnimationComponent = targetObjectLoopAnimation.components["loop-animation"];
+        if (!targetObjectLoopAnimationComponent) {
+            return;
+        }
+        const clipNames = targetObjectLoopAnimationComponent.data.allClipNames;
+        if (!clipNames) {
+            return;
+        }
+        const clipIndices = targetObjectLoopAnimationComponent.data.allClipIndices;
+        if (!clipIndices) {
+            return;
+        }
+        // Index of the animation to play
+        let animationIndex = -1;
+        for (let i = 0; i < clipNames.length; i++) {
+            if (clipNames[i] === animationName) {
+                animationIndex = i;
+                break;
+            }
+        }
+        if (animationIndex === -1) {
+            return;
+        }
+        const clipAction = mixer.clipAction(animations[clipIndices[animationIndex]]);
+
+        if (animationType === "play") {
+            clipAction.reset();
+            clipAction.setLoop(THREE.LoopOnce, 1);
+            clipAction.play();
+        }
+        if (animationType === "stop") {
+            clipAction.stop();
+        }
+        if (animationType === "loop") {
+            clipAction.reset();
+            clipAction.setLoop(THREE.LoopRepeat, Infinity);
+            clipAction.play();
+        }
+    },
+
     stopRecording: function () {
+        if (!this.mixerEl) {
+            const environmentScene = document.querySelector("#environment-scene");
+            const animationEntity = environmentScene.children[0];
+            // convert the animationEntity to el
+            const animationEl = animationEntity.object3D.el;
+            this.mixerEl = findAncestorWithComponent(animationEl, "animation-mixer");
+            if (!this.mixerEl) {
+                return;
+            }
+        }
+        this.playAnimation(this.mixerEl, "Sit", "loop", "npc");
         this.mediaRecorder.stop();
         this.mediaRecorder.onstop = async () => {
             const audioBlob = new Blob(this.recordedChunks, { type: 'audio/webm' });
+            if (audioBlob.size < 10000) { // Check if recording is too short
+                console.log('Recording too short, skipping upload.');
+                this.recordedChunks = [];
+                this.playAnimation(this.mixerEl, "Sit", "stop", "npc");
+                return;
+            }
             this.recordedChunks = []; // Clear chunks
 
             // Convert to a file object for upload
@@ -190,28 +315,46 @@ AFRAME.registerComponent("npc-communication", {
                             });
 
                             if (response.ok) {
+                                this.playAnimation(this.mixerEl, "Sit", "stop", "npc");
+                                this.playAnimation(this.mixerEl, "Happy", "loop", "npc");
                                 const audioBlob = await response.blob();
                                 const audioUrl = URL.createObjectURL(audioBlob);
                                 npcAudio.src = audioUrl;
                                 npcAudio.play();
+                                npcAudio.onended = () => {
+                                    this.playAnimation(this.mixerEl, "Happy", "stop", "npc");
+                                    this.playAnimation(this.mixerEl, "Sit", "stop", "npc");
+                                };
                             } else {
+                                this.playAnimation(this.mixerEl, "Happy", "stop", "npc");
+                                this.playAnimation(this.mixerEl, "Sit", "stop", "npc");
                                 console.error('Error in TTS API:', response.statusText);
                             }
                         } catch (error) {
+                            this.playAnimation(this.mixerEl, "Happy", "stop", "npc");
+                            this.playAnimation(this.mixerEl, "Sit", "stop", "npc");
                             console.error('Error during text-to-audio conversion:', error);
                         }
                     } else {
+                        this.playAnimation(this.mixerEl, "Happy", "stop", "npc");
+                        this.playAnimation(this.mixerEl, "Sit", "stop", "npc");
                         console.error('Error in NPC API:', response.statusText);
                         npcResponseTextarea.value = 'Error in NPC response';
                     }
                 } catch (error) {
+                    this.playAnimation(this.mixerEl, "Happy", "stop", "npc");
+                    this.playAnimation(this.mixerEl, "Sit", "stop", "npc");
                     console.error('Error during NPC interaction:', error);
                 }
             } else {
+                this.playAnimation(this.mixerEl, "Happy", "stop", "npc");
+                this.playAnimation(this.mixerEl, "Sit", "stop", "npc");
                 console.error('Error in transcription API:', response.statusText);
                 outputTextarea.value = 'Error in transcription';
             }
         } catch (error) {
+            this.playAnimation(this.mixerEl, "Happy", "stop", "npc");
+            this.playAnimation(this.mixerEl, "Sit", "stop", "npc");
             console.error('Error converting audio to text:', error);
         }
     },
