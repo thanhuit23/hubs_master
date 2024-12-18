@@ -269,7 +269,7 @@ AFRAME.registerComponent("npc-communication", {
                 const npcResponseTextarea = document.getElementById('npcResponse');
 
                 if (!audioText) {
-                    console('Please transcribe audio first!');
+                    console.log('Please transcribe audio first!');
                     return;
                 }
 
