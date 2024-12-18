@@ -19,6 +19,10 @@ AFRAME.registerComponent("npc-communication", {
         this.createOrUpdateUI("Recording");
         this.openaiKey = configs.feature("default_openai_api_key");
         this.toggleRecording();
+        this.waitingAnimationName = "Idle";
+        this.thinkingAnimationName = "Sit";
+        this.answerAnimationName = "Idle";
+        this.byAnimationName = "Salute";
     },
 
     clicked: function (world, entity) {
@@ -208,14 +212,14 @@ AFRAME.registerComponent("npc-communication", {
                 return;
             }
         }
-        this.playAnimation(this.mixerEl, "Sit", "loop", "npc");
+        this.playAnimation(this.mixerEl, this.thinkingAnimationName, "loop", "npc");
         this.mediaRecorder.stop();
         this.mediaRecorder.onstop = async () => {
             const audioBlob = new Blob(this.recordedChunks, { type: 'audio/webm' });
-            if (audioBlob.size < 10000) { // Check if recording is too short
+            if (audioBlob.size < 25000) { // Check if recording is too short
                 console.log('Recording too short, skipping upload.');
                 this.recordedChunks = [];
-                this.playAnimation(this.mixerEl, "Sit", "stop", "npc");
+                this.playAnimation(this.mixerEl, this.thinkingAnimationName, "stop", "npc");
                 return;
             }
             this.recordedChunks = []; // Clear chunks
@@ -264,7 +268,13 @@ AFRAME.registerComponent("npc-communication", {
                 const npcResponseTextarea = document.getElementById('npcResponse');
 
                 if (!audioText) {
-                    alert('Please transcribe audio first!');
+                    console('Please transcribe audio first!');
+                    return;
+                }
+
+                // Detect the text is too short
+                if (audioText.length < 4) {
+                    alert('The audio transcription is too short. Please try again.');
                     return;
                 }
 
@@ -315,46 +325,46 @@ AFRAME.registerComponent("npc-communication", {
                             });
 
                             if (response.ok) {
-                                this.playAnimation(this.mixerEl, "Sit", "stop", "npc");
-                                this.playAnimation(this.mixerEl, "Happy", "loop", "npc");
+                                this.playAnimation(this.mixerEl, this.thinkingAnimationName, "stop", "npc");
+                                this.playAnimation(this.mixerEl, this.answerAnimationName, "loop", "npc");
                                 const audioBlob = await response.blob();
                                 const audioUrl = URL.createObjectURL(audioBlob);
                                 npcAudio.src = audioUrl;
                                 npcAudio.play();
                                 npcAudio.onended = () => {
-                                    this.playAnimation(this.mixerEl, "Happy", "stop", "npc");
-                                    this.playAnimation(this.mixerEl, "Sit", "stop", "npc");
+                                    this.playAnimation(this.mixerEl, this.answerAnimationName, "stop", "npc");
+                                    this.playAnimation(this.mixerEl, this.thinkingAnimationName, "stop", "npc");
                                 };
                             } else {
-                                this.playAnimation(this.mixerEl, "Happy", "stop", "npc");
-                                this.playAnimation(this.mixerEl, "Sit", "stop", "npc");
+                                this.playAnimation(this.mixerEl, this.answerAnimationName, "stop", "npc");
+                                this.playAnimation(this.mixerEl, this.thinkingAnimationName, "stop", "npc");
                                 console.error('Error in TTS API:', response.statusText);
                             }
                         } catch (error) {
-                            this.playAnimation(this.mixerEl, "Happy", "stop", "npc");
-                            this.playAnimation(this.mixerEl, "Sit", "stop", "npc");
+                            this.playAnimation(this.mixerEl, this.answerAnimationName, "stop", "npc");
+                            this.playAnimation(this.mixerEl, this.thinkingAnimationName, "stop", "npc");
                             console.error('Error during text-to-audio conversion:', error);
                         }
                     } else {
-                        this.playAnimation(this.mixerEl, "Happy", "stop", "npc");
-                        this.playAnimation(this.mixerEl, "Sit", "stop", "npc");
+                        this.playAnimation(this.mixerEl, this.answerAnimationName, "stop", "npc");
+                        this.playAnimation(this.mixerEl, this.thinkingAnimationName, "stop", "npc");
                         console.error('Error in NPC API:', response.statusText);
                         npcResponseTextarea.value = 'Error in NPC response';
                     }
                 } catch (error) {
-                    this.playAnimation(this.mixerEl, "Happy", "stop", "npc");
-                    this.playAnimation(this.mixerEl, "Sit", "stop", "npc");
+                    this.playAnimation(this.mixerEl, this.answerAnimationName, "stop", "npc");
+                    this.playAnimation(this.mixerEl, this.thinkingAnimationName, "stop", "npc");
                     console.error('Error during NPC interaction:', error);
                 }
             } else {
-                this.playAnimation(this.mixerEl, "Happy", "stop", "npc");
-                this.playAnimation(this.mixerEl, "Sit", "stop", "npc");
+                this.playAnimation(this.mixerEl, this.answerAnimationName, "stop", "npc");
+                this.playAnimation(this.mixerEl, this.thinkingAnimationName, "stop", "npc");
                 console.error('Error in transcription API:', response.statusText);
                 outputTextarea.value = 'Error in transcription';
             }
         } catch (error) {
-            this.playAnimation(this.mixerEl, "Happy", "stop", "npc");
-            this.playAnimation(this.mixerEl, "Sit", "stop", "npc");
+            this.playAnimation(this.mixerEl, this.answerAnimationName, "stop", "npc");
+            this.playAnimation(this.mixerEl, this.thinkingAnimationName, "stop", "npc");
             console.error('Error converting audio to text:', error);
         }
     },

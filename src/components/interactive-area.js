@@ -17,6 +17,10 @@ AFRAME.registerComponent("interactive-area", {
         this.player = document.querySelector("#avatar-pov-node");
         this.portalEntity = null;
         this.enablePortal = false;
+        this.waitingAnimationName = "Idle";
+        this.thinkingAnimationName = "Sit";
+        this.answerAnimationName = "Happy";
+        this.greetingAnimationName = "Salute";
     },
 
     update: function () {
@@ -121,7 +125,7 @@ AFRAME.registerComponent("interactive-area", {
                 if (!mixerEl) {
                     return;
                 }
-                this.playAnimation(mixerEl, "Waving", "play", this.data.triggerTarget);
+                this.playAnimation(mixerEl, this.greetingAnimationName, "play", this.data.triggerTarget);
             } else if (this.data.triggerType === "teleport") {
                 changeRoom(this.data.triggerTarget);
             }
@@ -134,9 +138,9 @@ AFRAME.registerComponent("interactive-area", {
                 if (!mixerEl) {
                     return;
                 }
-                this.playAnimation(mixerEl, "Waving", "stop", this.data.triggerTarget);
-                this.playAnimation(mixerEl, "Sit", "stop", this.data.triggerTarget);
-                this.playAnimation(mixerEl, "Happy", "stop", this.data.triggerTarget);
+                this.playAnimation(mixerEl, this.greetingAnimationName, "play", this.data.triggerTarget);
+                this.playAnimation(mixerEl, this.thinkingAnimationName, "stop", this.data.triggerTarget);
+                this.playAnimation(mixerEl, this.answerAnimationName, "stop", this.data.triggerTarget);
             }
         }
     },
