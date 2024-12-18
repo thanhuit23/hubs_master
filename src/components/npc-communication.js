@@ -99,7 +99,7 @@ AFRAME.registerComponent("npc-communication", {
             source.connect(analyser);
             analyser.fftSize = 512;
             const dataArray = new Uint8Array(analyser.frequencyBinCount);
-            const silenceThreshold = 10;
+            const silenceThreshold = 20;
             const silenceDuration = 1500;
             let silenceStart = null;
             let keepListening = true;
