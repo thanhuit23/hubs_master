@@ -1,12 +1,15 @@
 // Thanh add
-import React from "react";
+import React, { useState } from 'react';
 import PropTypes from "prop-types";
-import { ButtonGridPopover } from "../popover/ButtonGridPopover";
+import { playAnimationRaiseHand, stopAnimationRaiseHand } from "../../components/emoji";
 import { Popover } from "../popover/Popover";
 import { ToolbarButton } from "../input/ToolbarButton";
 import { ReactComponent as ReactionIcon } from "../icons/Reaction.svg";
-import { defineMessage, useIntl } from "react-intl";
-import { ToolTip } from "@mozilla/lilypad-ui";
+import { defineMessage, FormattedMessage, useIntl } from "react-intl";
+import { Column } from "../layout/Column";
+import { Row } from "../layout/Row";
+import { HandRaisedButton } from "./ReactionButton";
+import styles from "./ReactionPopover.scss";
 import { ImageGridPopover } from "../popover/ImageGridPopover";
 
 const animationReactionTooltipDescription = defineMessage({
@@ -21,6 +24,8 @@ const animationReactionPopoverTitle = defineMessage({
 
 export function AnimationReactionPopover({ items }) {
   const intl = useIntl();
+  const [active, setActive] = useState(false);
+
   const filteredItems = items.filter(item => !!item);
 
   // The button is removed if you can't place anything.
@@ -34,20 +39,45 @@ export function AnimationReactionPopover({ items }) {
   return (
     <Popover
       title={title}
-      content={props => <ImageGridPopover items={filteredItems} {...props} />}
+      content={props =>
+        <Column padding="sm" grow gap="sm">
+          <Row noWrap>
+            <ImageGridPopover items={filteredItems} {...props} />
+          </Row>
+          <Row>
+            <label className={styles.label}>
+              <FormattedMessage id="reaction-popover.action" defaultMessage="Actions" />
+            </label>
+          </Row>
+          <Row nowrap>
+            <HandRaisedButton
+              active={active}
+              onClick={() => {
+                setActive(!active);
+                if (!active) {
+                  playAnimationRaiseHand();
+                } else {
+                  stopAnimationRaiseHand();
+                }
+                props.closePopover();
+              }}
+            />
+          </Row>
+        </Column>
+      }
       placement="top"
       offsetDistance={28}
     >
       {({ togglePopover, popoverVisible, triggerRef }) => (
         // <ToolTip description={description}>
-          <ToolbarButton
-            ref={triggerRef}
-            icon={<ReactionIcon />}
-            selected={popoverVisible}
-            onClick={togglePopover}
-            label={title}
-            preset="accent2"
-          />
+        <ToolbarButton
+          ref={triggerRef}
+          icon={<ReactionIcon />}
+          selected={popoverVisible}
+          onClick={togglePopover}
+          label={title}
+          preset="accent2"
+        />
         // </ToolTip>
       )}
     </Popover>

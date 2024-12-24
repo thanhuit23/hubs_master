@@ -174,6 +174,24 @@ export function playAnimationReaction({ id, src, label, location }) {
   }
 }
 
+export function playAnimationRaiseHand() {
+  let animationName = "RiseHand";
+  const avatarRoot = document.querySelectorAll("[fullbody-animation-play]");
+  if (avatarRoot && avatarRoot.length > 0) {
+    // avatarRoot[0].components["fullbody-animation-play"].playAnimation(animationName, false, false, 1);
+    window.dispatchEvent(new CustomEvent("loop-animation", { detail: { animationName: animationName } }));
+  }
+}
+
+export function stopAnimationRaiseHand() {
+  let animationName = "RiseHand";
+  const avatarRoot = document.querySelectorAll("[fullbody-animation-play]");
+  if (avatarRoot && avatarRoot.length > 0) {
+    // avatarRoot[0].components["fullbody-animation-play"].playAnimation(animationName, false, false, 1);
+    window.dispatchEvent(new CustomEvent("stop-animation", { detail: { animationName: animationName } }));
+  }
+}
+
 export function spawnEmojiInFrontOfUser({ model, particleEmitterConfig }) {
   const { entity } = addMedia(model, "#interactable-emoji");
   entity.setAttribute("offset-relative-to", {

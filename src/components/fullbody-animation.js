@@ -76,6 +76,20 @@ AFRAME.registerComponent("fullbody-animation-change", {
                 }, reactionTimes[event.detail.animationName] * 1000));
             }   
         });
+
+        window.addEventListener("loop-animation", event => {
+            this.currentAnimationName = event.detail.animationName;
+            for (let i = 0; i < this.currentThreads.length; i++) {
+                clearTimeout(this.currentThreads[i]);
+            }
+        });
+
+        window.addEventListener("stop-animation", event => {
+            this.currentAnimationName = ANIMATIONS.IDLE;
+            for (let i = 0; i < this.currentThreads.length; i++) {
+                clearTimeout(this.currentThreads[i]);
+            }
+        });
     },
 
     tick() {
