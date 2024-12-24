@@ -55,6 +55,11 @@ AFRAME.registerComponent("fullbody-animation-change", {
             this.el.addEventListener("position-update", (evt) => {
                 this.displacement = evt.detail.displacement;
                 this.isMoving = evt.detail.isMoving;
+                if (this.isMoving) {
+                    this.currentAnimationName = ANIMATIONS.IDLE;
+                    this.setCurrentAnimation(ANIMATIONS.IDLE);
+                    window.dispatchEvent(new CustomEvent("stop-risehand", { detail: { } }));
+                }
             })
             this.el.addEventListener("rotation-update", (evt) => {
                 this.isRotating = evt.detail.isRotating;
@@ -74,7 +79,7 @@ AFRAME.registerComponent("fullbody-animation-change", {
                 this.currentThreads.push(setTimeout(() => {
                     this.currentAnimationName = ANIMATIONS.IDLE;
                 }, reactionTimes[event.detail.animationName] * 1000));
-            }   
+            }
         });
 
         window.addEventListener("loop-animation", event => {
@@ -130,17 +135,22 @@ AFRAME.registerComponent("fullbody-animation-change", {
                         animation_speed = 1;
                     }
                     this.setCurrentAnimation(this.currentAnimationName, animation_speed)
-                } else if (Math.abs(front) < Math.abs(right)) {
-                    if (0 < right) {
-                        this.setCurrentAnimation(isRunning ? ANIMATIONS.RUNNING_RIGHT : ANIMATIONS.WALKING_RIGHT);
-                    } else {
-                        this.setCurrentAnimation(isRunning ? ANIMATIONS.RUNNING_LEFT : ANIMATIONS.WALKING_LEFT);
-                    }
                 } else {
-                    if (0 < front) {
-                        this.setCurrentAnimation(isRunning ? ANIMATIONS.RUNNING_FORWARD : ANIMATIONS.WALKING_FORWARD);
+                    this.currentAnimationName = ANIMATIONS.IDLE;
+                    this.setCurrentAnimation(ANIMATIONS.IDLE);
+                    window.dispatchEvent(new CustomEvent("stop-risehand", { detail: { } }));
+                    if (Math.abs(front) < Math.abs(right)) {
+                        if (0 < right) {
+                            this.setCurrentAnimation(isRunning ? ANIMATIONS.RUNNING_RIGHT : ANIMATIONS.WALKING_RIGHT);
+                        } else {
+                            this.setCurrentAnimation(isRunning ? ANIMATIONS.RUNNING_LEFT : ANIMATIONS.WALKING_LEFT);
+                        }
                     } else {
-                        this.setCurrentAnimation(isRunning ? ANIMATIONS.RUNNING_BACKWARD : ANIMATIONS.WALKING_BACKWARD);
+                        if (0 < front) {
+                            this.setCurrentAnimation(isRunning ? ANIMATIONS.RUNNING_FORWARD : ANIMATIONS.WALKING_FORWARD);
+                        } else {
+                            this.setCurrentAnimation(isRunning ? ANIMATIONS.RUNNING_BACKWARD : ANIMATIONS.WALKING_BACKWARD);
+                        }
                     }
                 }
             }

@@ -118,6 +118,7 @@ let reactionAnimationNames = [
   "Hiphop", // Hiphop
   "Salute", // Salute
   "WaveDance", // WaveDance
+  "RiseHand" // RiseHand
 ];
 
 

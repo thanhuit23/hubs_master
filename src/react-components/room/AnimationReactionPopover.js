@@ -1,5 +1,5 @@
 // Thanh add
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import PropTypes from "prop-types";
 import { playAnimationRaiseHand, stopAnimationRaiseHand } from "../../components/emoji";
 import { Popover } from "../popover/Popover";
@@ -25,6 +25,10 @@ const animationReactionPopoverTitle = defineMessage({
 export function AnimationReactionPopover({ items }) {
   const intl = useIntl();
   const [active, setActive] = useState(false);
+
+  window.addEventListener("stop-risehand", event => {
+    setActive(false);
+  });
 
   const filteredItems = items.filter(item => !!item);
 
