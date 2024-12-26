@@ -24,7 +24,7 @@ export function HandRaisedButton({ active, ...props }) {
       <HandRaisedIcon width="42px" height="42px" />
       <p>
         {active ? (
-          <FormattedMessage id="reaction-popover.lower-hand" defaultMessage="손 하부" />
+          <FormattedMessage id="reaction-popover.lower-hand" defaultMessage="손 내리기" />
         ) : (
           <FormattedMessage id="reaction-popover.raise-hand" defaultMessage="손 들기" />
         )}
