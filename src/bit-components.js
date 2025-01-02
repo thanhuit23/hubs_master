@@ -804,6 +804,18 @@ export const voiceButtonData = defineComponent({
   clicked: Types.ui32,
 });
 voiceButtonData.clicked[$isStringType] = true;
+
+export const snapFrame = defineComponent({
+  snapCondition: Types.ui32,
+  snapConditionData: Types.ui32,
+  snapAction: Types.ui32,
+  snapData: Types.ui32
+});
+
+snapFrame.snapCondition[$isStringType] = true;
+snapFrame.snapConditionData[$isStringType] = true;
+snapFrame.snapAction[$isStringType] = true;
+snapFrame.snapData[$isStringType] = true;
 //
 
 // TFC Learning Frame
