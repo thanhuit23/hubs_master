@@ -44,7 +44,7 @@ export function inflateMediaFrame(world, eid, componentProps) {
     new BoxBufferGeometry(componentProps.bounds.x, componentProps.bounds.y, componentProps.bounds.z),
     new ShaderMaterial({
       uniforms: {
-        color: { value: new Color(0x2f80ed) }
+        color: { value: new Color(0xFF748B) }
       },
       vertexShader: `
             varying vec2 vUv;
