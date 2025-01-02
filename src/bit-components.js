@@ -23,14 +23,26 @@ export const NetworkedMediaFrame = defineComponent({
   capturedNid: Types.ui32,
   scale: [Types.f32, 3],
   flags: Types.ui8,
-  mediaType: Types.ui8
+  mediaType: Types.ui8,
+  snapCondition: Types.ui32,
+  snapConditionData: Types.ui32,
+  snapAction: Types.ui32,
+  snapData: Types.ui32,
 });
 NetworkedMediaFrame.capturedNid[$isStringType] = true;
+NetworkedMediaFrame.snapCondition[$isStringType] = true;
+NetworkedMediaFrame.snapConditionData[$isStringType] = true;
+NetworkedMediaFrame.snapAction[$isStringType] = true;
+NetworkedMediaFrame.snapData[$isStringType] = true;
 
 export const MediaFrame = defineComponent({
   capturedNid: Types.ui32,
   scale: [Types.f32, 3],
   mediaType: Types.ui8,
+  snapCondition: Types.ui32,
+  snapConditionData: Types.ui32,
+  snapAction: Types.ui32,
+  snapData: Types.ui32,
   bounds: [Types.f32, 3],
   align: [Types.ui8, 3],
   guide: Types.eid,
@@ -38,6 +50,11 @@ export const MediaFrame = defineComponent({
   previewingNid: Types.eid,
   flags: Types.ui8
 });
+MediaFrame.snapCondition[$isStringType] = true;
+MediaFrame.snapConditionData[$isStringType] = true;
+MediaFrame.snapAction[$isStringType] = true;
+MediaFrame.snapData[$isStringType] = true;
+
 export const MediaRoot = defineComponent();
 export const NetworkedText = defineComponent({
   text: Types.ui8,

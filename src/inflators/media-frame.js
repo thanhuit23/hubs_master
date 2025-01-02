@@ -30,9 +30,33 @@ export const MediaTypes = {
   pdf: MediaType.PDF
 };
 
+export const ActionType = {
+  ANIMATION: 1 << 0,
+  MEDIA: 1 << 1,
+  LIGHT: 1 << 2,
+  SHOW: 1 << 3,
+  HIDE: 1 << 4,
+  TELEPORT: 1 << 5,
+  NOTHING: 1 << 6
+};
+
+export const SnapAction = {
+  "animation": ActionType.ANIMATION,
+  "media": ActionType.MEDIA,
+  "light": ActionType.LIGHT,
+  "show": ActionType.SHOW,
+  "hide": ActionType.HIDE,
+  "teleport": ActionType.TELEPORT,
+  "nothing": ActionType.NOTHING
+};
+
 const DEFAULTS = {
   bounds: { x: 1, y: 1, z: 1 },
   mediaType: "all",
+  snapCondition: false,
+  snapConditionData: "",
+  snapAction: "nothing",
+  snapData: "",
   scaleToBounds: true,
   align: { x: "center", y: "center", z: "center" },
   active: true,
@@ -91,6 +115,10 @@ export function inflateMediaFrame(world, eid, componentProps) {
 
   // Media types accepted
   MediaFrame.mediaType[eid] = MediaTypes[componentProps.mediaType];
+  MediaFrame.snapCondition[eid] = APP.getSid(componentProps.snapCondition);
+  MediaFrame.snapConditionData[eid] = APP.getSid(componentProps.snapConditionData);
+  MediaFrame.snapAction[eid] = APP.getSid(componentProps.snapAction);
+  MediaFrame.snapData[eid] = APP.getSid(componentProps.snapData);
   NetworkedMediaFrame.mediaType[eid] = MediaFrame.mediaType[eid];
   // Bounds
   MediaFrame.bounds[eid].set([componentProps.bounds.x, componentProps.bounds.y, componentProps.bounds.z]);

@@ -236,6 +236,27 @@ function showPreview(world, frameEid, capturableEid) {
   snapToFrame(world, frameEid, previewEid);
 }
 
+function triggerSnapAction(frameEid, onOrOff) {
+  const snapCondition = APP.getString(MediaFrame.snapCondition[frameEid]);
+  const snapConditionData = APP.getString(MediaFrame.snapConditionData[frameEid]);
+  const snapData = APP.getString(MediaFrame.snapData[frameEid]);
+  const snapAction = APP.getString(MediaFrame.snapAction[frameEid]);
+  if (snapData && snapAction) {
+    if (snapAction === "light") {
+      // Get light entity
+      const lightObject = document.getElementsByClassName(snapData)[0];
+      // Set the light element visible
+      if (lightObject) {
+        if (onOrOff === "off") {
+          lightObject.setAttribute("visible", false);
+        } else {
+          lightObject.setAttribute("visible", true);
+        }
+      }
+    }
+  }
+}
+
 function hidePreview(world, frameEid) {
   // NOTE we intentionally do not dispose of geometries or textures since they are all shared with the original object
   const eid = MediaFrame.preview[frameEid];
@@ -361,6 +382,7 @@ export function mediaFramesSystem(world, physicsSystem) {
 
     if (MediaFrame.flags[frame] & MEDIA_FRAME_FLAGS.ACTIVE) {
       if (capturedEid && isCapturedOwned && !isCapturedHeld && !isFrameDeleting && isCapturedColliding) {
+        triggerSnapAction(frame, "on");
         snapToFrame(world, frame, capturedEid);
         physicsSystem.updateRigidBody(capturedEid, { type: "kinematic" });
       } else if (
@@ -371,6 +393,7 @@ export function mediaFramesSystem(world, physicsSystem) {
         takeOwnership(world, frame);
         NetworkedMediaFrame.capturedNid[frame] = 0;
         NetworkedMediaFrame.scale[frame].set(zero);
+        triggerSnapAction(frame, "off");
         // TODO BUG: If an entity I do not own is capturedEid by the media frame,
         //           and then I take ownership of the entity (by grabbing it),
         //           the physics system does not immediately notice the entity isCapturedColliding with the frame,
@@ -378,6 +401,7 @@ export function mediaFramesSystem(world, physicsSystem) {
       } else if (isFrameOwned && MediaFrame.capturedNid[frame] && !capturedEid) {
         NetworkedMediaFrame.capturedNid[frame] = 0;
         NetworkedMediaFrame.scale[frame].set(zero);
+        triggerSnapAction(frame, "off");
       } else if (!NetworkedMediaFrame.capturedNid[frame]) {
         const capturable = getCapturableEntity(world, physicsSystem, frame);
         if (
@@ -394,6 +418,7 @@ export function mediaFramesSystem(world, physicsSystem) {
           tmpVec3.setFromMatrixScale(obj.matrixWorld).toArray(NetworkedMediaFrame.scale[frame]);
           snapToFrame(world, frame, capturable);
           physicsSystem.updateRigidBody(capturable, { type: "kinematic" });
+          triggerSnapAction(frame, "on");
         }
       }
     }
