@@ -15,8 +15,8 @@ AFRAME.registerComponent("interactive-area", {
         this.initialScale = this.el.object3D.scale.x;
         this.initialPosition = this.el.object3D.position;
         this.player = document.querySelector("#avatar-pov-node");
-        this.portalEntity = null;
-        this.enablePortal = false;
+        this.controllerEntity = null;
+        this.enableController = false;
         this.waitingAnimationName = "Idle";
         this.thinkingAnimationName = "Sit";
         this.answerAnimationName = "Happy";
@@ -119,8 +119,8 @@ AFRAME.registerComponent("interactive-area", {
         console.log(`Trigger target: ${this.data.triggerTarget}`);
         if (state) {
             if (this.data.triggerType === "npc") {
-                this.enablePortal = true;
-                this.onSpawnPortal();
+                this.enableController = true;
+                this.onSpawnController();
                 const mixerEl = findAncestorWithComponent(this.el.object3D.parent?.parent?.el, "animation-mixer");
                 if (!mixerEl) {
                     return;
@@ -131,9 +131,9 @@ AFRAME.registerComponent("interactive-area", {
             }
         } else {
             if (this.data.triggerType === "npc") {
-                // Remove the portal entity from the scene
-                this.el.sceneEl.removeChild(this.portalEntity);
-                this.enablePortal = false;
+                // Remove the controller entity from the scene
+                this.el.sceneEl.removeChild(this.controllerEntity);
+                this.enableController = false;
                 const mixerEl = findAncestorWithComponent(this.el.object3D.parent?.parent?.el, "animation-mixer");
                 if (!mixerEl) {
                     return;
@@ -145,13 +145,13 @@ AFRAME.registerComponent("interactive-area", {
         }
     },
 
-    onSpawnPortal: function (event) {
-        this.portalEntity = document.createElement("a-entity");
-        this.portalEntity.setAttribute("npc-communication", { height: 0.5, width: 0.5 });
-        // Set the position of the portal entity to the player's position
-        this.portalEntity.object3D.position.set(this.initialPosition.x - 1, this.initialPosition.y, this.initialPosition.z);
-        // Add the portal entity to the scene
-        this.el.sceneEl.appendChild(this.portalEntity);
+    onSpawnController: function (event) {
+        this.controllerEntity = document.createElement("a-entity");
+        this.controllerEntity.setAttribute("npc-communication", { height: 0.5, width: 0.5 });
+        // Set the position of the controller entity to the player's position
+        this.controllerEntity.object3D.position.set(this.initialPosition.x - 1, this.initialPosition.y, this.initialPosition.z);
+        // Add the controller entity to the scene
+        this.el.sceneEl.appendChild(this.controllerEntity);
     },
 
     remove: function () {
