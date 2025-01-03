@@ -381,7 +381,7 @@ export function mediaFramesSystem(world, physicsSystem) {
     }
 
     if (MediaFrame.flags[frame] & MEDIA_FRAME_FLAGS.ACTIVE) {
-      triggerSnapAction(frame, "off");
+      // triggerSnapAction(frame, "off");
       if (capturedEid && isCapturedOwned && !isCapturedHeld && !isFrameDeleting && isCapturedColliding) {
         triggerSnapAction(frame, "on");
         snapToFrame(world, frame, capturedEid);
@@ -424,9 +424,9 @@ export function mediaFramesSystem(world, physicsSystem) {
       }
       
       // Entity is captured in the frame by another user
-      if (capturedEid && !isCapturedOwned && !isCapturedHeld && !isFrameOwned) {
-        triggerSnapAction(frame, "on");
-      }
+      // if (capturedEid && !isCapturedOwned && !isCapturedHeld && !isFrameOwned) {
+      //   triggerSnapAction(frame, "on");
+      // }
     }
 
     if (
