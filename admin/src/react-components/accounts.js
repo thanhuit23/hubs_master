@@ -29,6 +29,7 @@ import {
   SimpleForm,
   TextField,
   TextInput,
+  FunctionField,
   refreshView
 } from "react-admin";
 
@@ -107,12 +108,12 @@ export const AccountList = withStyles(styles)(
             const emailAndIdentity = accounts.split(",");
             return emailAndIdentity.length === 1
               ? {
-                  email: emailAndIdentity[0].trim()
-                }
+                email: emailAndIdentity[0].trim()
+              }
               : {
-                  email: emailAndIdentity[0].trim(),
-                  name: emailAndIdentity[1].trim()
-                };
+                email: emailAndIdentity[0].trim(),
+                name: emailAndIdentity[1].trim()
+              };
           });
         const result = await fetch("/api/v1/accounts", {
           method: "post",
@@ -154,8 +155,8 @@ export const AccountList = withStyles(styles)(
             createStatus: isAllSuccess
               ? "Success adding all accounts"
               : hasOneSuccess
-              ? "Success adding some accounts, Errors adding some accounts"
-              : "Errors adding all accounts",
+                ? "Success adding some accounts, Errors adding some accounts"
+                : "Errors adding all accounts",
             createResults: results
           });
         }
@@ -242,6 +243,11 @@ export const AccountList = withStyles(styles)(
                 <ReferenceManyField label="Identity" target="_account_id" reference="identities">
                   <Datagrid classes={{ rowCell: classes.noBorder, thead: classes.hide }}>
                     <TextField source="name" />
+                  </Datagrid>
+                </ReferenceManyField>
+                <ReferenceManyField label="Identity" target="_account_id" reference="identities">
+                  <Datagrid classes={{ rowCell: classes.noBorder, thead: classes.hide }}>
+                    {false && <TextField source="name" />}
                     <IdentityEditLink />
                   </Datagrid>
                 </ReferenceManyField>
