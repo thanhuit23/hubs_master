@@ -51,41 +51,41 @@ export function PlacePopoverContainer({ scene, mediaSearchStore, showNonHistorie
           // TODO: Create text/link dialog
           // { id: "text", icon: TextIcon, color: "blue", label: "Text" },
           // { id: "link", icon: LinkIcon, color: "blue", label: "Link" },
-          configs.integration("tenor") && {
-            id: "gif",
-            icon: GIFIcon,
-            color: "accent2",
-            label: <FormattedMessage id="place-popover.item-type.gif" defaultMessage="GIF" />,
-            onSelect: () => mediaSearchStore.sourceNavigate("gifs")
-          },
-          configs.integration("sketchfab") && {
-            id: "model",
-            icon: ObjectIcon,
-            color: "accent2",
-            label: <FormattedMessage id="place-popover.item-type.model" defaultMessage="3D Model" />,
-            onSelect: () => mediaSearchStore.sourceNavigate("sketchfab")
-          },
-          {
-            id: "avatar",
-            icon: AvatarIcon,
-            color: "accent1",
-            label: <FormattedMessage id="place-popover.item-type.avatar" defaultMessage="Avatar" />,
-            onSelect: () => mediaSearchStore.sourceNavigate("avatars")
-          },
-          {
-            id: "scene",
-            icon: SceneIcon,
-            color: "accent1",
-            label: <FormattedMessage id="place-popover.item-type.scene" defaultMessage="Scene" />,
-            onSelect: () => mediaSearchStore.sourceNavigate("scenes")
-          },
-          {
-            id: "minimap",
-            icon: CodeBranch,
-            color: "accent1",
-            label: <FormattedMessage id="place-popover.item-type.map" defaultMessage="Map" />,
-            onSelect: () => showNonHistoriedDialog(MiniMapModalContainer, { scene, json: {} })
-          },
+          // configs.integration("tenor") && {
+          //   id: "gif",
+          //   icon: GIFIcon,
+          //   color: "accent2",
+          //   label: <FormattedMessage id="place-popover.item-type.gif" defaultMessage="GIF" />,
+          //   onSelect: () => mediaSearchStore.sourceNavigate("gifs")
+          // },
+          // configs.integration("sketchfab") && {
+          //   id: "model",
+          //   icon: ObjectIcon,
+          //   color: "accent2",
+          //   label: <FormattedMessage id="place-popover.item-type.model" defaultMessage="3D Model" />,
+          //   onSelect: () => mediaSearchStore.sourceNavigate("sketchfab")
+          // },
+          // {
+          //   id: "avatar",
+          //   icon: AvatarIcon,
+          //   color: "accent1",
+          //   label: <FormattedMessage id="place-popover.item-type.avatar" defaultMessage="Avatar" />,
+          //   onSelect: () => mediaSearchStore.sourceNavigate("avatars")
+          // },
+          // {
+          //   id: "scene",
+          //   icon: SceneIcon,
+          //   color: "accent1",
+          //   label: <FormattedMessage id="place-popover.item-type.scene" defaultMessage="Scene" />,
+          //   onSelect: () => mediaSearchStore.sourceNavigate("scenes")
+          // },
+          // {
+          //   id: "minimap",
+          //   icon: CodeBranch,
+          //   color: "accent1",
+          //   label: <FormattedMessage id="place-popover.item-type.map" defaultMessage="Map" />,
+          //   onSelect: () => showNonHistoriedDialog(MiniMapModalContainer, { scene, json: {} })
+          // },
           // TODO: Launch system file prompt directly
           // {
           //   id: "upload",
