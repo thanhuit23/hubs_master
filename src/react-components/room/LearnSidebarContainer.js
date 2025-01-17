@@ -6,7 +6,7 @@ export function LearnSidebarContainer({ onClose, hubChannel, room }) {
     // Get description of the room and display it in the sidebar
     const roomDescription = room.description;
     // Split the description into an array of strings by newlines
-    const roomDescriptionLines = roomDescription.split("\n");
+    const roomDescriptionLines = roomDescription ? roomDescription.split("\n") : [];
     
     const roomName = room.name;
 
