@@ -51,6 +51,9 @@ export function LeaveRoomModal({ reason, destinationUrl, onClose }) {
   let shouldCloseTab = false;
   if (destinationUrl === "") {
     shouldCloseTab = true;
+  } else {
+    shouldCloseTab = false;
+    destinationUrl = "/intrometa";
   }
   return (
     <Modal
