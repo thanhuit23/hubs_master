@@ -42,9 +42,16 @@ const confirmationMessages = defineMessages({
   }
 });
 
+function closeTab() {
+  window.open("", "_self").close();
+}
+
 export function LeaveRoomModal({ reason, destinationUrl, onClose }) {
   const intl = useIntl();
-
+  let shouldCloseTab = false;
+  if (destinationUrl === "") {
+    shouldCloseTab = true;
+  }
   return (
     <Modal
       title={<FormattedMessage id="leave-room-modal.title" defaultMessage="Leave Room" />}
@@ -52,9 +59,17 @@ export function LeaveRoomModal({ reason, destinationUrl, onClose }) {
     >
       <Column padding center centerMd="both" grow>
         <p>{intl.formatMessage(reasonMessages[reason])}</p>
-        <Button as="a" preset="cancel" href={destinationUrl} rel="noopener noreferrer">
-          {intl.formatMessage(confirmationMessages[reason])}
-        </Button>
+        {shouldCloseTab && (
+          <Button as="a" preset="cancel" onClick={closeTab}>
+            {intl.formatMessage(confirmationMessages[reason])}
+          </Button>
+        )}
+        {!shouldCloseTab && (
+          <Button as="a" preset="cancel" href={destinationUrl} rel="noopener noreferrer">
+            {intl.formatMessage(confirmationMessages[reason])}
+          </Button>
+        )
+        }
       </Column>
     </Modal>
   );

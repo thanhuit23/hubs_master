@@ -1316,6 +1316,16 @@ class UIRoot extends Component {
     const canCloseRoom = this.props.hubChannel && !!this.props.hubChannel.canOrWillIfCreator("close_hub");
     const isModerator = this.props.hubChannel && this.props.hubChannel.canOrWillIfCreator("kick_users") && !isMobileVR;
 
+    let leaveRoomDestinationUrl = "/";
+    // Get url param for destinationUrl
+    const urlParams = new URLSearchParams(window.location.search);
+    const hubsParam = urlParams.get("hubsParam");
+    if (hubsParam) {
+      if (hubsParam.includes("api.meta-track.kr")) {
+        leaveRoomDestinationUrl = "";
+      }
+    }
+
     const moreMenu = [
       {
         id: "user",
@@ -1438,7 +1448,7 @@ class UIRoot extends Component {
             icon: LeaveIcon,
             onClick: () => {
               this.showNonHistoriedDialog(LeaveRoomModal, {
-                destinationUrl: "/",
+                destinationUrl: leaveRoomDestinationUrl,
                 reason: LeaveReason.leaveRoom
               });
             }
@@ -1911,7 +1921,7 @@ class UIRoot extends Component {
                         onClick={() => {
                           this.setState({ leaving: true });
                           this.showNonHistoriedDialog(LeaveRoomModal, {
-                            destinationUrl: "/",
+                            destinationUrl: leaveRoomDestinationUrl,
                             reason: LeaveReason.leaveRoom,
                             onClose: () => {
                               this.setState({ leaving: false });
