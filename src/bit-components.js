@@ -833,6 +833,46 @@ snapFrame.snapCondition[$isStringType] = true;
 snapFrame.snapConditionData[$isStringType] = true;
 snapFrame.snapAction[$isStringType] = true;
 snapFrame.snapData[$isStringType] = true;
+
+export const imageButton = defineComponent({
+  href: Types.ui32,
+  triggerType: Types.ui32,
+  triggerTarget: Types.ui32,
+  triggerName: Types.ui32,
+  triggerValue: Types.ui32,
+  actionsAfterClick: Types.ui32,
+  actionsData: Types.ui32,
+  clicked: Types.ui32,
+});
+
+imageButton.href[$isStringType] = true;
+imageButton.triggerType[$isStringType] = true;
+imageButton.triggerTarget[$isStringType] = true;
+imageButton.triggerName[$isStringType] = true;
+imageButton.triggerValue[$isStringType] = true;
+imageButton.actionsAfterClick[$isStringType] = true;
+imageButton.actionsData[$isStringType] = true;
+imageButton.clicked[$isStringType] = true;
+
+export const imageButtonNetworkedData = defineComponent({  
+  href: Types.ui32,
+  triggerType: Types.ui32,
+  triggerTarget: Types.ui32,
+  triggerName: Types.ui32,
+  triggerValue: Types.ui32,
+  actionsAfterClick: Types.ui32,
+  actionsData: Types.ui32,
+  clicked: Types.ui32,
+  entityTargetId: Types.ui32
+});
+imageButtonNetworkedData.href[$isStringType] = true;
+imageButtonNetworkedData.triggerType[$isStringType] = true;
+imageButtonNetworkedData.triggerTarget[$isStringType] = true;
+imageButtonNetworkedData.triggerName[$isStringType] = true;
+imageButtonNetworkedData.triggerValue[$isStringType] = true;
+imageButtonNetworkedData.actionsAfterClick[$isStringType] = true;
+imageButtonNetworkedData.actionsData[$isStringType] = true;
+imageButtonNetworkedData.clicked[$isStringType] = true;
 //
 
 // TFC Learning Frame

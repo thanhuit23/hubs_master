@@ -32,6 +32,7 @@ import { inflateTFCKeyboardButton } from "./inflators/tfc-keyboard-button";
 import { inflateTFCIframe } from "./inflators/iframe";
 import { inflatepdfviewer } from "./inflators/pdfviewer";
 import { inflateanimationcontrol } from "./inflators/animationcontrol";
+import { inflateImageButton } from "./inflators/image-button";
 //
 
 import { inflateTFCGatewayLink } from "./inflators/tfc-gateway-link";
@@ -654,6 +655,8 @@ AFRAME.GLTFModelPlus.registerComponent("iframe", "iframe", inflatorWrapper(infla
 AFRAME.GLTFModelPlus.registerComponent("pdfviewer", "pdfviewer", inflatorWrapper(inflatepdfviewer));
 AFRAME.GLTFModelPlus.registerComponent("animationcontrol", "animationcontrol", inflatorWrapper(inflateanimationcontrol));
 AFRAME.GLTFModelPlus.registerComponent("interactive-area", "interactive-area");
+AFRAME.GLTFModelPlus.registerComponent("image-button", "image-button", inflatorWrapper(inflateImageButton));
+
 //
 
 AFRAME.GLTFModelPlus.registerComponent("tfc-gateway-link", "tfc-gateway-link", inflatorWrapper(inflateTFCGatewayLink));

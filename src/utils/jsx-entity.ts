@@ -133,6 +133,7 @@ import { TFCIframeParams, inflateTFCIframe } from "../inflators/iframe";
 import { pdfviewerParams, inflatepdfviewer } from "../inflators/pdfviewer";
 import { inflateanimationcontrol, animationcontrolParams } from "../inflators/animationcontrol";
 import { interactiveAreaParams, inflateInteractiveArea } from "../inflators/interactiveArea";
+import { inflateImageButton, imageButtonParams } from "../inflators/image-button";
 //
 import { TFCGatewayLinkParams, inflateTFCGatewayLink } from "../inflators/tfc-gateway-link";
 import { TFCGatewayParams, inflateTFCGateway } from "../inflators/tfc-gateway";
@@ -455,6 +456,7 @@ export interface JSXComponentData extends ComponentData {
   tfcIframe?: TFCIframeParams;
   pdfviewer?: pdfviewerParams;
   animationcontrol?: animationcontrolParams;
+  imageButton?: imageButtonParams;
   //
 
   tfcGatewayLink?: TFCGatewayLinkParams;
@@ -526,6 +528,7 @@ export interface GLTFComponentData extends ComponentData {
   tfcIframe?: TFCIframeParams;
   pdfviewer?: pdfviewerParams;
   animationcontrol?: animationcontrolParams;
+  imageButton?: imageButtonParams;
 
   ////
 
@@ -654,6 +657,7 @@ export const jsxInflators: Required<{ [K in keyof ComponentDataT]: InflatorFn }>
   tfcIframe: inflateTFCIframe,
   pdfviewer: inflatepdfviewer,
   animationcontrol: inflateanimationcontrol,
+  imageButton: inflateImageButton,
 
   //
 
@@ -727,6 +731,7 @@ export const gltfInflators: Required<{ [K in keyof ComponentDataT]: InflatorFn }
   tfcIframe: inflateTFCIframe,
   pdfviewer: inflatepdfviewer,
   animationcontrol: inflateanimationcontrol,
+  imageButton: inflateImageButton,
   //
 
   tfcGatewayLink: inflateTFCGatewayLink,

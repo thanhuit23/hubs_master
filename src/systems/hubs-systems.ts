@@ -119,6 +119,8 @@ import { TFCIframeSystem } from "../bit-systems/iframe";
 import { InteractableObjectSystem } from "./interactable-object-system";
 import { pdfviewerSystem } from "../bit-systems/pdfviewer-system";
 import { animationcontrolSystem } from "../bit-systems/animationcontrol-system";
+import { ImageButtonSystem } from "../bit-systems/image-button-system";
+
 
 //
 import { TFCGatewayLinkSystem } from "../bit-systems/tfc-gateway-link";
@@ -360,7 +362,7 @@ export function mainTick(xrFrame: XRFrame, renderer: WebGLRenderer, scene: Scene
   TFCIframeSystem(world);
   pdfviewerSystem(world);
   animationcontrolSystem(world);
-
+  ImageButtonSystem(world);
   //
 
   TFCGatewayLinkSystem(world);
