@@ -201,6 +201,82 @@ function handleAnimationAction(
   callback();
 }
 
+function handleAllAnimations(
+  animationValue: string, // The animation value (e.g., "play", "stop", "loop")
+  callback: () => void
+) {
+  console.log("Playing animation:", {
+    animationValue
+  });
+
+  const environmentScene = (document.querySelector("#environment-scene") as AElement)?.object3D?.children[0];
+  if (environmentScene && environmentScene.el) {
+    const animationMixer = findAncestorWithComponent(environmentScene.el, "animation-mixer");
+    if (!animationMixer) {
+      console.error("Animation mixer not found.");
+      return;
+    }
+    console.log("Animation mixer:", animationMixer);
+    const { mixer, animations } = animationMixer.components["animation-mixer"];
+    if (!mixer) {
+      console.error("Animation mixer not found.");
+      return;
+    }
+
+    if (!animations) {
+      console.error("Animations not found.");
+      return;
+    }
+    let startOrStop = false;
+
+    if (animationValue === "play") {
+      startOrStop = true;
+    }
+
+    if (animationValue === "stop") {
+      startOrStop = false;
+    }
+    if (animationValue === "loop") {
+      startOrStop = true;
+    }
+    if (animations.length > 0) {
+      for (let i = 0; i < animations.length; i++) {
+        const clips = [animations[i]];
+        for (let j = 0; j < clips.length; j++) {
+          const clip = clips[j];
+          if (!clip) {
+          } else {
+            const action = mixer.clipAction(clip);
+            if (action) {
+              if (startOrStop) {
+                action.reset();
+                action.setLoop(THREE.LoopOnce, 1);
+                action.clampWhenFinished = true;
+                action.play();
+                // const duration = clip.duration; // Get animation duration
+                // const halfTime = duration / 2 * 1000; // Convert to milliseconds
+
+                // action.play();
+
+                // // Stop after half-time
+                // setTimeout(() => {
+                //   action.stop();
+                //   console.log("Animation stopped at half-time");
+                // }, halfTime);
+                // Detect when the animation is finished then start callback function
+              } else {
+                action.stop();
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+
+  callback();
+
+}
 function handleTransformAction(
   transformTarget: string, // The target object to transform
   transformType: string, // The transform type (e.g., "rotation", "scale", "position")
@@ -247,7 +323,7 @@ function handleTransformAction(
     default:
       console.error("Invalid transform type:", transformType);
   }
-  
+
   callback();
 }
 
@@ -299,7 +375,7 @@ function handleActionsAfterClick(
         break;
 
       case 2: // Animation
-        // const { animationName, animationTarget, animationValue } = actionsData;
+        const { animationName, animationTarget, animationValue } = actionsData;
         // if (animationName && animationTarget && animationValue) {
         //   console.log("Playing animation:", {
         //     animationName,
@@ -309,7 +385,10 @@ function handleActionsAfterClick(
         // } else console.error("Missing animation data:", actionsData);
         // Play the animation and mark the action as complete
         // handleAnimationAction(animationName, animationTarget, animationValue, actionComplete);
-        actionComplete();
+
+        // Play all animations in the scene
+        handleAllAnimations(animationValue, actionComplete);
+        // actionComplete();
         break;
 
       case 3: // Audio
@@ -317,7 +396,7 @@ function handleActionsAfterClick(
         // handleAudioAction(actionsData.audio, actionComplete);
         actionComplete();
         break;
-      
+
       case 4:
         // handleTransformAction(actionsData.transformTarget, actionsData.transformType, actionsData.transformValue, actionComplete);
         actionComplete();
@@ -380,8 +459,8 @@ export function ImageButtonSystem(world: HubsWorld) {
   const entered = ImageButtonEnterQuery(world);
   entered.forEach((entity) => {
     const data = getImageButtonData(entity);
-    if (data.triggerType === "scenario" && typeof data.triggerValue === "string") {
-      scenarioButtons.set(entity, parseInt(data.triggerValue, 10));
+    if (data.triggerType === "scenario" && typeof data.triggerName === "string") {
+      scenarioButtons.set(entity, parseInt(data.triggerName, 10));
     }
     logImageButtonData("Entered", entity, data);
   });
@@ -418,7 +497,8 @@ export function ImageButtonSystem(world: HubsWorld) {
           // Handle post-click actions
           if (data.triggerType === "scenario") {
             // Check if the triggerValue is a valid number
-            const nextValue = parseInt(data.triggerValue || "-2", 10) + 1;
+            // const nextValue = parseInt(data.triggerValue || "-2", 10) + 1;
+            const nextValue = parseInt(data.triggerValue || "-1", 10);
             // Find the next entity associated with nextValue
             const nextEntity = Array.from(scenarioButtons.entries()).find(
               ([_, value]) => value === nextValue
