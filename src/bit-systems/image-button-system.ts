@@ -210,72 +210,65 @@ function handleAllAnimations(
   });
 
   const environmentScene = (document.querySelector("#environment-scene") as AElement)?.object3D?.children[0];
-  if (environmentScene && environmentScene.el) {
-    const animationMixer = findAncestorWithComponent(environmentScene.el, "animation-mixer");
-    if (!animationMixer) {
-      console.error("Animation mixer not found.");
-      return;
-    }
-    console.log("Animation mixer:", animationMixer);
-    const { mixer, animations } = animationMixer.components["animation-mixer"];
-    if (!mixer) {
-      console.error("Animation mixer not found.");
-      return;
-    }
+  if (!environmentScene || !environmentScene.el) {
+    console.error("Environment scene not found.");
+    callback();
+    return;
+  }
 
-    if (!animations) {
-      console.error("Animations not found.");
-      return;
-    }
-    let startOrStop = false;
+  const animationMixer = findAncestorWithComponent(environmentScene.el, "animation-mixer");
+  if (!animationMixer) {
+    console.error("Animation mixer not found.");
+    callback();
+    return;
+  }
+  console.log("Animation mixer:", animationMixer);
+  const { mixer, animations } = animationMixer.components["animation-mixer"];
+  if (!mixer || !animations || animations.length === 0) {
+    console.error("No animations found.");
+    callback();
+    return;
+  }
+  const startOrStop = animationValue !== "stop";
+  let animationsCompleted = 0;
+  const totalAnimations = animations.length;
 
-    if (animationValue === "play") {
-      startOrStop = true;
-    }
+  if (totalAnimations > 0) {
+    for (let i = 0; i < totalAnimations; i++) {
+      const clip = animations[i];
+      if (clip) {
+        const action = mixer.clipAction(clip);
+        if (action) {
+          if (startOrStop) {
+            action.reset();
+            action.setLoop(THREE.LoopOnce, 1);
+            action.clampWhenFinished = true;
+            action.play();
 
-    if (animationValue === "stop") {
-      startOrStop = false;
-    }
-    if (animationValue === "loop") {
-      startOrStop = true;
-    }
-    if (animations.length > 0) {
-      for (let i = 0; i < animations.length; i++) {
-        const clips = [animations[i]];
-        for (let j = 0; j < clips.length; j++) {
-          const clip = clips[j];
-          if (!clip) {
-          } else {
-            const action = mixer.clipAction(clip);
-            if (action) {
-              if (startOrStop) {
-                action.reset();
-                action.setLoop(THREE.LoopOnce, 1);
-                action.clampWhenFinished = true;
-                action.play();
-                // const duration = clip.duration; // Get animation duration
-                // const halfTime = duration / 2 * 1000; // Convert to milliseconds
-
-                // action.play();
-
-                // // Stop after half-time
-                // setTimeout(() => {
-                //   action.stop();
-                //   console.log("Animation stopped at half-time");
-                // }, halfTime);
-                // Detect when the animation is finished then start callback function
-              } else {
-                action.stop();
+            // Listen for animation finished event
+            action.getMixer().addEventListener("finished", (event: THREE.Event) => {
+              if (event.action === action) {
+                animationsCompleted++;
+                if (animationsCompleted === totalAnimations) {
+                  callback(); // Run callback when all animations are finished
+                  console.log("All animations finished.");
+                }
               }
+            });
+          } else {
+            action.stop();
+            animationsCompleted++;
+            if (animationsCompleted === totalAnimations) {
+              callback(); // Run callback when all animations are finished
+              console.log("All animations are stopped.");
             }
           }
         }
       }
     }
+  } else {
+    callback(); // If no animations, run callback immediately
   }
-
-  callback();
-
 }
 function handleTransformAction(
   transformTarget: string, // The target object to transform
