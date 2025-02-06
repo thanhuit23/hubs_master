@@ -386,8 +386,8 @@ function handleActionsAfterClick(
 
       case 3: // Audio
         // Do actionComplete() when the audio is finished playing
-        // handleAudioAction(actionsData.audio, actionComplete);
-        actionComplete();
+        handleAudioAction(actionsData.audio, actionComplete);
+        // actionComplete();
         break;
 
       case 4:
