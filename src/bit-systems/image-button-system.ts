@@ -350,6 +350,8 @@ function handleActionsAfterClick(
     }
   };
 
+  const shouldHideButton = actionsAfterClick.some((action) => action.value === 1);
+
   actionsAfterClick.forEach((action) => {
     if (!action || typeof action.value !== "number") {
       console.warn("Invalid action object:", action);
@@ -359,15 +361,21 @@ function handleActionsAfterClick(
 
     switch (action.value) {
       case 1: // Hide
-        const button = world.eid2obj.get(entity);
-        if (button) button.visible = false;
-        else console.error(`Button with entity ${entity} not found.`);
-
-        // Mark the action as complete
-        actionComplete();
+        if (actionsAfterClick.length === 1) {
+          const button = world.eid2obj.get(entity);
+          if (button) button.visible = false;
+          else console.error(`Button with entity ${entity} not found.`);
+          actionComplete();
+        }
         break;
 
       case 2: // Animation
+        if (shouldHideButton) {
+          const button = world.eid2obj.get(entity);
+          if (button) button.visible = false;
+          else console.error(`Button with entity ${entity} not found.`);
+          actionComplete();
+        }
         const { animationName, animationTarget, animationValue } = actionsData;
         // if (animationName && animationTarget && animationValue) {
         //   console.log("Playing animation:", {
@@ -385,6 +393,12 @@ function handleActionsAfterClick(
         break;
 
       case 3: // Audio
+        if (shouldHideButton) {
+          const button = world.eid2obj.get(entity);
+          if (button) button.visible = false;
+          else console.error(`Button with entity ${entity} not found.`);
+          actionComplete();
+        }
         // Do actionComplete() when the audio is finished playing
         handleAudioAction(actionsData.audio, actionComplete);
         // actionComplete();
