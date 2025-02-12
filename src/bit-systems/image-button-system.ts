@@ -19,6 +19,8 @@ const ImageButtonExitQuery = exitQuery(ImageButtonQuery);
 
 // Scenario buttons and audio state
 const scenarioButtons: Map<number, number> = new Map();
+const buttonClickTimes: Map<number, number> = new Map();
+
 let currentAudio: HTMLAudioElement | null = null;
 
 /**
@@ -274,7 +276,7 @@ function handleTransformAction(
   transformTarget: string, // The target object to transform
   transformType: string, // The transform type (e.g., "rotation", "scale", "position")
   transformValue: string, // The transform value (e.g., "0 0 0", "1 1 1", "0 0 0 0")
-  callback: () => void
+  // callback: () => void
 ) {
   console.log("Transforming object:", {
     transformTarget,
@@ -311,13 +313,20 @@ function handleTransformAction(
       break;
     case "translate":
       console.log("Setting position:", values);
-      targetObject.setAttribute('position', '1 2 3');
-      break;
+      // get current position
+      const currentPosition = targetObject.getAttribute('position')
+      if (!currentPosition) {
+        console.error("Current position not found.");
+        return;
+      }
+      const targetPosition = targetObject.object3D.position;
+      const newTargetPosition = `${targetPosition.x + values[0]} ${targetPosition.y + values[1]} ${targetPosition.z + values[2]}`;
+      targetObject.setAttribute('position', newTargetPosition); break;
     default:
       console.error("Invalid transform type:", transformType);
   }
 
-  callback();
+  // callback();
 }
 
 /**
@@ -361,6 +370,12 @@ function handleActionsAfterClick(
 
     switch (action.value) {
       case 1: // Hide
+        // if (actionsAfterClick.length === 1) {
+        //   const button = world.eid2obj.get(entity);
+        //   if (button) button.visible = false;
+        //   else console.error(`Button with entity ${entity} not found.`);
+        //   actionComplete();
+        // }
         if (actionsAfterClick.length === 1) {
           const button = world.eid2obj.get(entity);
           if (button) button.visible = false;
@@ -405,8 +420,23 @@ function handleActionsAfterClick(
         break;
 
       case 4:
-        // handleTransformAction(actionsData.transformTarget, actionsData.transformType, actionsData.transformValue, actionComplete);
-        actionComplete();
+        handleTransformAction(actionsData.transformTarget, actionsData.transformType, actionsData.transformValue);
+        // Set clicked time for the button incrementally
+        let clickTime = buttonClickTimes.get(entity) || 0;
+        buttonClickTimes.set(entity, clickTime + 1);
+        clickTime = buttonClickTimes.get(entity) || 0;
+        console.log(`Button ${entity} clicked ${clickTime} times.`);
+        const times = actionsData.transformTimes;
+        if (clickTime >= times) {
+          buttonClickTimes.set(entity, 0);
+          if (shouldHideButton) {
+            const button = world.eid2obj.get(entity);
+            if (button) button.visible = false;
+            else console.error(`Button with entity ${entity} not found.`);
+            actionComplete();
+          }
+          actionComplete();
+        }
         break;
 
       default:
@@ -469,6 +499,8 @@ export function ImageButtonSystem(world: HubsWorld) {
     if (data.triggerType === "scenario" && typeof data.triggerName === "string") {
       scenarioButtons.set(entity, parseInt(data.triggerName, 10));
     }
+    buttonClickTimes.set(entity, 0);
+
     logImageButtonData("Entered", entity, data);
   });
 
