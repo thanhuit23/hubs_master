@@ -272,6 +272,86 @@ function handleAllAnimations(
     callback(); // If no animations, run callback immediately
   }
 }
+
+function handleRotateAction(targetObject: AElement, values: number[], speed: number) {
+  const currentRotation = targetObject.object3D.rotation; // THREE.js Euler rotation
+
+  if (!currentRotation) {
+    console.error("Current rotation not found.");
+    return;
+  }
+
+  if (!Array.isArray(values) || values.length < 3) {
+    console.error("Invalid values array.");
+    return;
+  }
+
+  const targetRotation = new THREE.Euler(
+    currentRotation.x + THREE.MathUtils.degToRad(values[0]),
+    currentRotation.y + THREE.MathUtils.degToRad(values[1]),
+    currentRotation.z + THREE.MathUtils.degToRad(values[2])
+  );
+
+  function animateRotate() {
+    currentRotation.x = THREE.MathUtils.lerp(currentRotation.x, targetRotation.x, speed);
+    currentRotation.y = THREE.MathUtils.lerp(currentRotation.y, targetRotation.y, speed);
+    currentRotation.z = THREE.MathUtils.lerp(currentRotation.z, targetRotation.z, speed);
+
+    targetObject.setAttribute('rotation',
+      `${THREE.MathUtils.radToDeg(currentRotation.x)} 
+           ${THREE.MathUtils.radToDeg(currentRotation.y)} 
+           ${THREE.MathUtils.radToDeg(currentRotation.z)}`
+    );
+
+    if (
+      Math.abs(currentRotation.x - targetRotation.x) > 0.01 ||
+      Math.abs(currentRotation.y - targetRotation.y) > 0.01 ||
+      Math.abs(currentRotation.z - targetRotation.z) > 0.01
+    ) {
+      requestAnimationFrame(animateRotate);
+    }
+  }
+
+  animateRotate();
+}
+
+function handleTranslateAction(targetObject: AElement, values: number[], speed: number) {
+  const currentPosition = targetObject.object3D.position;
+
+  if (!currentPosition) {
+    console.error("Current position not found.");
+    return;
+  }
+
+  if (!Array.isArray(values) || values.length < 3) {
+    console.error("Invalid values array.");
+    return;
+  }
+
+  // Define target position
+  const targetPosition = new THREE.Vector3(
+    currentPosition.x + values[0],
+    currentPosition.y + values[1],
+    currentPosition.z + values[2]
+  );
+
+  function lerpMovement() {
+    // Gradually interpolate between the current position and target
+    currentPosition.lerp(targetPosition, speed);
+
+    // Update A-Frame position manually (because object3D does not auto-sync)
+    targetObject.setAttribute('position', `${currentPosition.x} ${currentPosition.y} ${currentPosition.z}`);
+
+    // Continue updating until close enough to target
+    if (currentPosition.distanceTo(targetPosition) > 0.01) {
+      requestAnimationFrame(lerpMovement);
+    }
+  }
+
+  // Start the animation loop
+  lerpMovement();
+}
+
 function handleTransformAction(
   transformTarget: string, // The target object to transform
   transformType: string, // The transform type (e.g., "rotation", "scale", "position")
@@ -302,11 +382,7 @@ function handleTransformAction(
   switch (transformType) {
     case "rotate":
       console.log("Setting rotation:", values);
-      // targetObject.object3D.rotation.set(
-      //   THREE.MathUtils.degToRad(values[0]),
-      //   THREE.MathUtils.degToRad(values[1]),
-      //   THREE.MathUtils.degToRad(values[2])
-      // );
+      handleRotateAction(targetObject, values, parseFloat(transformSpeed) || 0.01);
       break;
     case "scale":
       console.log("Setting scale:", values);
@@ -314,54 +390,7 @@ function handleTransformAction(
       break;
     case "translate":
       console.log("Setting position:", values);
-      // get current position
-      // const currentPosition = targetObject.getAttribute('position')
-      // if (!currentPosition) {
-      //   console.error("Current position not found.");
-      //   return;
-      // }
-      // const targetPosition = targetObject.object3D.position;
-      // const newTargetPosition = `${targetPosition.x + values[0]} ${targetPosition.y + values[1]} ${targetPosition.z + values[2]}`;
-      // targetObject.setAttribute('position', newTargetPosition); break;
-      const currentPosition = targetObject.object3D.position;
-
-      if (!currentPosition) {
-        console.error("Current position not found.");
-        return;
-      }
-
-      if (!Array.isArray(values) || values.length < 3) {
-        console.error("Invalid values array.");
-        return;
-      }
-
-      // Define target position
-      const targetPosition = new THREE.Vector3(
-        currentPosition.x + values[0],
-        currentPosition.y + values[1],
-        currentPosition.z + values[2]
-      );
-
-      // Define animation speed (adjust for smoother/slower movement)
-      // const speed = 0.05; // Adjust this value for different speeds
-      const speedValue = parseFloat(transformSpeed);
-
-      function lerpMovement() {
-        // Gradually interpolate between the current position and target
-        currentPosition.lerp(targetPosition, speedValue);
-
-        // Update A-Frame position manually (because object3D does not auto-sync)
-        targetObject.setAttribute('position', `${currentPosition.x} ${currentPosition.y} ${currentPosition.z}`);
-
-        // Continue updating until close enough to target
-        if (currentPosition.distanceTo(targetPosition) > 0.01) {
-          requestAnimationFrame(lerpMovement);
-        }
-      }
-
-      // Start the animation loop
-      lerpMovement();
-
+      handleTranslateAction(targetObject, values, parseFloat(transformSpeed) || 0.01);
       break;
     default:
       console.error("Invalid transform type:", transformType);
