@@ -243,20 +243,30 @@ function handleAllAnimations(
         if (action) {
           if (startOrStop) {
             action.reset();
-            action.setLoop(THREE.LoopOnce, 1);
-            action.clampWhenFinished = true;
-            action.play();
-
-            // Listen for animation finished event
-            action.getMixer().addEventListener("finished", (event: THREE.Event) => {
-              if (event.action === action) {
-                animationsCompleted++;
-                if (animationsCompleted === totalAnimations) {
-                  callback(); // Run callback when all animations are finished
-                  console.log("All animations finished.");
-                }
+            if (animationValue === "loop") {
+              action.setLoop(THREE.LoopRepeat, Infinity);
+              action.clampWhenFinished = false;
+              action.play();
+              animationsCompleted++;
+              if (animationsCompleted === totalAnimations) {
+                callback();
+                console.log("All animations looped.");
               }
-            });
+            } else {
+              action.setLoop(THREE.LoopOnce, 1);
+              action.clampWhenFinished = true;
+              action.play();
+              // Listen for animation finished event
+              action.getMixer().addEventListener("finished", (event: THREE.Event) => {
+                if (event.action === action) {
+                  animationsCompleted++;
+                  if (animationsCompleted === totalAnimations) {
+                    callback(); // Run callback when all animations are finished
+                    console.log("All animations finished.");
+                  }
+                }
+              });
+            }
           } else {
             action.stop();
             animationsCompleted++;
