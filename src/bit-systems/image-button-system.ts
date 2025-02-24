@@ -471,7 +471,7 @@ function handleActionsAfterClick(
     }
   };
 
-  const shouldHideButton = actionsAfterClick.some((action) => action.value === 1);
+  let shouldHideButton = actionsAfterClick.some((action) => action.value === 1);
 
   actionsAfterClick.forEach((action) => {
     if (!action || typeof action.value !== "number") {
@@ -490,6 +490,7 @@ function handleActionsAfterClick(
       case 2: // Animation
         if (shouldHideButton) {
           handleHideAction(entity, world, actionComplete);
+          shouldHideButton = false;
         }
         const { animationName, animationTarget, animationValue } = actionsData;
         // if (animationName && animationTarget && animationValue) {
@@ -510,6 +511,7 @@ function handleActionsAfterClick(
       case 3: // Audio
         if (shouldHideButton) {
           handleHideAction(entity, world, actionComplete);
+          shouldHideButton = false;
         }
         // Do actionComplete() when the audio is finished playing
         handleAudioAction(actionsData.audio, actionComplete);
@@ -527,6 +529,7 @@ function handleActionsAfterClick(
         if (clickTime >= times) {
           buttonClickTimes.set(entity, 0);
           if (shouldHideButton) {
+            shouldHideButton = false;
             handleHideAction(entity, world, actionComplete);
           }
           actionComplete();
@@ -535,6 +538,7 @@ function handleActionsAfterClick(
       case 5:
         if (shouldHideButton) {
           handleHideAction(entity, world, actionComplete);
+          shouldHideButton = false;
         }
         handleVisbilityAction(actionsData.visibilityTarget, actionsData.visibilityType, actionComplete);
         break;
