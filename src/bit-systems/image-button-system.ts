@@ -481,13 +481,13 @@ function handleActionsAfterClick(
     }
 
     switch (action.value) {
-      case 1: // Hide
+      case 1: // Handle hide action if it's the only action in the list
         if (actionsAfterClick.length === 1) {
           handleHideAction(entity, world, actionComplete);
         }
         break;
 
-      case 2: // Animation
+      case 2: // Handle animation action
         if (shouldHideButton) {
           handleHideAction(entity, world, actionComplete);
           shouldHideButton = false;
@@ -508,7 +508,7 @@ function handleActionsAfterClick(
         // actionComplete();
         break;
 
-      case 3: // Audio
+      case 3: // Handle audio action
         if (shouldHideButton) {
           handleHideAction(entity, world, actionComplete);
           shouldHideButton = false;
@@ -518,7 +518,7 @@ function handleActionsAfterClick(
         // actionComplete();
         break;
 
-      case 4:
+      case 4: // Handle transform action
         handleTransformAction(actionsData.transformTarget, actionsData.transformType, actionsData.transformValue, actionsData.transformSpeed);
         // Set clicked time for the button incrementally
         let clickTime = buttonClickTimes.get(entity) || 0;
@@ -535,13 +535,15 @@ function handleActionsAfterClick(
           actionComplete();
         }
         break;
-      case 5:
+
+      case 5: // Handle visibility action
         if (shouldHideButton) {
           handleHideAction(entity, world, actionComplete);
           shouldHideButton = false;
         }
         handleVisbilityAction(actionsData.visibilityTarget, actionsData.visibilityType, actionComplete);
         break;
+
       default:
         console.warn(`Unhandled action value: ${action.value}`);
     }
