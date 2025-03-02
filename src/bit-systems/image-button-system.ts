@@ -441,6 +441,17 @@ function handleVisbilityAction(visibilityTarget: string, visibilityType: string,
   callback();
 }
 
+function onSpawnController(initialPosition: { x: number, y: number, z: number }) {
+  const controllerEntity = document.createElement("a-entity") as AElement;
+  // Set the controller entity attributes
+  controllerEntity.setAttribute("npc-ai-communication", "height: 0.5; width: 0.5;");
+  // Set the position of the controller entity to the player's position
+  controllerEntity.object3D.position.set(initialPosition.x, initialPosition.y, initialPosition.z);
+  // Add the controller entity to the scene
+  const scene = AFRAME.scenes[0];
+  scene.appendChild(controllerEntity);
+}
+
 /**
  * Handle post-click actions for an image button.
  * @param {any[]} actionsAfterClick - List of actions to process.
@@ -607,6 +618,15 @@ export function ImageButtonSystem(world: HubsWorld) {
     buttonClickTimes.set(entity, 0);
 
     logImageButtonData("Entered", entity, data);
+    if (data.triggerType === "npc" && typeof data.triggerValue === "string") {
+      const object3D = world.eid2obj.get(entity);
+      if (object3D) {
+        object3D.visible = false;
+        onSpawnController(object3D.position);
+      } else {
+        console.error(`Object3D not found for entity ${entity}.`);
+      }
+    }
   });
 
   const exited = ImageButtonExitQuery(world);
