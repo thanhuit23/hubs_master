@@ -142,6 +142,7 @@ import "./components/mirror";
 import "./components/interactable-object";
 import "./components/fullbody-animation";
 import "./components/npc-communication";
+import "./components/npc-ai-communication";
 //
 
 import React from "react";
