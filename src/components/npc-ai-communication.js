@@ -17,6 +17,7 @@ AFRAME.registerComponent("npc-ai-communication", {
         this.createOrUpdateUI("idle");
         this.toggleRecording();
         this.shouldTalk = true;
+        this.currentText = "idle";
     },
 
     clicked: function (world, entity) {
@@ -51,106 +52,140 @@ AFRAME.registerComponent("npc-ai-communication", {
         // Attach the button to the entity
         this.el.object3D.add(this.voiceButton);
         voiceButtonData.clicked[this.eid] = APP.getSid(buttonText === "idle" ? "false" : "true");
+        this.currentText = buttonText;
     },
 
-    // tick: function () {
-    //     if (this.clicked(APP.world, this.eid)) {
-    //         const currentClickedState = APP.getString(voiceButtonData.clicked[this.eid]);
-    //         const nextButtonText = currentClickedState === "true" ? "idle" : "send";
-    //         const voiceButton = APP.world.eid2obj.get(this.eid);
-    //         this.el.object3D.remove(voiceButton);
-
-    //         if (currentClickedState === "true") {
-    //             this.stopRecording();
-    //         } else {
-    //             this.toggleRecording();
-    //             // Add a new object 3D component to the entity
-    //             this.createOrUpdateUI(nextButtonText);
-    //         }
+    tick: function () {
+        if (this.clicked(APP.world, this.eid)) {
+            const currentClickedState = APP.getString(voiceButtonData.clicked[this.eid]);
+            const nextButtonText = currentClickedState === "true" ? "idle" : "send";
 
 
-    //     }
-    // },
-    // toggleRecording: async function () {
-    //     try {
-    //         const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
-    //         this.mediaRecorder = new MediaRecorder(stream);
+            if (currentClickedState === "true" && this.currentText === "send") {
+                this.stopRecording();
+            }
+            if (currentClickedState === "false" && this.currentText === "idle") {
+                this.toggleRecording();
+                // Add a new object 3D component to the entity
+                const voiceButton = APP.world.eid2obj.get(this.eid);
+                this.el.object3D.remove(voiceButton);
+                this.createOrUpdateUI(nextButtonText);
+            }
+        }
+    },
+    toggleRecording: async function () {
+        try {
+            const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+            this.mediaRecorder = new MediaRecorder(stream);
 
-    //         this.mediaRecorder.ondataavailable = (event) => {
-    //             if (event.data.size > 0) {
-    //                 this.recordedChunks.push(event.data);
-    //             }
-    //         };
+            this.mediaRecorder.ondataavailable = (event) => {
+                if (event.data.size > 0) {
+                    this.recordedChunks.push(event.data);
+                }
+            };
 
-    //         this.mediaRecorder.start();
-    //     } catch (error) {
-    //         console.error("Error starting recording:", error);
-    //     }
-    // },
+            this.mediaRecorder.start();
+        } catch (error) {
+            console.error("Error starting recording:", error);
+        }
+    },
 
 
-    // stopRecording: function () {
-    //     this.createOrUpdateUI("wait");
-    //     this.mediaRecorder.stop();
-    //     this.mediaRecorder.onstop = async () => {
-    //         const audioBlob = new Blob(this.recordedChunks, { type: 'audio/webm' });
-    //         this.recordedChunks = []; // Clear chunks
-    //         // Convert to a file object for upload
-    //         const audioFile = new File([audioBlob], 'recording.webm', { type: 'audio/webm' });
-    //         const dataTransfer = new DataTransfer();
-    //         dataTransfer.items.add(audioFile);
-    //         document.getElementById('audioInput').files = dataTransfer.files;
-    //         await this.voiceProcess();
-    //     };
+    stopRecording: function () {
+        const voiceButton = APP.world.eid2obj.get(this.eid);
+        this.el.object3D.remove(voiceButton);
+        this.createOrUpdateUI("wait");
+        this.mediaRecorder.stop();
+        this.mediaRecorder.onstop = async () => {
+            const audioBlob = new Blob(this.recordedChunks, { type: 'audio/webm' });
+            this.recordedChunks = []; // Clear chunks
+            // Convert to a file object for upload
+            const audioFile = new File([audioBlob], 'recording.webm', { type: 'audio/webm' });
+            const dataTransfer = new DataTransfer();
+            dataTransfer.items.add(audioFile);
+            document.getElementById('audioInput').files = dataTransfer.files;
+            await this.voiceProcess();
+        };
 
-    // },
+    },
 
-    // voiceProcess: async function () {
-    //     // Delay 2 seconds to ensure the recording is saved
-    //     await new Promise((resolve) => setTimeout(resolve, 2000));
+    voiceProcess: async function () {
+        // Delay 2 seconds to ensure the recording is saved
+        await new Promise((resolve) => setTimeout(resolve, 2000));
 
-    //     const fileInput = document.getElementById('audioInput');
+        const fileInput = document.getElementById('audioInput');
 
-    //     if (!fileInput.files.length) {
-    //         alert('Please select an audio file first!');
-    //         return;
-    //     }
-    //     const file = fileInput.files[0];
+        if (!fileInput.files.length) {
+            alert('Please select an audio file first!');
+            return;
+        }
+        const file = fileInput.files[0];
 
-    //     try {
-    //         const transcriptionFormData = new FormData();
-    //         transcriptionFormData.append('file', file); // Use the original file directly
-    //         transcriptionFormData.append('model', 'whisper-1');
+        try {
+            const transcriptionFormData = new FormData();
+            transcriptionFormData.append('file', file, "test.webm"); // Use the original file directly
+            // transcriptionFormData.append('type', 'audio/webm');
 
-    //         // Using OpenAI Whisper API
-    //         const apiUrl = 'https://api.openai.com/v1/audio/transcriptions';
-    //         const response = await fetch(apiUrl, {
-    //             method: 'POST',
-    //             headers: {
-    //                 // 'Authorization': `Bearer ${apiKey}`,
-    //             },
-    //             body: transcriptionFormData,
-    //         });
+            // Using AI API
+            const apiUrl = 'https://coastal-fails-warren-co.trycloudflare.com/process_audio';
+            const response = await fetch(apiUrl, {
+                method: 'POST',
+                headers: {
+                    'Accept': 'application/json',
+                },
+                body: transcriptionFormData,
+            });
 
-    //         if (response.ok && this.shouldTalk) {
-    //             this.createOrUpdateUI("speak");
-    //             const audioBlob = await response.blob();
-    //             const audioUrl = URL.createObjectURL(audioBlob);
-    //             npcAudio.src = audioUrl;
-    //             npcAudio.play();
-    //             npcAudio.onended = () => {
-    //                 this.createOrUpdateUI("idle");
-    //             };
-    //         } else {
-    //             npcAudio.pause();
-    //             console.error('Error in TTS API:', response.statusText);
-    //             this.createOrUpdateUI("idle");
-    //         }
-    //     } catch (error) {
-    //         console.error('Error converting audio to text:', error);
-    //         this.createOrUpdateUI("idle");
-    //     }
-    // },
+            if (response.ok && this.shouldTalk) {
+                const voiceButton = APP.world.eid2obj.get(this.eid);
+                this.el.object3D.remove(voiceButton);
+                this.createOrUpdateUI("speak");
+                try {
+                    const responseJSON = await response.json();
+                    console.log('Audio blob:', responseJSON["blob"]);
+                    const base64Audio = responseJSON["blob"];
+                    // Remove the "data:audio/mpeg;base64," prefix to get the pure Base64 string
+                    const base64String = base64Audio.split(",")[1];
+
+                    // Convert Base64 to binary data
+                    const binaryData = atob(base64String);
+                    const byteArray = new Uint8Array(binaryData.length);
+                    for (let i = 0; i < binaryData.length; i++) {
+                        byteArray[i] = binaryData.charCodeAt(i);
+                    }
+
+                    // Create a Blob from the binary data
+                    const audioBlob = new Blob([byteArray], { type: "audio/mpeg" });
+
+                    // Create an Object URL for the Blob
+                    const audioUrl = URL.createObjectURL(audioBlob);
+                    npcAudio.src = audioUrl;
+                    npcAudio.play();
+                    npcAudio.onended = () => {
+                        const voiceButton = APP.world.eid2obj.get(this.eid);
+                        this.el.object3D.remove(voiceButton);
+                        this.createOrUpdateUI("idle");
+                    };
+                } catch (error) {
+                    const voiceButton = APP.world.eid2obj.get(this.eid);
+                    this.el.object3D.remove(voiceButton);
+                    this.createOrUpdateUI("idle");
+                    console.error('Error playing audio:', error);
+                }
+            } else {
+                npcAudio.pause();
+                console.error('Error in TTS API:', response.status, response);
+                const voiceButton = APP.world.eid2obj.get(this.eid);
+                this.el.object3D.remove(voiceButton);
+                this.createOrUpdateUI("idle");
+            }
+        } catch (error) {
+            console.error('Error converting audio to text:', error);
+            const voiceButton = APP.world.eid2obj.get(this.eid);
+            this.el.object3D.remove(voiceButton);
+            this.createOrUpdateUI("idle");
+        }
+    },
 
     remove: function () {
         if (this.eid) {
