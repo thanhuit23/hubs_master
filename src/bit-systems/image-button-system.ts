@@ -441,10 +441,10 @@ function handleVisbilityAction(visibilityTarget: string, visibilityType: string,
   callback();
 }
 
-function onSpawnController(initialPosition: { x: number, y: number, z: number }) {
+function onSpawnController(initialPosition: { x: number, y: number, z: number }, apiUrl: string) {
   const controllerEntity = document.createElement("a-entity") as AElement;
   // Set the controller entity attributes
-  controllerEntity.setAttribute("npc-ai-communication", "height: 0.5; width: 0.5;");
+  controllerEntity.setAttribute("npc-ai-communication", "height: 0.5; width: 0.5; api: " + apiUrl); 
   // Set the position of the controller entity to the player's position
   controllerEntity.object3D.position.set(initialPosition.x, initialPosition.y, initialPosition.z);
   // Add the controller entity to the scene
@@ -622,7 +622,7 @@ export function ImageButtonSystem(world: HubsWorld) {
       const object3D = world.eid2obj.get(entity);
       if (object3D) {
         object3D.visible = false;
-        onSpawnController(object3D.position);
+        onSpawnController(object3D.position, data.triggerValue);
       } else {
         console.error(`Object3D not found for entity ${entity}.`);
       }
@@ -633,6 +633,8 @@ export function ImageButtonSystem(world: HubsWorld) {
   exited.forEach((entity) => {
     const href = APP.getString(imageButton.href[entity]);
     logImageButtonData("Exited", entity, { href });
+    scenarioButtons.delete(entity);
+    buttonClickTimes.delete(entity);
   });
 
   const entities = ImageButtonQuery(world);

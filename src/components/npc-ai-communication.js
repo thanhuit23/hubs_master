@@ -8,6 +8,7 @@ AFRAME.registerComponent("npc-ai-communication", {
     schema: {
         height: { type: "number", default: 1.5 },
         width: { type: "number", default: 0.5 },
+        api: { type: "string", default: "https://coastal-fails-warren-co.trycloudflare.com/process_audio" },
     },
 
     init: function () {
@@ -127,7 +128,8 @@ AFRAME.registerComponent("npc-ai-communication", {
             // transcriptionFormData.append('type', 'audio/webm');
 
             // Using AI API
-            const apiUrl = 'https://coastal-fails-warren-co.trycloudflare.com/process_audio';
+            const apiUrl = this.data.api;
+            console.log('API URL:', apiUrl);
             const response = await fetch(apiUrl, {
                 method: 'POST',
                 headers: {
