@@ -441,12 +441,15 @@ function handleVisbilityAction(visibilityTarget: string, visibilityType: string,
   callback();
 }
 
-function onSpawnController(initialPosition: { x: number, y: number, z: number }, apiUrl: string) {
+function onSpawnController(initialPosition: { x: number, y: number, z: number }, 
+  initialRotation: THREE.Quaternion, initialScale: THREE.Vector3, apiUrl: string) {
   const controllerEntity = document.createElement("a-entity") as AElement;
   // Set the controller entity attributes
-  controllerEntity.setAttribute("npc-ai-communication", "height: 0.5; width: 0.5; api: " + apiUrl); 
+  controllerEntity.setAttribute("npc-ai-communication", "height: 1.0; width: 1.0; api: " + apiUrl);
   // Set the position of the controller entity to the player's position
   controllerEntity.object3D.position.set(initialPosition.x, initialPosition.y, initialPosition.z);
+  controllerEntity.object3D.rotation.setFromQuaternion(initialRotation);
+  controllerEntity.object3D.scale.copy(initialScale);
   // Add the controller entity to the scene
   const scene = AFRAME.scenes[0];
   scene.appendChild(controllerEntity);
@@ -620,9 +623,16 @@ export function ImageButtonSystem(world: HubsWorld) {
     logImageButtonData("Entered", entity, data);
     if (data.triggerType === "npc" && typeof data.triggerValue === "string") {
       const object3D = world.eid2obj.get(entity);
+
       if (object3D) {
+        const controlPosition = new THREE.Vector3();
+        object3D.getWorldPosition(controlPosition);
+        const controlRotation = new THREE.Quaternion();
+        object3D.getWorldQuaternion(controlRotation);
+        const controlScale = new THREE.Vector3();
+        object3D.getWorldScale(controlScale);
         object3D.visible = false;
-        onSpawnController(object3D.position, data.triggerValue);
+        onSpawnController(controlPosition, controlRotation, controlScale, data.triggerValue);
       } else {
         console.error(`Object3D not found for entity ${entity}.`);
       }
@@ -635,6 +645,10 @@ export function ImageButtonSystem(world: HubsWorld) {
     logImageButtonData("Exited", entity, { href });
     scenarioButtons.delete(entity);
     buttonClickTimes.delete(entity);
+    // All audio should be stop
+    if (currentAudio) {
+      currentAudio.pause();
+    }
   });
 
   const entities = ImageButtonQuery(world);

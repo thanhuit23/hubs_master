@@ -27,8 +27,8 @@ AFRAME.registerComponent("npc-ai-communication", {
 
     createOrUpdateUI: function (buttonText) {
         const BUTTON_CONFIG = {
-            width: 0.5,
-            height: 0.5,
+            width: 1.0,
+            height: 1.0,
             backgroundColor: "Play Button",
             textColor: "#000000",
             fontSize: 16,
