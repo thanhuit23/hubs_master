@@ -11,6 +11,9 @@ import { takeOwnership } from "../utils/take-ownership";
 import { createNetworkedEntity } from "../hubs";
 import { findAncestorWithComponent } from "../utils/scene-graph";
 import { AElement } from "aframe";
+import { isLocalHubsUrl, isHubsRoomUrl } from "../utils/media-url-utils";
+import { changeHub } from "../change-hub";
+import { handleExitTo2DInterstitial } from "../utils/vr-interstitial";
 
 // Queries for handling entity lifecycle
 const ImageButtonQuery = defineQuery([imageButton]);
@@ -441,7 +444,7 @@ function handleVisbilityAction(visibilityTarget: string, visibilityType: string,
   callback();
 }
 
-function onSpawnController(initialPosition: { x: number, y: number, z: number }, 
+function onSpawnController(initialPosition: { x: number, y: number, z: number },
   initialRotation: THREE.Quaternion, initialScale: THREE.Vector3, apiUrl: string) {
   const controllerEntity = document.createElement("a-entity") as AElement;
   // Set the controller entity attributes
@@ -474,6 +477,11 @@ function handleActionsAfterClick(
     return;
   }
 
+  let shouldNavigate = actionsAfterClick.some((action) => action.value === 6);
+  if (shouldNavigate) {
+    // Remove the navigate action from the list
+    actionsAfterClick = actionsAfterClick.filter((action) => action.value !== 6);
+  }
   // Count the number of pending actions
   let pendingActions = actionsAfterClick.length;
 
@@ -481,7 +489,15 @@ function handleActionsAfterClick(
   const actionComplete = () => {
     pendingActions -= 1;
     if (pendingActions === 0) {
-      callback(); // Invoke the callback when all actions are finished
+      if (shouldNavigate) {
+        shouldNavigate = false;
+        const { navigationTarget } = actionsData;
+        if (navigationTarget) {
+          changeRoom(navigationTarget);
+        }
+      } else {
+        callback(); // Invoke the callback when all actions are finished
+      }
     }
   };
 
@@ -800,4 +816,36 @@ export function ImageButtonSystem(world: HubsWorld) {
     //   });
     // }
   });
+}
+async function changeRoom(linkUrl: string) {
+  if (linkUrl == null || linkUrl == undefined) {
+    return;
+  }
+
+  const currnetHubId = await isHubsRoomUrl(window.location.href);
+  //console.log("currnet HubId :", currnetHubId);
+
+  const exitImmersive = async () => await handleExitTo2DInterstitial(false, () => { }, true);
+
+  let gotoHubId;
+  // URL이 허브 룸인지 확인
+  if ((gotoHubId = await isHubsRoomUrl(linkUrl))) {
+    //console.log("go to HubId", gotoHubId);
+    const url = new URL(linkUrl);
+    if (currnetHubId === gotoHubId && url.hash) {
+      // 같은 방에서 Way Point으로 이동할 경우
+      window.history.replaceState(null, "", window.location.href.split("#")[0] + url.hash);
+    } else if (await isLocalHubsUrl(linkUrl)) {
+      // 같은 도메인에 있는 허브 경로일 경우
+      let waypoint = "";
+      if (url.hash) {
+        waypoint = url.hash.substring(1);
+      }
+      // 페이지 로드 또는 입장 진행 없이 새 방으로
+      changeHub(gotoHubId, true, waypoint);
+    } else {
+      await exitImmersive();
+      location.href = linkUrl;
+    }
+  }
 }
