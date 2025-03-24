@@ -23,8 +23,21 @@ AFRAME.registerComponent("npc-ai-communication", {
         this.waitingAnimationName = "idle";
         this.thinkingAnimationName = "think";
         this.answerAnimationName = "talk";
+        this.greedingAnimationName = "abcd";
         // this.thinkingAnimationName = "texting";
         // this.answerAnimationName = "talking";
+        if (!this.mixerEl) {
+            const environmentScene = document.querySelector("#environment-scene");
+            const animationEntity = environmentScene.children[0];
+            // convert the animationEntity to el
+            const animationEl = animationEntity.object3D.el;
+            this.mixerEl = findAncestorWithComponent(animationEl, "animation-mixer");
+            if (!this.mixerEl) {
+                this.stopNPCSection();
+                console.error("No animation mixer found");
+                return;
+            }
+        }
     },
 
     clicked: function (world, entity) {
@@ -72,6 +85,7 @@ AFRAME.registerComponent("npc-ai-communication", {
                 this.stopRecording();
             }
             if (currentClickedState === "false" && this.currentText === "idle") {
+                this.playAnimation(this.mixerEl, this.greedingAnimationName, "play", "npc");
                 this.toggleRecording();
                 // Add a new object 3D component to the entity
                 const voiceButton = APP.world.eid2obj.get(this.eid);
