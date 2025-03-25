@@ -188,7 +188,7 @@ function handleAnimationAction(
 
     if (animationValue === "play") {
       action.reset(); // Reset the animation
-      action.setLoop(THREE.LoopOnce); // Play the animation once
+      action.setLoop(THREE.LoopOnce, 1); // Play the animation once
       // Play the animation
       action.play();
     }
@@ -284,6 +284,100 @@ function handleAllAnimations(
   } else {
     callback(); // If no animations, run callback immediately
   }
+}
+
+function playAnimation(world: HubsWorld, parentEid: number, animationName: string, targetClassName: string, animationType: string, callback: () => void): void {
+  const parentObject = world.eid2obj.get(parentEid);
+
+  if (!parentObject) {
+    callback();
+    return;
+  }
+  const mixerEl = findAncestorWithComponent(parentObject?.parent?.parent?.el, "animation-mixer");
+
+  if (!mixerEl) {
+    callback();
+    return;
+  }
+
+  const { mixer, animations } = mixerEl.components["animation-mixer"];
+
+  if (!mixer) {
+    callback();
+    return;
+  }
+
+  if (!animations) {
+    callback();
+    return;
+  }
+
+  if (!targetClassName || targetClassName === "") {
+    callback();
+    return;
+  }
+
+  if (!animationName || animationName === "") {
+    callback();
+    return;
+  }
+
+  if (!animationType || animationType === "") {
+    callback();
+    return;
+  }
+
+  // Try to start the animation on the robot object instead of all the objects
+  const targetObject = document.getElementsByClassName(targetClassName)[0];
+  if (!targetObject) {
+    callback();
+    return;
+  }
+  // Get all clip names from the loop-animation component on the robot object
+  const targetObjectLoopAnimation = findAncestorWithComponent(targetObject, "loop-animation");
+  const targetObjectLoopAnimationComponent = targetObjectLoopAnimation.components["loop-animation"];
+  if (!targetObjectLoopAnimationComponent) {
+    callback();
+    return;
+  }
+  const clipNames = targetObjectLoopAnimationComponent.data.allClipNames;
+  if (!clipNames || clipNames.length === 0 || !clipNames.includes(animationName)) {
+    callback();
+    return;
+  }
+  const clipIndices = targetObjectLoopAnimationComponent.data.allClipIndices;
+  if (!clipIndices || clipIndices.length === 0) {
+    callback();
+    return;
+  }
+  // Index of the animation to play
+  let animationIndex = -1;
+  for (let i = 0; i < clipNames.length; i++) {
+    if (clipNames[i] === animationName) {
+      animationIndex = i;
+      break;
+    }
+  }
+  if (animationIndex === -1) {
+    callback();
+    return;
+  }
+  const clipAction = mixer.clipAction(animations[clipIndices[animationIndex]]);
+
+  if (animationType === "play") {
+    clipAction.reset();
+    clipAction.setLoop(THREE.LoopOnce, 1);
+    clipAction.play();
+  }
+  if (animationType === "stop") {
+    clipAction.stop();
+  }
+  if (animationType === "loop") {
+    clipAction.reset();
+    clipAction.setLoop(THREE.LoopRepeat, Infinity);
+    clipAction.play();
+  }
+  callback();
 }
 
 function handleRotateAction(targetObject: AElement, values: number[], speed: number) {
@@ -509,6 +603,7 @@ function handleActionsAfterClick(
       actionComplete(); // Consider invalid actions as completed
       return;
     }
+    let { animationName, animationTarget, animationValue } = actionsData;
 
     switch (action.value) {
       case 1: // Handle hide action if it's the only action in the list
@@ -522,7 +617,7 @@ function handleActionsAfterClick(
           handleHideAction(entity, world, actionComplete);
           shouldHideButton = false;
         }
-        const { animationName, animationTarget, animationValue } = actionsData;
+
         // if (animationName && animationTarget && animationValue) {
         //   console.log("Playing animation:", {
         //     animationName,
@@ -572,6 +667,23 @@ function handleActionsAfterClick(
           shouldHideButton = false;
         }
         handleVisbilityAction(actionsData.visibilityTarget, actionsData.visibilityType, actionComplete);
+        break;
+
+      case 7: // Handle single animation action
+        if (shouldHideButton) {
+          handleHideAction(entity, world, actionComplete);
+          shouldHideButton = false;
+        }
+        if (animationName && animationTarget && animationValue) {
+          console.log("Playing a single animation:", {
+            animationName,
+            animationTarget,
+            animationValue,
+          });
+        } else console.error("Missing animation data:", actionsData);
+        // handleSingleAnimations(animationName, animationTarget, animationValue, actionComplete);
+
+        playAnimation(world, entity, animationName, animationTarget, animationValue, actionComplete);
         break;
 
       default:
