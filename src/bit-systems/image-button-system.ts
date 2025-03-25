@@ -334,8 +334,17 @@ function playAnimation(world: HubsWorld, parentEid: number, animationName: strin
     return;
   }
   // Get all clip names from the loop-animation component on the robot object
-  const targetObjectLoopAnimation = findAncestorWithComponent(targetObject, "loop-animation");
-  const targetObjectLoopAnimationComponent = targetObjectLoopAnimation.components["loop-animation"];
+  let animationComponentName = "loop-animation"
+  let targetObjectLoopAnimation = findAncestorWithComponent(targetObject, "loop-animation");
+  if (!targetObjectLoopAnimation) {
+    animationComponentName = "shadow";
+    targetObjectLoopAnimation = findAncestorWithComponent(targetObject, animationComponentName);
+    if (!targetObjectLoopAnimation) {
+      callback();
+      return;
+    }
+  }
+  const targetObjectLoopAnimationComponent = targetObjectLoopAnimation.components[animationComponentName];
   if (!targetObjectLoopAnimationComponent) {
     callback();
     return;
